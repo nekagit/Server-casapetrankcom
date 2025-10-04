@@ -1,0 +1,235 @@
+# Casa Petrada E-commerce Website Development Rules
+
+## Project Overview
+This project is a complete recreation of Casa Petrada (https://casa-petrada.de), a German handmade Boho jewelry and fashion e-commerce website. The goal is to create a pixel-perfect clone with full functionality.
+
+## Development Workflow
+When you receive a request to "implement casapetra further", follow this exact workflow:
+
+### 1. ANALYSIS PHASE
+- **Analyze Current State**: Examine all project files (frontend, backend, database, configuration)
+- **Compare with Original**: Compare current implementation against https://casa-petrada.de
+- **Identify Gaps**: Find missing features, styling issues, functionality gaps
+- **Create Analysis Report**: Generate a comprehensive `.md` file documenting findings
+
+### 2. PLANNING PHASE
+- **Create TODO List**: Break down missing features into actionable tasks
+- **Prioritize Tasks**: Order tasks by importance and dependencies
+- **Set Implementation Goals**: Define what to implement in current session
+
+### 3. IMPLEMENTATION PHASE
+- **Implement TODOs**: Work through the prioritized task list
+- **Test Functionality**: Ensure each feature works correctly
+- **Maintain Code Quality**: Follow established patterns and best practices
+
+### 4. CLEANUP PHASE
+- **Remove Unnecessary Files**: Delete unused code, assets, and configurations
+- **Optimize Structure**: Clean up file organization and imports
+- **Update Documentation**: Refresh README and other docs
+
+### 5. LOOP
+- **Repeat Process**: Continue the cycle until project is complete
+
+## Technical Stack
+- **Frontend**: Vite + TypeScript + CSS3
+- **Backend**: FastAPI + Python + SQLAlchemy
+- **Database**: PostgreSQL
+- **Styling**: Custom CSS with CSS Variables
+- **Icons**: Font Awesome 6
+- **Fonts**: Inter (body), Playfair Display (headings)
+
+## Brand Guidelines
+
+### Visual Identity
+- **Colors**: Earth tones, beiges (#f5f1eb), soft pinks (#d4af8c), natural browns (#c9a876)
+- **Typography**: Clean, readable fonts with elegant headings
+- **Style**: Boho, handmade, natural, feminine, artisanal
+- **Logo**: "CASA-PETRADA" with "Handmade Boho Schmuck" subtitle
+
+### Content Tone
+- **Language**: German (primary)
+- **Voice**: Personal, artisanal, natural, feminine
+- **Focus**: Handmade, unique, quality, personal service
+
+## Required Features
+
+### Core E-commerce Features
+- [ ] Product catalog with categories
+- [ ] Product detail pages with image galleries
+- [ ] Shopping cart functionality
+- [ ] User authentication (login/register)
+- [ ] Checkout process
+- [ ] Order management
+- [ ] User account dashboard
+- [ ] Wishlist functionality
+- [ ] Search functionality
+- [ ] Product filtering and sorting
+
+### Content Management
+- [ ] Blog system
+- [ ] About page with founder story
+- [ ] Contact page with form
+- [ ] Legal pages (Impressum, Datenschutz, AGB, etc.)
+- [ ] Newsletter signup
+- [ ] Customer testimonials/reviews
+
+### Design Requirements
+- [ ] Responsive design (mobile-first)
+- [ ] Navigation matching original exactly
+- [ ] Hero section with call-to-action buttons
+- [ ] Category overview grid
+- [ ] Product showcase sections
+- [ ] Features section highlighting USP
+- [ ] Testimonials section
+- [ ] Footer with all required links
+
+### Product Categories
+- **Armbänder** (Bracelets): Einfacharmbänder, Wickelarmbänder
+- **Ketten** (Necklaces): alle Ketten, kurze Ketten, Wechselketten, Anhänger
+- **Fußkettchen** (Anklets)
+- **Modeschmuck** (Fashion jewelry)
+- **Fashion**: Kleider, Oberteile, Accessories
+- **Taschen** (Bags)
+- **SALE** section
+
+### Key Pages
+- [ ] Homepage with hero, categories, bestsellers, features, about, testimonials
+- [ ] Product listing pages for each category
+- [ ] Individual product detail pages
+- [ ] Shopping cart page
+- [ ] Checkout page
+- [ ] User account pages
+- [ ] About page
+- [ ] Contact page
+- [ ] Blog listing and individual posts
+- [ ] Legal pages
+
+## Code Standards
+
+### Frontend (TypeScript/CSS)
+- Use TypeScript for type safety
+- Follow component-based architecture
+- Use CSS variables for consistent theming
+- Implement responsive design with mobile-first approach
+- Use semantic HTML structure
+- Optimize images and assets
+- Follow accessibility guidelines
+
+### Backend (Python/FastAPI)
+- Use FastAPI for API endpoints
+- Implement proper error handling
+- Use Pydantic for data validation
+- Follow RESTful API conventions
+- Implement proper authentication
+- Use SQLAlchemy for database operations
+- Add comprehensive logging
+
+### Database Design
+- Design normalized database schema
+- Include proper relationships and constraints
+- Add indexes for performance
+- Implement soft deletes where appropriate
+- Use migrations for schema changes
+
+## File Organization
+
+### Frontend Structure
+```
+frontend/
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── pages/         # Page components
+│   ├── services/      # API services
+│   ├── types/         # TypeScript type definitions
+│   ├── utils/         # Utility functions
+│   ├── styles/        # CSS files
+│   └── main.ts        # Application entry point
+├── public/
+│   ├── images/        # Static images
+│   └── icons/         # Icon files
+└── dist/              # Built files
+```
+
+### Backend Structure
+```
+backend/
+├── app/
+│   ├── api/           # API route handlers
+│   ├── core/          # Configuration and security
+│   ├── models/        # Database models
+│   ├── schemas/       # Pydantic schemas
+│   ├── services/      # Business logic
+│   └── utils/         # Utility functions
+├── static/            # Static files
+└── tests/             # Test files
+```
+
+## Development Commands
+- **Frontend Dev**: `cd frontend && npm run dev`
+- **Backend Dev**: `cd backend && uvicorn main:app --reload`
+- **Build Frontend**: `cd frontend && npm run build`
+- **Run Tests**: `cd backend && python -m pytest`
+
+## Quality Assurance
+
+### Testing Requirements
+- Unit tests for backend functions
+- Integration tests for API endpoints
+- Frontend component testing
+- E2E testing for critical user flows
+
+### Performance Requirements
+- Page load times under 3 seconds
+- Mobile-first responsive design
+- Optimized images and assets
+- Efficient database queries
+
+### Security Requirements
+- Input validation and sanitization
+- CSRF protection
+- Secure authentication
+- HTTPS enforcement
+- Data encryption for sensitive information
+
+## Deployment Considerations
+- Environment-specific configurations
+- Database migrations
+- Static file serving
+- SSL certificate setup
+- Domain configuration
+- Monitoring and logging
+
+## Content Requirements
+
+### German Language Content
+- All text content in German
+- Proper German grammar and spelling
+- Cultural appropriateness for German market
+- Legal compliance with German e-commerce laws
+
+### SEO Optimization
+- Meta tags and descriptions
+- Structured data markup
+- Sitemap generation
+- URL structure optimization
+- Image alt tags
+
+## Success Criteria
+- [ ] Pixel-perfect match to original design
+- [ ] All functionality working correctly
+- [ ] Responsive design on all devices
+- [ ] Fast loading times
+- [ ] Clean, maintainable code
+- [ ] Comprehensive documentation
+- [ ] No console errors or warnings
+- [ ] Accessibility compliance
+
+## Notes
+- Always maintain the handmade, artisanal feel
+- Focus on user experience and ease of navigation
+- Ensure mobile responsiveness is perfect
+- Keep the personal touch that makes Casa Petrada special
+- Maintain German language throughout
+- Follow e-commerce best practices for conversion optimization
+
+When implementing, always prioritize user experience and visual fidelity to the original site while maintaining clean, scalable code architecture.
