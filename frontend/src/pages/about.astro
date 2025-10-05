@@ -1,0 +1,127 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout 
+  title="Über uns - Casa Petrada"
+  description="Erfahre mehr über die Geschichte von Casa Petrada und unsere Leidenschaft für handgefertigten Boho Schmuck."
+>
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-boho-beige to-boho-accent py-20 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-boho-dark mb-6">
+          Unsere Geschichte
+        </h1>
+        <p class="text-lg md:text-xl text-boho-dark/80 max-w-3xl mx-auto">
+          Willkommen bei Casa Petrada - wo Handwerk auf Leidenschaft trifft
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story Section -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-6">
+            Die Leidenschaft für Handwerk
+          </h2>
+          <p class="text-lg text-boho-dark/80 mb-6">
+            Casa Petrada entstand aus der Leidenschaft für handgefertigten Schmuck und der Liebe zu 
+            natürlichen, nachhaltigen Materialien. Jedes Stück wird mit Sorgfalt und Liebe zum Detail 
+            von Hand gefertigt.
+          </p>
+          <p class="text-lg text-boho-dark/80 mb-6">
+            Wir glauben daran, dass Schmuck mehr als nur ein Accessoire ist - er ist ein Ausdruck 
+            der Persönlichkeit und ein Statement für nachhaltigen Konsum.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="/products" class="btn-primary inline-flex items-center justify-center">
+              <i class="fas fa-shopping-bag mr-2"></i>
+              Unsere Kollektion entdecken
+            </a>
+          </div>
+        </div>
+        <div class="relative">
+          <img 
+            src="/images/blog/handgefertigt-schmuck.jpg" 
+            alt="Handgefertigter Schmuck von Casa Petrada"
+            class="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-2xl"
+          />
+          <div class="absolute -top-4 -right-4 w-24 h-24 bg-boho-pink/20 rounded-full -z-10"></div>
+          <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-boho-brown/20 rounded-full -z-10"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="py-20 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-4">
+          Unsere Werte
+        </h2>
+        <p class="text-lg text-boho-dark/70 max-w-2xl mx-auto">
+          Was uns antreibt und was wir für unsere Kunden schaffen möchten
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-heart text-2xl text-boho-pink"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-boho-dark mb-2">Handgefertigt</h3>
+          <p class="text-boho-dark/70">
+            Jedes Stück wird mit Liebe und Sorgfalt von Hand gefertigt. 
+            Kein Massenprodukt, sondern einzigartige Unikate.
+          </p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-leaf text-2xl text-boho-pink"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-boho-dark mb-2">Nachhaltig</h3>
+          <p class="text-boho-dark/70">
+            Wir verwenden umweltfreundliche Materialien und nachhaltige 
+            Verpackungen für einen besseren Planeten.
+          </p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-users text-2xl text-boho-pink"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-boho-dark mb-2">Persönlich</h3>
+          <p class="text-boho-dark/70">
+            Wir stehen für persönlichen Service und eine enge Beziehung 
+            zu unseren Kunden. Jede Anfrage wird persönlich beantwortet.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="py-20 bg-boho-pink">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-white mb-4">
+        Hast du Fragen?
+      </h2>
+      <p class="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+        Wir freuen uns auf deine Nachricht und helfen gerne bei allen Fragen zu unseren Produkten.
+      </p>
+      <a 
+        href="/contact"
+        class="bg-white text-boho-pink px-8 py-4 rounded-lg font-semibold text-lg hover:bg-boho-light transition-colors duration-300 inline-flex items-center"
+      >
+        <i class="fas fa-envelope mr-2"></i>
+        Kontakt aufnehmen
+      </a>
+    </div>
+  </section>
+</Layout>

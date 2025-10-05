@@ -1,0 +1,323 @@
+---
+// Accessibility Component
+export interface Props {
+  enableSkipLinks?: boolean;
+  enableFocusManagement?: boolean;
+  enableKeyboardNavigation?: boolean;
+  enableScreenReaderSupport?: boolean;
+  enableHighContrast?: boolean;
+  enableReducedMotion?: boolean;
+}
+
+const {
+  enableSkipLinks = true,
+  enableFocusManagement = true,
+  enableKeyboardNavigation = true,
+  enableScreenReaderSupport = true,
+  enableHighContrast = true,
+  enableReducedMotion = true
+} = Astro.props;
+---
+
+{enableSkipLinks && (
+  <!-- Skip Links -->
+  <div class="skip-links">
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+    <a href="#navigation" class="skip-link">Zur Navigation springen</a>
+    <a href="#search" class="skip-link">Zur Suche springen</a>
+    <a href="#footer" class="skip-link">Zum Footer springen</a>
+  </div>
+)}
+
+<style>
+  /* Skip Links */
+  .skip-links {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    z-index: 1000;
+  }
+  
+  .skip-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--boho-pink);
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 0 0 4px 0;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .skip-link:focus {
+    transform: translateY(0);
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  /* Focus Management */
+  .focus-visible {
+    outline: 2px solid var(--boho-pink);
+    outline-offset: 2px;
+  }
+
+  /* High Contrast Mode */
+  @media (prefers-contrast: high) {
+    :root {
+      --boho-beige: #ffffff;
+      --boho-pink: #000000;
+      --boho-brown: #000000;
+      --boho-dark: #000000;
+      --boho-light: #ffffff;
+      --boho-accent: #cccccc;
+    }
+    
+    .card {
+      border: 2px solid var(--boho-dark);
+    }
+    
+    .btn-primary {
+      background: var(--boho-dark);
+      color: var(--boho-light);
+      border: 2px solid var(--boho-dark);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--boho-dark);
+      border: 2px solid var(--boho-dark);
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    
+    .lazy-image {
+      transition: none;
+    }
+  }
+
+  /* Screen Reader Only */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Focus Indicators */
+  .focus-indicator:focus {
+    outline: 2px solid var(--boho-pink);
+    outline-offset: 2px;
+  }
+
+  /* High Contrast Focus */
+  @media (prefers-contrast: high) {
+    .focus-indicator:focus {
+      outline: 3px solid var(--boho-dark);
+      outline-offset: 3px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Focus Management
+    if (true) { // enableFocusManagement
+      // Trap focus in modals
+      function trapFocus(element: Element) {
+        const focusableElements = element.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        element.addEventListener('keydown', function(e: KeyboardEvent) {
+          if (e.key === 'Tab') {
+            if (e.shiftKey) {
+              if (document.activeElement === firstElement) {
+                lastElement.focus();
+                e.preventDefault();
+              }
+            } else {
+              if (document.activeElement === lastElement) {
+                firstElement.focus();
+                e.preventDefault();
+              }
+            }
+          }
+        });
+      }
+
+      // Apply focus trap to modals
+      document.querySelectorAll('.modal, .dropdown').forEach(trapFocus);
+    }
+
+    // Keyboard Navigation
+    if (true) { // enableKeyboardNavigation
+      // Arrow key navigation for menus
+      function handleArrowKeys(container: Element) {
+        const items = Array.from(container.querySelectorAll('[role="menuitem"], [role="option"]'));
+        let currentIndex = -1;
+
+        container.addEventListener('keydown', function(e: KeyboardEvent) {
+          switch (e.key) {
+            case 'ArrowDown':
+              e.preventDefault();
+              currentIndex = Math.min(currentIndex + 1, items.length - 1);
+              (items[currentIndex] as HTMLElement)?.focus();
+              break;
+            case 'ArrowUp':
+              e.preventDefault();
+              currentIndex = Math.max(currentIndex - 1, 0);
+              (items[currentIndex] as HTMLElement)?.focus();
+              break;
+            case 'Home':
+              e.preventDefault();
+              currentIndex = 0;
+              (items[0] as HTMLElement)?.focus();
+              break;
+            case 'End':
+              e.preventDefault();
+              currentIndex = items.length - 1;
+              (items[items.length - 1] as HTMLElement)?.focus();
+              break;
+          }
+        });
+      }
+
+      // Apply arrow key navigation to menus
+      document.querySelectorAll('[role="menu"], [role="listbox"]').forEach(handleArrowKeys);
+    }
+
+    // Screen Reader Support
+    if (true) { // enableScreenReaderSupport
+      // Announce dynamic content changes
+      function announceToScreenReader(message: string) {
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.className = 'sr-only';
+        announcement.textContent = message;
+        
+        document.body.appendChild(announcement);
+        
+        setTimeout(() => {
+          document.body.removeChild(announcement);
+        }, 1000);
+      }
+
+      // Announce cart updates
+      document.addEventListener('cartUpdated', function(e: CustomEvent) {
+        announceToScreenReader(`Warenkorb aktualisiert. ${e.detail.count} Artikel im Warenkorb.`);
+      });
+
+      // Announce search results
+      document.addEventListener('searchCompleted', function(e: CustomEvent) {
+        announceToScreenReader(`${e.detail.count} Suchergebnisse gefunden.`);
+      });
+
+      // Announce form submissions
+      document.addEventListener('formSubmitted', function(e) {
+        announceToScreenReader('Formular erfolgreich gesendet.');
+      });
+    }
+
+    // High Contrast Support
+    if (true) { // enableHighContrast
+      // Detect high contrast preference
+      const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+      
+      if (prefersHighContrast) {
+        document.body.classList.add('high-contrast');
+      }
+
+      // Listen for changes
+      window.matchMedia('(prefers-contrast: high)').addEventListener('change', function(e) {
+        if (e.matches) {
+          document.body.classList.add('high-contrast');
+        } else {
+          document.body.classList.remove('high-contrast');
+        }
+      });
+    }
+
+    // Reduced Motion Support
+    if (true) { // enableReducedMotion
+      // Detect reduced motion preference
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      
+      if (prefersReducedMotion) {
+        document.body.classList.add('reduced-motion');
+      }
+
+      // Listen for changes
+      window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function(e) {
+        if (e.matches) {
+          document.body.classList.add('reduced-motion');
+        } else {
+          document.body.classList.remove('reduced-motion');
+        }
+      });
+    }
+
+    // Enhanced focus indicators
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab') {
+        document.body.classList.add('keyboard-navigation');
+      }
+    });
+
+    document.addEventListener('mousedown', function() {
+      document.body.classList.remove('keyboard-navigation');
+    });
+
+    // Add ARIA labels to interactive elements
+    document.querySelectorAll('button:not([aria-label]):not([aria-labelledby])').forEach(button => {
+      if (!button.textContent.trim() && !button.querySelector('img')) {
+        button.setAttribute('aria-label', 'Button');
+      }
+    });
+
+    // Add role attributes to custom elements
+    document.querySelectorAll('.card').forEach(card => {
+      if (!card.getAttribute('role')) {
+        card.setAttribute('role', 'article');
+      }
+    });
+
+    // Ensure proper heading hierarchy
+    const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    let lastLevel = 0;
+    
+    headings.forEach((heading, index) => {
+      const level = parseInt(heading.tagName.charAt(1));
+      
+      if (index === 0 && level !== 1) {
+        console.warn('First heading should be h1');
+      }
+      
+      if (level > lastLevel + 1) {
+        console.warn(`Heading level skipped: ${heading.tagName} after h${lastLevel}`);
+      }
+      
+      lastLevel = level;
+    });
+  });
+</script>

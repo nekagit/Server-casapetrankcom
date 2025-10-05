@@ -1,0 +1,380 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout 
+  title="Anmelden - Casa Petrada"
+  description="Melde dich in deinem Casa Petrada Konto an und entdecke handgefertigten Boho Schmuck."
+>
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/" class="text-boho-dark hover:text-boho-pink transition-colors">Home</a>
+        <span class="text-boho-dark/60">/</span>
+        <span class="text-boho-dark/60">Anmelden</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Login Form -->
+  <section class="py-12">
+    <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <h1 class="text-2xl font-serif font-bold text-boho-dark mb-2">Willkommen zurück</h1>
+          <p class="text-boho-dark/70">Melde dich in deinem Konto an</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="space-y-6">
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-boho-dark mb-2">E-Mail-Adresse *</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              required
+              class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+              placeholder="deine@email.de"
+            />
+            <div class="error-message hidden text-red-600 text-sm mt-1"></div>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-boho-dark mb-2">Passwort *</label>
+            <div class="relative">
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                required
+                class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink pr-10"
+                placeholder="Dein Passwort"
+              />
+              <button 
+                type="button" 
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-boho-dark/60 hover:text-boho-pink transition-colors"
+                id="toggle-password"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="error-message hidden text-red-600 text-sm mt-1"></div>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="flex items-center justify-between">
+            <label class="flex items-center">
+              <input type="checkbox" name="remember" class="mr-2" />
+              <span class="text-sm text-boho-dark/70">Angemeldet bleiben</span>
+            </label>
+            <a href="/auth/forgot-password" class="text-sm text-boho-pink hover:text-boho-brown transition-colors">
+              Passwort vergessen?
+            </a>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            class="w-full bg-boho-pink text-white font-medium py-3 px-4 rounded-lg hover:bg-boho-brown transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            id="login-btn"
+          >
+            <i class="fas fa-sign-in-alt mr-2"></i>
+            Anmelden
+          </button>
+
+          <!-- Social Login -->
+          <div class="mt-6">
+            <div class="relative">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-boho-accent/20"></div>
+              </div>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-boho-dark/70">Oder mit</span>
+              </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-2 gap-3">
+              <button 
+                type="button" 
+                class="w-full inline-flex justify-center py-2 px-4 border border-boho-accent rounded-lg shadow-sm bg-white text-sm font-medium text-boho-dark hover:bg-boho-beige transition-colors"
+                id="google-login"
+              >
+                <i class="fab fa-google text-red-500 mr-2"></i>
+                Google
+              </button>
+              <button 
+                type="button" 
+                class="w-full inline-flex justify-center py-2 px-4 border border-boho-accent rounded-lg shadow-sm bg-white text-sm font-medium text-boho-dark hover:bg-boho-beige transition-colors"
+                id="facebook-login"
+              >
+                <i class="fab fa-facebook text-blue-600 mr-2"></i>
+                Facebook
+              </button>
+            </div>
+          </div>
+
+          <!-- Register Link -->
+          <div class="text-center mt-6">
+            <p class="text-sm text-boho-dark/70">
+              Noch kein Konto? 
+              <a href="/auth/register" class="text-boho-pink hover:text-boho-brown transition-colors font-medium">
+                Jetzt registrieren
+              </a>
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!-- Trust Signals -->
+      <div class="mt-8 text-center">
+        <div class="flex items-center justify-center space-x-6 text-sm text-boho-dark/70">
+          <div class="flex items-center">
+            <i class="fas fa-shield-alt text-boho-pink mr-2"></i>
+            <span>Sichere Anmeldung</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-lock text-boho-pink mr-2"></i>
+            <span>SSL-Verschlüsselung</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-user-secret text-boho-pink mr-2"></i>
+            <span>Datenschutz</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .error-message {
+    display: none;
+  }
+
+  .error-message.show {
+    display: block;
+  }
+
+  .form-error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+  }
+
+  .loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--boho-pink);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Focus styles for accessibility */
+  input:focus,
+  button:focus {
+    outline: 2px solid var(--boho-pink);
+    outline-offset: 2px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .grid-cols-2 {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+</style>
+
+<script>
+  // Login form functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('login-form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const loginBtn = document.getElementById('login-btn');
+    const googleLoginBtn = document.getElementById('google-login');
+    const facebookLoginBtn = document.getElementById('facebook-login');
+
+    // Password visibility toggle
+    if (togglePasswordBtn) {
+      togglePasswordBtn.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        const icon = this.querySelector('i');
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+      });
+    }
+
+    // Form validation
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    function validatePassword(password) {
+      return password.length >= 6;
+    }
+
+    function showFieldError(field, message) {
+      field.classList.add('form-error');
+      const errorDiv = field.parentNode.querySelector('.error-message');
+      if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.classList.add('show');
+      }
+    }
+
+    function clearFieldError(field) {
+      field.classList.remove('form-error');
+      const errorDiv = field.parentNode.querySelector('.error-message');
+      if (errorDiv) {
+        errorDiv.classList.remove('show');
+        errorDiv.textContent = '';
+      }
+    }
+
+    // Real-time validation
+    emailInput.addEventListener('blur', function() {
+      const email = this.value.trim();
+      if (email && !validateEmail(email)) {
+        showFieldError(this, 'Bitte geben Sie eine gültige E-Mail-Adresse ein');
+      } else {
+        clearFieldError(this);
+      }
+    });
+
+    passwordInput.addEventListener('blur', function() {
+      const password = this.value;
+      if (password && !validatePassword(password)) {
+        showFieldError(this, 'Das Passwort muss mindestens 6 Zeichen lang sein');
+      } else {
+        clearFieldError(this);
+      }
+    });
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      
+      // Clear previous errors
+      clearFieldError(emailInput);
+      clearFieldError(passwordInput);
+      
+      // Validate form
+      let isValid = true;
+      
+      if (!email) {
+        showFieldError(emailInput, 'E-Mail-Adresse ist erforderlich');
+        isValid = false;
+      } else if (!validateEmail(email)) {
+        showFieldError(emailInput, 'Bitte geben Sie eine gültige E-Mail-Adresse ein');
+        isValid = false;
+      }
+      
+      if (!password) {
+        showFieldError(passwordInput, 'Passwort ist erforderlich');
+        isValid = false;
+      } else if (!validatePassword(password)) {
+        showFieldError(passwordInput, 'Das Passwort muss mindestens 6 Zeichen lang sein');
+        isValid = false;
+      }
+      
+      if (!isValid) {
+        return;
+      }
+      
+      // Show loading state
+      loginBtn.classList.add('loading');
+      loginBtn.disabled = true;
+      
+      // Simulate API call
+      setTimeout(() => {
+        // In a real app, this would make an API call to authenticate
+        console.log('Login attempt:', { email, password });
+        
+        // Simulate successful login
+        const success = Math.random() > 0.3; // 70% success rate for demo
+        
+        if (success) {
+          // Show success message
+          showNotification('Erfolgreich angemeldet!', 'success');
+          
+          // Redirect to account page or previous page
+          setTimeout(() => {
+            window.location.href = '/account';
+          }, 1000);
+        } else {
+          // Show error message
+          showNotification('Ungültige Anmeldedaten. Bitte versuchen Sie es erneut.', 'error');
+          
+          // Remove loading state
+          loginBtn.classList.remove('loading');
+          loginBtn.disabled = false;
+        }
+      }, 1500);
+    });
+
+    // Social login
+    if (googleLoginBtn) {
+      googleLoginBtn.addEventListener('click', function() {
+        // In a real app, this would initiate Google OAuth
+        console.log('Google login initiated');
+        showNotification('Google Login wird implementiert...', 'info');
+      });
+    }
+
+    if (facebookLoginBtn) {
+      facebookLoginBtn.addEventListener('click', function() {
+        // In a real app, this would initiate Facebook OAuth
+        console.log('Facebook login initiated');
+        showNotification('Facebook Login wird implementiert...', 'info');
+      });
+    }
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ${
+        type === 'success' ? 'bg-green-600' : 
+        type === 'error' ? 'bg-red-600' : 
+        'bg-boho-pink'
+      }`;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Auto-focus email field
+    emailInput.focus();
+  });
+</script>

@@ -1,0 +1,781 @@
+---
+export interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  className?: string;
+  placeholder?: string;
+  blurDataURL?: string;
+  quality?: number;
+  format?: 'webp' | 'avif' | 'jpeg' | 'png' | 'auto';
+  responsive?: boolean;
+  aspectRatio?: string;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'scale-down' | 'none';
+  objectPosition?: string;
+  caption?: string;
+  lazy?: boolean;
+  fadeIn?: boolean;
+  grayscale?: boolean;
+  brightness?: number;
+  contrast?: number;
+  saturate?: number;
+  sepia?: number;
+  hue?: number;
+  invert?: boolean;
+  opacity?: number;
+  shadow?: boolean;
+  border?: boolean;
+  rounded?: boolean;
+  hover?: boolean;
+  zoom?: boolean;
+  download?: boolean;
+  share?: boolean;
+  fullscreen?: boolean;
+  gallery?: boolean;
+  index?: number;
+  total?: number;
+  metadata?: {
+    photographer?: string;
+    location?: string;
+    date?: string;
+    camera?: string;
+    settings?: string;
+    copyright?: string;
+  };
+}
+
+const {
+  src,
+  alt,
+  width = 400,
+  height = 400,
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+  loading = 'lazy',
+  priority = false,
+  className = '',
+  placeholder,
+  blurDataURL,
+  quality = 80,
+  format = 'auto',
+  responsive = true,
+  aspectRatio,
+  objectFit = 'cover',
+  objectPosition = 'center',
+  caption,
+  lazy = true,
+  fadeIn = true,
+  grayscale = false,
+  brightness = 100,
+  contrast = 100,
+  saturate = 100,
+  sepia = 0,
+  hue = 0,
+  invert = false,
+  opacity = 100,
+  shadow = false,
+  border = false,
+  rounded = true,
+  hover = true,
+  zoom = false,
+  download = false,
+  share = false,
+  fullscreen = false,
+  gallery = false,
+  index,
+  total,
+  metadata
+} = Astro.props;
+
+// Generate optimized image URLs
+const generateOptimizedUrls = (baseSrc: string, baseWidth: number, baseHeight: number) => {
+  const cdnUrl = 'https://cdn.casa-petrada.de';
+  const isExternal = baseSrc.startsWith('http');
+  const imagePath = isExternal ? baseSrc : baseSrc.replace('/images/', '');
+  
+  // Generate different formats
+  const formats = {
+    avif: `${cdnUrl}/images/${imagePath}?w=${baseWidth}&h=${baseHeight}&f=avif&q=${quality}`,
+    webp: `${cdnUrl}/images/${imagePath}?w=${baseWidth}&h=${baseHeight}&f=webp&q=${quality}`,
+    jpeg: `${cdnUrl}/images/${imagePath}?w=${baseWidth}&h=${baseHeight}&f=jpeg&q=${quality}`,
+    png: `${cdnUrl}/images/${imagePath}?w=${baseWidth}&h=${baseHeight}&f=png&q=${quality}`
+  };
+  
+  // Generate responsive sizes
+  const responsiveSizes = {
+    mobile: `${cdnUrl}/images/${imagePath}?w=400&h=400&f=webp&q=${quality}`,
+    tablet: `${cdnUrl}/images/${imagePath}?w=800&h=800&f=webp&q=${quality}`,
+    desktop: `${cdnUrl}/images/${imagePath}?w=1200&h=1200&f=webp&q=${quality}`,
+    xlarge: `${cdnUrl}/images/${imagePath}?w=1920&h=1920&f=webp&q=${quality}`
+  };
+  
+  // Generate blur placeholder
+  const blurPlaceholder = `${cdnUrl}/images/${imagePath}?w=20&h=20&f=webp&blur=10&q=10`;
+  
+  return {
+    formats,
+    responsive: responsiveSizes,
+    blur: blurPlaceholder,
+    original: isExternal ? baseSrc : `${cdnUrl}/images/${imagePath}`
+  };
+};
+
+const imageUrls = generateOptimizedUrls(src, width, height);
+const finalPlaceholder = placeholder || imageUrls.blur;
+const finalBlurDataURL = blurDataURL || imageUrls.blur;
+
+// Generate CSS filters
+const generateFilters = () => {
+  const filters = [];
+  
+  if (grayscale) filters.push('grayscale(100%)');
+  if (brightness !== 100) filters.push(`brightness(${brightness}%)`);
+  if (contrast !== 100) filters.push(`contrast(${contrast}%)`);
+  if (saturate !== 100) filters.push(`saturate(${saturate}%)`);
+  if (sepia !== 0) filters.push(`sepia(${sepia}%)`);
+  if (hue !== 0) filters.push(`hue-rotate(${hue}deg)`);
+  if (invert) filters.push('invert(100%)');
+  if (opacity !== 100) filters.push(`opacity(${opacity}%)`);
+  
+  return filters.length > 0 ? filters.join(' ') : 'none';
+};
+
+const cssFilters = generateFilters();
+const uniqueId = `img-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div 
+  class={`optimized-image-container ${className} ${gallery ? 'gallery-item' : ''} ${zoom ? 'zoom-enabled' : ''} ${hover ? 'hover-enabled' : ''}`}
+  data-image-id={uniqueId}
+  style={`
+    ${aspectRatio ? `aspect-ratio: ${aspectRatio};` : ''}
+    ${shadow ? 'box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);' : ''}
+    ${border ? 'border: 1px solid var(--boho-accent);' : ''}
+    ${rounded ? 'border-radius: 0.5rem;' : ''}
+    ${fadeIn ? 'opacity: 0; transition: opacity 0.3s ease;' : ''}
+  `}
+>
+  {responsive ? (
+    <picture class="optimized-image-picture">
+      <!-- AVIF format for modern browsers -->
+      <source 
+        media="(min-width: 1200px)" 
+        srcset={imageUrls.formats.avif}
+        type="image/avif"
+      >
+      <source 
+        media="(min-width: 768px)" 
+        srcset={imageUrls.responsive.tablet.replace('webp', 'avif')}
+        type="image/avif"
+      >
+      <source 
+        srcset={imageUrls.responsive.mobile.replace('webp', 'avif')}
+        type="image/avif"
+      >
+      
+      <!-- WebP format for good browser support -->
+      <source 
+        media="(min-width: 1200px)" 
+        srcset={imageUrls.formats.webp}
+        type="image/webp"
+      >
+      <source 
+        media="(min-width: 768px)" 
+        srcset={imageUrls.responsive.tablet}
+        type="image/webp"
+      >
+      <source 
+        srcset={imageUrls.responsive.mobile}
+        type="image/webp"
+      >
+      
+      <!-- Fallback JPEG -->
+      <img
+        src={imageUrls.formats.jpeg}
+        alt={alt}
+        width={width}
+        height={height}
+        sizes={sizes}
+        loading={priority ? 'eager' : loading}
+        decoding={priority ? 'sync' : 'async'}
+        class={`optimized-image ${fadeIn ? 'fade-in' : ''}`}
+        style={`
+          object-fit: ${objectFit};
+          object-position: ${objectPosition};
+          filter: ${cssFilters};
+          background-image: url('${finalBlurDataURL}');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        `}
+        onload="this.style.backgroundImage='none'; this.closest('.optimized-image-container').style.opacity='1'"
+        onerror="this.style.backgroundImage='url(/images/placeholder.jpg)'"
+      >
+    </picture>
+  ) : (
+    <img
+      src={imageUrls.formats.webp}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={priority ? 'eager' : loading}
+      decoding={priority ? 'sync' : 'async'}
+      class={`optimized-image ${fadeIn ? 'fade-in' : ''}`}
+      style={`
+        object-fit: ${objectFit};
+        object-position: ${objectPosition};
+        filter: ${cssFilters};
+        background-image: url('${finalBlurDataURL}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      `}
+      onload="this.style.backgroundImage='none'; this.closest('.optimized-image-container').style.opacity='1'"
+      onerror="this.style.backgroundImage='url(/images/placeholder.jpg)'"
+    >
+  )}
+  
+  <!-- Image Overlay Controls -->
+  {(zoom || download || share || fullscreen || gallery) && (
+    <div class="image-overlay">
+      {zoom && (
+        <button class="overlay-button zoom-button" aria-label="Bild vergrößern" data-action="zoom">
+          <i class="fas fa-search-plus"></i>
+        </button>
+      )}
+      
+      {download && (
+        <button class="overlay-button download-button" aria-label="Bild herunterladen" data-action="download">
+          <i class="fas fa-download"></i>
+        </button>
+      )}
+      
+      {share && (
+        <button class="overlay-button share-button" aria-label="Bild teilen" data-action="share">
+          <i class="fas fa-share-alt"></i>
+        </button>
+      )}
+      
+      {fullscreen && (
+        <button class="overlay-button fullscreen-button" aria-label="Vollbild" data-action="fullscreen">
+          <i class="fas fa-expand"></i>
+        </button>
+      )}
+      
+      {gallery && index !== undefined && total && (
+        <div class="gallery-counter">
+          <span class="current">{index + 1}</span>
+          <span class="separator">/</span>
+          <span class="total">{total}</span>
+        </div>
+      )}
+    </div>
+  )}
+  
+  <!-- Image Caption -->
+  {caption && (
+    <figcaption class="image-caption">
+      {caption}
+    </figcaption>
+  )}
+  
+  <!-- Image Metadata -->
+  {metadata && (
+    <div class="image-metadata">
+      {metadata.photographer && (
+        <span class="metadata-item">
+          <i class="fas fa-camera"></i>
+          {metadata.photographer}
+        </span>
+      )}
+      {metadata.location && (
+        <span class="metadata-item">
+          <i class="fas fa-map-marker-alt"></i>
+          {metadata.location}
+        </span>
+      )}
+      {metadata.date && (
+        <span class="metadata-item">
+          <i class="fas fa-calendar"></i>
+          {metadata.date}
+        </span>
+      )}
+    </div>
+  )}
+</div>
+
+<style>
+  .optimized-image-container {
+    position: relative;
+    overflow: hidden;
+    background: var(--boho-beige);
+    transition: all 0.3s ease;
+  }
+
+  .optimized-image-container:hover {
+    transform: translateY(-2px);
+  }
+
+  .optimized-image-picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .optimized-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: all 0.3s ease;
+  }
+
+  .hover-enabled:hover .optimized-image {
+    transform: scale(1.05);
+  }
+
+  .fade-in {
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .optimized-image-container:hover .image-overlay {
+    opacity: 1;
+  }
+
+  .overlay-button {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--boho-dark);
+    font-size: 1.25rem;
+  }
+
+  .overlay-button:hover {
+    background: var(--boho-pink);
+    color: white;
+    transform: scale(1.1);
+  }
+
+  .gallery-counter {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    color: white;
+    padding: 1rem;
+    font-size: 0.875rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .optimized-image-container:hover .image-caption {
+    opacity: 1;
+  }
+
+  .image-metadata {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .optimized-image-container:hover .image-metadata {
+    opacity: 1;
+  }
+
+  .metadata-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-right: 1rem;
+  }
+
+  .metadata-item:last-child {
+    margin-right: 0;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .overlay-button {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1rem;
+    }
+
+    .gallery-counter {
+      bottom: 0.5rem;
+      left: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    .image-caption {
+      padding: 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    .image-metadata {
+      top: 0.5rem;
+      left: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.625rem;
+    }
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .optimized-image-container {
+      border: 2px solid var(--boho-dark);
+    }
+
+    .overlay-button {
+      border: 2px solid var(--boho-dark);
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .optimized-image-container,
+    .optimized-image,
+    .image-overlay,
+    .overlay-button {
+      transition: none;
+    }
+
+    .fade-in {
+      animation: none;
+      opacity: 1;
+    }
+  }
+
+  /* Focus styles for accessibility */
+  .overlay-button:focus {
+    outline: 2px solid var(--boho-pink);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // Optimized Image JavaScript functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const imageContainers = document.querySelectorAll('.optimized-image-container');
+    
+    imageContainers.forEach(container => {
+      const image = container.querySelector('.optimized-image') as HTMLImageElement;
+      const overlay = container.querySelector('.image-overlay');
+      const buttons = container.querySelectorAll('.overlay-button');
+      
+      // Image loading optimization
+      if (image) {
+        // Preload critical images
+        if (container.hasAttribute('data-priority')) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = image.src;
+          document.head.appendChild(link);
+        }
+        
+        // Lazy loading with Intersection Observer
+        if ('IntersectionObserver' in window && image.loading === 'lazy') {
+          const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const img = entry.target as HTMLImageElement;
+                if (img.dataset.src) {
+                  img.src = img.dataset.src;
+                  img.removeAttribute('data-src');
+                }
+                imageObserver.unobserve(img);
+              }
+            });
+          }, {
+            rootMargin: '50px 0px',
+            threshold: 0.01
+          });
+          
+          imageObserver.observe(image);
+        }
+        
+        // Error handling
+        image.addEventListener('error', function() {
+          this.src = '/images/placeholder.jpg';
+          this.alt = 'Bild nicht verfügbar';
+        });
+      }
+      
+      // Overlay button functionality
+      buttons.forEach(button => {
+        const action = button.getAttribute('data-action');
+        
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          switch (action) {
+            case 'zoom':
+              openZoomModal(image);
+              break;
+            case 'download':
+              downloadImage(image);
+              break;
+            case 'share':
+              shareImage(image);
+              break;
+            case 'fullscreen':
+              openFullscreen(image);
+              break;
+          }
+        });
+      });
+      
+      // Keyboard navigation
+      container.addEventListener('keydown', (e) => {
+        const keyboardEvent = e as KeyboardEvent;
+        if (keyboardEvent.key === 'Enter' || keyboardEvent.key === ' ') {
+          keyboardEvent.preventDefault();
+          const zoomButton = container.querySelector('[data-action="zoom"]') as HTMLButtonElement;
+          if (zoomButton) zoomButton.click();
+        }
+      });
+      
+      // Touch/swipe support for galleries
+      if (container.classList.contains('gallery-item')) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        container.addEventListener('touchstart', (e) => {
+          const touchEvent = e as TouchEvent;
+          touchStartX = touchEvent.changedTouches[0].screenX;
+        });
+        
+        container.addEventListener('touchend', (e) => {
+          const touchEvent = e as TouchEvent;
+          touchEndX = touchEvent.changedTouches[0].screenX;
+          handleSwipe();
+        });
+        
+        function handleSwipe() {
+          const swipeThreshold = 50;
+          const diff = touchStartX - touchEndX;
+          
+          if (Math.abs(diff) > swipeThreshold) {
+            // Trigger gallery navigation
+            const event = new CustomEvent('gallerySwipe', {
+              detail: { direction: diff > 0 ? 'next' : 'prev' }
+            });
+            container.dispatchEvent(event);
+          }
+        }
+      }
+    });
+    
+    // Zoom modal functionality
+    function openZoomModal(image: HTMLImageElement) {
+      const modal = document.createElement('div');
+      modal.className = 'zoom-modal';
+      modal.innerHTML = `
+        <div class="zoom-modal-content">
+          <button class="zoom-close" aria-label="Schließen">
+            <i class="fas fa-times"></i>
+          </button>
+          <img src="${image.src}" alt="${image.alt}" class="zoom-modal-image">
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      document.body.style.overflow = 'hidden';
+      
+      // Close modal
+      const closeModal = () => {
+        document.body.removeChild(modal);
+        document.body.style.overflow = '';
+      };
+      
+      modal.querySelector('.zoom-close')?.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+      
+      // Keyboard navigation
+      const handleKeydown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          closeModal();
+          document.removeEventListener('keydown', handleKeydown);
+        }
+      };
+      document.addEventListener('keydown', handleKeydown);
+    }
+    
+    // Download functionality
+    function downloadImage(image: HTMLImageElement) {
+      const link = document.createElement('a');
+      link.href = image.src;
+      link.download = image.alt || 'image';
+      link.click();
+    }
+    
+    // Share functionality
+    function shareImage(image: HTMLImageElement) {
+      if (navigator.share) {
+        navigator.share({
+          title: image.alt,
+          text: `Schau dir dieses Bild an: ${image.alt}`,
+          url: window.location.href
+        });
+      } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          alert('Link wurde in die Zwischenablage kopiert!');
+        });
+      }
+    }
+    
+    // Fullscreen functionality
+    function openFullscreen(image: HTMLImageElement) {
+      if (image.requestFullscreen) {
+        image.requestFullscreen();
+      } else if ((image as any).webkitRequestFullscreen) {
+        (image as any).webkitRequestFullscreen();
+      } else if ((image as any).msRequestFullscreen) {
+        (image as any).msRequestFullscreen();
+      }
+    }
+  });
+
+  // Zoom modal styles
+  const zoomModalStyles = `
+    .zoom-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .zoom-modal-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .zoom-modal-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 0.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+    
+    .zoom-close {
+      position: absolute;
+      top: -3rem;
+      right: 0;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      width: 3rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--boho-dark);
+      font-size: 1.25rem;
+    }
+    
+    .zoom-close:hover {
+      background: var(--boho-pink);
+      color: white;
+      transform: scale(1.1);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @media (max-width: 768px) {
+      .zoom-modal-content {
+        max-width: 95vw;
+        max-height: 95vh;
+      }
+      
+      .zoom-close {
+        top: -2.5rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+      }
+    }
+  `;
+
+  // Inject zoom modal styles
+  if (!document.querySelector('#zoom-modal-styles')) {
+    const style = document.createElement('style');
+    style.id = 'zoom-modal-styles';
+    style.textContent = zoomModalStyles;
+    document.head.appendChild(style);
+  }
+</script>

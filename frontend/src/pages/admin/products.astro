@@ -1,0 +1,366 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+
+// Mock product data
+const products = [
+  {
+    id: 1,
+    name: 'Tibet Armband',
+    sku: 'CP-ARM-001',
+    price: 24.90,
+    stock: 15,
+    status: 'active',
+    category: 'Armbänder',
+    image: '/images/products/tibet-armband.jpg',
+    createdAt: '2024-01-15',
+    updatedAt: '2024-03-10'
+  },
+  {
+    id: 2,
+    name: 'Boho Kette',
+    sku: 'CP-KET-001',
+    price: 39.90,
+    stock: 8,
+    status: 'active',
+    category: 'Ketten',
+    image: '/images/products/product_1.jpg',
+    createdAt: '2024-01-20',
+    updatedAt: '2024-03-08'
+  },
+  {
+    id: 3,
+    name: 'Mondstein Ohrringe',
+    sku: 'CP-OHR-001',
+    price: 49.90,
+    stock: 0,
+    status: 'inactive',
+    category: 'Ohrringe',
+    image: '/images/products/product_3.jpg',
+    createdAt: '2024-02-01',
+    updatedAt: '2024-03-05'
+  },
+  {
+    id: 4,
+    name: 'Feder Fußkettchen',
+    sku: 'CP-FUS-001',
+    price: 19.90,
+    stock: 25,
+    status: 'active',
+    category: 'Fußkettchen',
+    image: '/images/products/product_4.jpg',
+    createdAt: '2024-02-10',
+    updatedAt: '2024-03-12'
+  }
+];
+
+const categories = ['Alle', 'Armbänder', 'Ketten', 'Ohrringe', 'Fußkettchen', 'Ringe'];
+const statuses = ['Alle', 'Aktiv', 'Inaktiv', 'Ausverkauft'];
+---
+
+<AdminLayout title="Produktverwaltung - Casa Petrada" currentPage="products">
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-boho-dark">Produktverwaltung</h1>
+        <p class="text-boho-text-muted">Verwalten Sie Ihre Produkte und Lagerbestände</p>
+      </div>
+      <div class="flex space-x-3">
+        <button class="bg-boho-pink hover:bg-boho-brown text-white px-4 py-2 rounded-lg transition-colors duration-300">
+          <i class="fas fa-download mr-2"></i>
+          Exportieren
+        </button>
+        <a href="/admin/products/new" class="bg-boho-dark hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+          <i class="fas fa-plus mr-2"></i>
+          Neues Produkt
+        </a>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-white rounded-lg shadow-md border border-boho-accent p-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-boho-dark mb-2">Suche</label>
+          <input
+            type="text"
+            placeholder="Produktname oder SKU..."
+            class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+          >
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-boho-dark mb-2">Kategorie</label>
+          <select class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink">
+            {categories.map((category) => (
+              <option value={category}>{category}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-boho-dark mb-2">Status</label>
+          <select class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink">
+            {statuses.map((status) => (
+              <option value={status}>{status}</option>
+            ))}
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button class="w-full bg-boho-pink hover:bg-boho-brown text-white px-4 py-2 rounded-lg transition-colors duration-300">
+            <i class="fas fa-search mr-2"></i>
+            Filtern
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="bg-white rounded-lg shadow-md border border-boho-accent overflow-hidden">
+      <div class="px-6 py-4 border-b border-boho-accent">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-boho-dark">Produkte ({products.length})</h3>
+          <div class="flex items-center space-x-2">
+            <button class="text-boho-text-muted hover:text-boho-dark">
+              <i class="fas fa-th-large"></i>
+            </button>
+            <button class="text-boho-dark">
+              <i class="fas fa-list"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-boho-accent">
+          <thead class="bg-boho-beige">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-boho-text-muted uppercase tracking-wider">
+                Produkt
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-boho-text-muted uppercase tracking-wider">
+                SKU
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-boho-text-muted uppercase tracking-wider">
+                Preis
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-boho-text-muted uppercase tracking-wider">
+                Lagerbestand
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-boho-text-muted uppercase tracking-wider">
+                Status
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-boho-text-muted uppercase tracking-wider">
+                Kategorie
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-boho-text-muted uppercase tracking-wider">
+                Aktualisiert
+              </th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-boho-text-muted uppercase tracking-wider">
+                Aktionen
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-boho-accent">
+            {products.map((product) => (
+              <tr class="hover:bg-boho-beige transition-colors duration-200">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-12 w-12">
+                      <img class="h-12 w-12 rounded-lg object-cover" src={product.image} alt={product.name}>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-boho-dark">{product.name}</div>
+                      <div class="text-sm text-boho-text-muted">ID: {product.id}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark">
+                  {product.sku}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark">
+                  €{product.price.toFixed(2)}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <span class={`text-sm font-medium ${
+                      product.stock === 0 ? 'text-red-600' :
+                      product.stock < 10 ? 'text-yellow-600' :
+                      'text-green-600'
+                    }`}>
+                      {product.stock}
+                    </span>
+                    <span class="ml-1 text-sm text-boho-text-muted">Stück</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    product.status === 'active' ? 'bg-green-100 text-green-800' :
+                    product.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {product.status === 'active' ? 'Aktiv' :
+                     product.status === 'inactive' ? 'Inaktiv' : product.status}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark">
+                  {product.category}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-text-muted">
+                  {new Date(product.updatedAt).toLocaleDateString('de-DE')}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="flex items-center justify-end space-x-2">
+                    <button class="text-boho-pink hover:text-boho-brown" title="Anzeigen">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="text-boho-dark hover:text-gray-700" title="Bearbeiten">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-red-600 hover:text-red-800" title="Löschen">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="bg-white px-4 py-3 border-t border-boho-accent sm:px-6">
+        <div class="flex items-center justify-between">
+          <div class="flex-1 flex justify-between sm:hidden">
+            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-boho-accent text-sm font-medium rounded-md text-boho-dark bg-white hover:bg-boho-beige">
+              Zurück
+            </a>
+            <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-boho-accent text-sm font-medium rounded-md text-boho-dark bg-white hover:bg-boho-beige">
+              Weiter
+            </a>
+          </div>
+          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-boho-text-muted">
+                Zeige <span class="font-medium">1</span> bis <span class="font-medium">4</span> von <span class="font-medium">4</span> Ergebnissen
+              </p>
+            </div>
+            <div>
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-boho-accent bg-white text-sm font-medium text-boho-text-muted hover:bg-boho-beige">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-boho-accent bg-boho-pink text-sm font-medium text-white">
+                  1
+                </a>
+                <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-boho-accent bg-white text-sm font-medium text-boho-text-muted hover:bg-boho-beige">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="bg-white rounded-lg shadow-md border border-boho-accent p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <input type="checkbox" class="rounded border-boho-accent text-boho-pink focus:ring-boho-pink">
+          <span class="text-sm text-boho-text-muted">Alle auswählen</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <select class="px-3 py-2 border border-boho-accent rounded-lg text-sm">
+            <option>Bulk-Aktionen</option>
+            <option>Aktivieren</option>
+            <option>Deaktivieren</option>
+            <option>Kategorie ändern</option>
+            <option>Löschen</option>
+          </select>
+          <button class="bg-boho-pink hover:bg-boho-brown text-white px-4 py-2 rounded-lg text-sm transition-colors duration-300">
+            Anwenden
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<script>
+  // Product management functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        const target = e.target as HTMLInputElement;
+        const searchTerm = target.value.toLowerCase();
+        // In a real app, this would filter the products
+        console.log('Searching for:', searchTerm);
+      });
+    }
+
+    // Filter functionality
+    const filterButton = document.querySelector('button:has(.fa-search)');
+    if (filterButton) {
+      filterButton.addEventListener('click', function() {
+        // In a real app, this would apply filters
+        console.log('Applying filters...');
+      });
+    }
+
+    // Bulk actions
+    const selectAllCheckbox = document.querySelector('input[type="checkbox"]') as HTMLInputElement;
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', function(e) {
+        const target = e.target as HTMLInputElement;
+        const isChecked = target.checked;
+        // In a real app, this would select/deselect all products
+        console.log('Select all:', isChecked);
+      });
+    }
+
+    // Product actions
+    document.querySelectorAll('button[title="Anzeigen"]').forEach(button => {
+      button.addEventListener('click', function() {
+        // In a real app, this would open the product view
+        console.log('Viewing product...');
+      });
+    });
+
+    document.querySelectorAll('button[title="Bearbeiten"]').forEach(button => {
+      button.addEventListener('click', function() {
+        // In a real app, this would open the product edit form
+        console.log('Editing product...');
+      });
+    });
+
+    document.querySelectorAll('button[title="Löschen"]').forEach(button => {
+      button.addEventListener('click', function() {
+        if (confirm('Sind Sie sicher, dass Sie dieses Produkt löschen möchten?')) {
+          // In a real app, this would delete the product
+          console.log('Deleting product...');
+        }
+      });
+    });
+  });
+
+  // Auto-save functionality
+  let autoSaveTimeout: NodeJS.Timeout;
+  function autoSave() {
+    clearTimeout(autoSaveTimeout);
+    autoSaveTimeout = setTimeout(() => {
+      // In a real app, this would save any pending changes
+      console.log('Auto-saving...');
+    }, 2000);
+  }
+
+  // Real-time updates
+  if (typeof EventSource !== 'undefined') {
+    const eventSource = new EventSource('/api/events/products');
+    eventSource.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      // In a real app, this would update the product list
+      console.log('Product update:', data);
+    };
+  }
+</script>

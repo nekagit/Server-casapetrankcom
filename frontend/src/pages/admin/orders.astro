@@ -1,0 +1,493 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// Mock orders data - in real app this would come from API
+const orders = [
+  {
+    id: 'CP-2024-001',
+    customer: {
+      name: 'Max Mustermann',
+      email: 'max@example.com',
+      phone: '+49 123 456789'
+    },
+    status: 'Versandt',
+    statusDate: '2024-01-20',
+    total: 69.70,
+    items: 3,
+    paymentMethod: 'PayPal',
+    shippingAddress: {
+      name: 'Max Mustermann',
+      street: 'Musterstraße 123',
+      city: '12345 Musterstadt',
+      country: 'Deutschland'
+    },
+    trackingNumber: 'DHL123456789',
+    carrier: 'DHL',
+    createdAt: '2024-01-15T14:30:00Z',
+    updatedAt: '2024-01-20T11:30:00Z'
+  },
+  {
+    id: 'CP-2024-002',
+    customer: {
+      name: 'Anna Schmidt',
+      email: 'anna@example.com',
+      phone: '+49 987 654321'
+    },
+    status: 'Bezahlt',
+    statusDate: '2024-01-18',
+    total: 45.90,
+    items: 2,
+    paymentMethod: 'Kreditkarte',
+    shippingAddress: {
+      name: 'Anna Schmidt',
+      street: 'Beispielweg 456',
+      city: '54321 Beispielstadt',
+      country: 'Deutschland'
+    },
+    trackingNumber: null,
+    carrier: null,
+    createdAt: '2024-01-17T10:15:00Z',
+    updatedAt: '2024-01-18T09:45:00Z'
+  },
+  {
+    id: 'CP-2024-003',
+    customer: {
+      name: 'Lisa Weber',
+      email: 'lisa@example.com',
+      phone: '+49 555 123456'
+    },
+    status: 'Bestellt',
+    statusDate: '2024-01-19',
+    total: 89.70,
+    items: 4,
+    paymentMethod: 'Klarna',
+    shippingAddress: {
+      name: 'Lisa Weber',
+      street: 'Teststraße 789',
+      city: '98765 Teststadt',
+      country: 'Deutschland'
+    },
+    trackingNumber: null,
+    carrier: null,
+    createdAt: '2024-01-19T16:20:00Z',
+    updatedAt: '2024-01-19T16:20:00Z'
+  }
+];
+
+const statusOptions = ['Bestellt', 'Bezahlt', 'Verarbeitung', 'Versandt', 'Geliefert', 'Storniert'];
+const statusColors = {
+  'Bestellt': 'bg-yellow-100 text-yellow-800',
+  'Bezahlt': 'bg-blue-100 text-blue-800',
+  'Verarbeitung': 'bg-purple-100 text-purple-800',
+  'Versandt': 'bg-green-100 text-green-800',
+  'Geliefert': 'bg-green-100 text-green-800',
+  'Storniert': 'bg-red-100 text-red-800'
+};
+---
+
+<Layout 
+  title="Bestellverwaltung - Casa Petrada Admin"
+  description="Verwaltung der Bestellungen im Casa Petrada Shop"
+  noindex={true}
+  nofollow={true}
+>
+  <!-- Admin Header -->
+  <section class="py-8 bg-boho-dark text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-serif font-bold mb-2">Bestellverwaltung</h1>
+          <p class="text-boho-accent">Verwalte alle Bestellungen und deren Status</p>
+        </div>
+        <div class="flex space-x-4">
+          <a href="/admin" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Zurück zum Dashboard
+          </a>
+          <button class="btn-primary" onclick="exportOrders()">
+            <i class="fas fa-download mr-2"></i>
+            Exportieren
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters and Search -->
+  <section class="py-8 bg-white border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row gap-4">
+        <!-- Search -->
+        <div class="flex-1">
+          <div class="relative">
+            <input 
+              type="text" 
+              placeholder="Bestellungen durchsuchen..."
+              class="w-full pl-10 pr-4 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+            />
+            <i class="fas fa-search absolute left-3 top-3 text-boho-dark/50"></i>
+          </div>
+        </div>
+        
+        <!-- Status Filter -->
+        <div class="md:w-48">
+          <select class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink">
+            <option value="">Alle Status</option>
+            {statusOptions.map(status => (
+              <option value={status.toLowerCase()}>{status}</option>
+            ))}
+          </select>
+        </div>
+        
+        <!-- Date Filter -->
+        <div class="md:w-48">
+          <select class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink">
+            <option value="">Alle Daten</option>
+            <option value="today">Heute</option>
+            <option value="week">Diese Woche</option>
+            <option value="month">Dieser Monat</option>
+            <option value="year">Dieses Jahr</option>
+          </select>
+        </div>
+        
+        <!-- Sort -->
+        <div class="md:w-48">
+          <select class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink">
+            <option value="newest">Neueste zuerst</option>
+            <option value="oldest">Älteste zuerst</option>
+            <option value="total-asc">Preis aufsteigend</option>
+            <option value="total-desc">Preis absteigend</option>
+            <option value="status">Status</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Orders Table -->
+  <section class="py-12 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-boho-accent">
+            <thead class="bg-boho-accent/10">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Bestellung</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Kunde</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Betrag</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Zahlung</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Datum</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-boho-accent">
+              {orders.map((order) => (
+                <tr class="hover:bg-boho-light/5">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div>
+                      <div class="text-sm font-medium text-boho-dark">{order.id}</div>
+                      <div class="text-sm text-boho-dark/70">{order.items} Artikel</div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div>
+                      <div class="text-sm font-medium text-boho-dark">{order.customer.name}</div>
+                      <div class="text-sm text-boho-dark/70">{order.customer.email}</div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[order.status as keyof typeof statusColors]}`}>
+                      {order.status}
+                    </span>
+                    <div class="text-xs text-boho-dark/60 mt-1">
+                      {order.statusDate}
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark/80">
+                    {order.total.toFixed(2)} €
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark/80">
+                    {order.paymentMethod}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark/80">
+                    {new Date(order.createdAt).toLocaleDateString('de-DE')}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div class="flex space-x-2">
+                      <button 
+                        class="text-boho-pink hover:text-boho-brown"
+                        onclick={`viewOrder('${order.id}')`}
+                        title="Bestellung ansehen"
+                      >
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button 
+                        class="text-boho-pink hover:text-boho-brown"
+                        onclick={`editOrder('${order.id}')`}
+                        title="Status ändern"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button 
+                        class="text-boho-pink hover:text-boho-brown"
+                        onclick={`printOrder('${order.id}')`}
+                        title="Drucken"
+                      >
+                        <i class="fas fa-print"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-8 flex items-center justify-between">
+        <div class="text-sm text-boho-dark/70">
+          Zeige 1-{orders.length} von {orders.length} Bestellungen
+        </div>
+        <div class="flex space-x-2">
+          <button class="px-3 py-2 text-sm border border-boho-accent rounded-lg hover:bg-boho-light">
+            <i class="fas fa-chevron-left mr-1"></i>
+            Zurück
+          </button>
+          <button class="px-3 py-2 text-sm bg-boho-pink text-white rounded-lg">
+            1
+          </button>
+          <button class="px-3 py-2 text-sm border border-boho-accent rounded-lg hover:bg-boho-light">
+            Weiter
+            <i class="fas fa-chevron-right ml-1"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Order Details Modal -->
+  <div id="order-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-boho-accent">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xl font-semibold text-boho-dark">Bestelldetails</h3>
+            <button 
+              onclick="closeOrderModal()"
+              class="text-boho-dark/50 hover:text-boho-dark"
+            >
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+        </div>
+        <div class="p-6">
+          <!-- Order content will be loaded here -->
+          <div id="order-content">
+            <div class="text-center py-8">
+              <i class="fas fa-spinner fa-spin text-3xl text-boho-pink mb-4"></i>
+              <p class="text-boho-dark/70">Lade Bestelldetails...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Update Modal -->
+  <div id="status-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-white rounded-lg max-w-md w-full">
+        <div class="p-6 border-b border-boho-accent">
+          <h3 class="text-xl font-semibold text-boho-dark">Status ändern</h3>
+        </div>
+        <div class="p-6">
+          <form id="status-form">
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-boho-dark mb-2">
+                Neuer Status
+              </label>
+              <select 
+                id="new-status"
+                class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                required
+              >
+                {statusOptions.map(status => (
+                  <option value={status}>{status}</option>
+                ))}
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-boho-dark mb-2">
+                Tracking-Nummer (optional)
+              </label>
+              <input 
+                type="text"
+                id="tracking-number"
+                class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                placeholder="z.B. DHL123456789"
+              />
+            </div>
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-boho-dark mb-2">
+                Notizen (optional)
+              </label>
+              <textarea 
+                id="status-notes"
+                rows="3"
+                class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                placeholder="Interne Notizen zum Statuswechsel..."
+              ></textarea>
+            </div>
+            <div class="flex space-x-4">
+              <button 
+                type="button"
+                onclick="closeStatusModal()"
+                class="btn-secondary flex-1"
+              >
+                Abbrechen
+              </button>
+              <button 
+                type="submit"
+                class="btn-primary flex-1"
+              >
+                Status aktualisieren
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  let currentOrderId = '';
+
+  // View order details
+  function viewOrder(orderId: string) {
+    currentOrderId = orderId;
+    const orderModal = document.getElementById('order-modal');
+    if (orderModal) {
+      orderModal.classList.remove('hidden');
+    }
+    
+    // In a real app, this would fetch order details from API
+    setTimeout(() => {
+      const orderContent = document.getElementById('order-content');
+      if (orderContent) {
+        orderContent.innerHTML = `
+        <div class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-semibold text-boho-dark mb-2">Bestellinformationen</h4>
+              <p class="text-sm text-boho-dark/70">Bestellnummer: ${orderId}</p>
+              <p class="text-sm text-boho-dark/70">Datum: ${new Date().toLocaleDateString('de-DE')}</p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-boho-dark mb-2">Kunde</h4>
+              <p class="text-sm text-boho-dark/70">Max Mustermann</p>
+              <p class="text-sm text-boho-dark/70">max@example.com</p>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold text-boho-dark mb-4">Bestellte Artikel</h4>
+            <div class="space-y-3">
+              <div class="flex items-center space-x-4 p-3 bg-boho-light rounded-lg">
+                <img src="/images/products/placeholder.svg" alt="Produkt" class="w-12 h-12 object-cover rounded">
+                <div class="flex-1">
+                  <h5 class="font-medium text-boho-dark">Tibet Armband</h5>
+                  <p class="text-sm text-boho-dark/70">Menge: 2</p>
+                </div>
+                <div class="text-right">
+                  <p class="font-semibold text-boho-dark">49,80 €</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      }
+    }, 500);
+  }
+
+  // Edit order status
+  function editOrder(orderId: string) {
+    currentOrderId = orderId;
+    const statusModal = document.getElementById('status-modal');
+    if (statusModal) {
+      statusModal.classList.remove('hidden');
+    }
+  }
+
+  // Print order
+  function printOrder(orderId: string) {
+    // In a real app, this would open a print dialog
+    alert(`Drucke Bestellung ${orderId}`);
+  }
+
+  // Close modals
+  function closeOrderModal() {
+    const orderModal = document.getElementById('order-modal');
+    if (orderModal) {
+      orderModal.classList.add('hidden');
+    }
+  }
+
+  function closeStatusModal() {
+    const statusModal = document.getElementById('status-modal');
+    if (statusModal) {
+      statusModal.classList.add('hidden');
+    }
+  }
+
+  // Export orders
+  function exportOrders() {
+    // In a real app, this would generate and download a CSV/Excel file
+    alert('Exportiere Bestellungen...');
+  }
+
+  // Status form submission
+  document.getElementById('status-form')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const newStatusElement = document.getElementById('new-status') as HTMLSelectElement;
+    const trackingNumberElement = document.getElementById('tracking-number') as HTMLInputElement;
+    const notesElement = document.getElementById('status-notes') as HTMLTextAreaElement;
+    
+    const newStatus = newStatusElement?.value || '';
+    const trackingNumber = trackingNumberElement?.value || '';
+    const notes = notesElement?.value || '';
+    
+    // In a real app, this would update the order status via API
+    console.log('Updating order status:', {
+      orderId: currentOrderId,
+      status: newStatus,
+      trackingNumber,
+      notes
+    });
+    
+    alert(`Status für Bestellung ${currentOrderId} wurde auf "${newStatus}" geändert`);
+    closeStatusModal();
+    
+    // Reload the page to show updated status
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  });
+
+  // Close modals when clicking outside
+  document.getElementById('order-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeOrderModal();
+    }
+  });
+
+  document.getElementById('status-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeStatusModal();
+    }
+  });
+</script>

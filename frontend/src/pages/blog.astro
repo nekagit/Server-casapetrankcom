@@ -1,0 +1,179 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock blog posts - in real app this would come from API
+const blogPosts = [
+  {
+    id: 1,
+    title: "Boho Styling Trends 2024",
+    slug: "boho-styling-trends-2024",
+    excerpt: "Entdecke die neuesten Boho-Trends für 2024 und wie du sie mit unseren handgefertigten Schmuckstücken kombinierst.",
+    image: "/images/blog/boho-trends-2024.jpg",
+    author: "Casa Petrada Team",
+    date: "2024-01-15",
+    readTime: "5 Min",
+    category: "Styling"
+  },
+  {
+    id: 2,
+    title: "Handgefertigter Schmuck - Die Kunst des Handwerks",
+    slug: "handgefertigter-schmuck-kunst-handwerk",
+    excerpt: "Erfahre mehr über die traditionelle Kunst des Schmuckhandwerks und was unsere Stücke so besonders macht.",
+    image: "/images/blog/handgefertigt-schmuck.jpg",
+    author: "Casa Petrada Team",
+    date: "2024-01-10",
+    readTime: "7 Min",
+    category: "Handwerk"
+  },
+  {
+    id: 3,
+    title: "Schmuck richtig pflegen - Tipps für langanhaltende Schönheit",
+    slug: "schmuck-pflege-tipps",
+    excerpt: "Wie du deine handgefertigten Schmuckstücke richtig pflegst, damit sie lange schön bleiben.",
+    image: "/images/blog/schmuck-pflege.jpg",
+    author: "Casa Petrada Team",
+    date: "2024-01-05",
+    readTime: "4 Min",
+    category: "Pflege"
+  },
+  {
+    id: 4,
+    title: "Boho Styling für jeden Anlass",
+    slug: "boho-styling-jeden-anlass",
+    excerpt: "Von casual bis elegant - so kombinierst du Boho-Schmuck für jeden Anlass perfekt.",
+    image: "/images/blog/boho-styling.jpg",
+    author: "Casa Petrada Team",
+    date: "2024-01-01",
+    readTime: "6 Min",
+    category: "Styling"
+  }
+];
+
+const categories = ["Alle", "Styling", "Handwerk", "Pflege"];
+---
+
+<Layout 
+  title="Blog - Casa Petrada"
+  description="Entdecke Tipps, Trends und Inspirationen rund um handgefertigten Boho Schmuck und Mode."
+>
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/" class="text-boho-pink hover:text-boho-brown">Home</a>
+        <i class="fas fa-chevron-right text-boho-dark/50"></i>
+        <span class="text-boho-dark">Blog</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Hero Section -->
+  <section class="py-20 bg-gradient-to-br from-boho-beige to-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-boho-dark mb-6">
+        Unser Blog
+      </h1>
+      <p class="text-lg md:text-xl text-boho-dark/80 max-w-3xl mx-auto">
+        Entdecke Tipps, Trends und Inspirationen rund um handgefertigten Boho Schmuck und Mode
+      </p>
+    </div>
+  </section>
+
+  <!-- Category Filter -->
+  <section class="py-8 bg-white border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap gap-4 justify-center">
+        {categories.map((category) => (
+          <button class={`px-6 py-2 rounded-lg font-medium transition-colors ${
+            category === "Alle" 
+              ? "bg-boho-pink text-white" 
+              : "bg-boho-accent text-boho-dark hover:bg-boho-pink hover:text-white"
+          }`}>
+            {category}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Posts -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {blogPosts.map((post) => (
+          <article class="card group">
+            <div class="relative overflow-hidden">
+              <img 
+                src={post.image} 
+                alt={post.title}
+                class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="absolute top-4 left-4">
+                <span class="bg-boho-pink text-white px-3 py-1 rounded-full text-sm font-medium">
+                  {post.category}
+                </span>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex items-center text-sm text-boho-dark/60 mb-3">
+                <span>{post.author}</span>
+                <span class="mx-2">•</span>
+                <span>{new Date(post.date).toLocaleDateString('de-DE')}</span>
+                <span class="mx-2">•</span>
+                <span>{post.readTime} Lesezeit</span>
+              </div>
+              
+              <h2 class="text-xl font-semibold text-boho-dark mb-3 group-hover:text-boho-pink transition-colors">
+                <a href={`/blog/${post.slug}`}>{post.title}</a>
+              </h2>
+              
+              <p class="text-boho-dark/70 mb-4 line-clamp-3">{post.excerpt}</p>
+              
+              <a 
+                href={`/blog/${post.slug}`}
+                class="inline-flex items-center text-boho-pink hover:text-boho-brown font-medium transition-colors"
+              >
+                Weiterlesen
+                <i class="fas fa-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+      
+      <!-- Load More -->
+      <div class="text-center mt-12">
+        <button class="btn-secondary">
+          <i class="fas fa-plus mr-2"></i>
+          Mehr Artikel laden
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter CTA -->
+  <section class="py-20 bg-boho-pink">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-white mb-4">
+        Bleib auf dem Laufenden
+      </h2>
+      <p class="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+        Erhalte exklusive Blog-Updates und Neuigkeiten über unsere neuesten handgefertigten Stücke
+      </p>
+      <form class="max-w-md mx-auto flex gap-4">
+        <input 
+          type="email" 
+          placeholder="Deine E-Mail-Adresse"
+          class="flex-1 px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-white/20"
+          required
+        />
+        <button 
+          type="submit"
+          class="bg-white text-boho-pink px-6 py-3 rounded-lg font-semibold hover:bg-boho-light transition-colors duration-300"
+        >
+          Anmelden
+        </button>
+      </form>
+    </div>
+  </section>
+</Layout>

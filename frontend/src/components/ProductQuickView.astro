@@ -1,0 +1,665 @@
+---
+// Product Quick View Modal Component
+export interface Props {
+  productId?: string;
+  showModal?: boolean;
+}
+
+const { productId, showModal = false } = Astro.props;
+
+// Mock product data - in real app this would come from API
+const product = {
+  id: 1,
+  name: "Tibet Armband",
+  slug: "tibet-armband",
+  price: 24.90,
+  originalPrice: 29.90,
+  discount: 17,
+  description: "Handgefertigtes Tibet Armband aus natürlichen Materialien. Dieses einzigartige Armband wird traditionell in Tibet hergestellt und verkörpert die spirituelle Bedeutung der tibetischen Kultur.",
+  images: [
+    "/images/products/tibet-armband.jpg",
+    "/images/products/tibet-armband-detail.jpg",
+    "/images/products/tibet-armband-worn.jpg"
+  ],
+  category: "Armbänder",
+  subcategory: "Einfacharmbänder",
+  rating: 4.8,
+  reviewCount: 127,
+  inStock: true,
+  stock: 15,
+  sku: "CP-ARM-001",
+  material: "Perlen, Metall, Baumwolle",
+  color: "Braun, Gold",
+  size: "One Size",
+  weight: "25g",
+  dimensions: "18cm x 2cm",
+  care: "Trocken abwischen, vor Wasser schützen",
+  origin: "Tibet",
+  handmade: true,
+  tags: ["Tibet", "Handgefertigt", "Naturstein", "Spirituell"],
+  variants: [
+    { id: "size-s", name: "Größe S", price: 24.90, inStock: true },
+    { id: "size-m", name: "Größe M", price: 24.90, inStock: true },
+    { id: "size-l", name: "Größe L", price: 24.90, inStock: false }
+  ],
+  colors: [
+    { id: "brown", name: "Braun", hex: "#8B4513", inStock: true },
+    { id: "gold", name: "Gold", hex: "#FFD700", inStock: true },
+    { id: "silver", name: "Silber", hex: "#C0C0C0", inStock: false }
+  ]
+};
+---
+
+<!-- Quick View Modal -->
+<div 
+  id="quick-view-modal" 
+  class="fixed inset-0 z-50 hidden overflow-y-auto"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <!-- Backdrop -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" id="quick-view-backdrop"></div>
+
+  <!-- Modal Container -->
+  <div class="flex min-h-full items-center justify-center p-4">
+    <div class="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-6 border-b border-boho-accent/20">
+        <h2 id="modal-title" class="text-xl font-semibold text-boho-dark">
+          Schnellansicht
+        </h2>
+        <button 
+          id="close-quick-view"
+          class="text-boho-dark/60 hover:text-boho-pink transition-colors"
+          aria-label="Modal schließen"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Product Images -->
+          <div class="product-images">
+            <div class="relative">
+              <img 
+                id="quick-view-main-image"
+                src={product.images[0]} 
+                alt={product.name}
+                class="w-full h-64 lg:h-80 object-cover rounded-lg border border-boho-accent/20"
+              />
+              
+              <!-- Image Navigation -->
+              <button 
+                id="prev-image"
+                class="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center hover:bg-opacity-75 transition-colors"
+              >
+                <i class="fas fa-chevron-left text-sm"></i>
+              </button>
+              <button 
+                id="next-image"
+                class="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center hover:bg-opacity-75 transition-colors"
+              >
+                <i class="fas fa-chevron-right text-sm"></i>
+              </button>
+            </div>
+            
+            <!-- Thumbnail Navigation -->
+            <div class="flex space-x-2 mt-4 overflow-x-auto">
+              {product.images.map((image, index) => (
+                <button 
+                  class={`thumbnail-btn flex-shrink-0 w-16 h-16 rounded border-2 transition-colors ${
+                    index === 0 ? 'border-boho-pink' : 'border-boho-accent/20'
+                  }`}
+                  data-image-index={index}
+                >
+                  <img 
+                    src={image} 
+                    alt={`${product.name} - Bild ${index + 1}`}
+                    class="w-full h-full object-cover rounded"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <!-- Product Information -->
+          <div class="product-info">
+            <!-- Category & Rating -->
+            <div class="mb-4">
+              <div class="flex items-center space-x-2 mb-2">
+                <span class="text-sm text-boho-dark/70">{product.category}</span>
+                <span class="text-boho-dark/30">•</span>
+                <span class="text-sm text-boho-dark/70">{product.subcategory}</span>
+              </div>
+              
+              <div class="flex items-center space-x-2">
+                <div class="flex items-center">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <i class={`fas fa-star text-sm ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}></i>
+                  ))}
+                </div>
+                <span class="text-sm text-boho-dark/70">
+                  {product.rating} ({product.reviewCount} Bewertungen)
+                </span>
+              </div>
+            </div>
+
+            <!-- Product Name -->
+            <h1 class="text-2xl font-serif font-bold text-boho-dark mb-4">
+              {product.name}
+            </h1>
+
+            <!-- Price -->
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="text-3xl font-bold text-boho-dark">
+                {product.price.toFixed(2)} €
+              </span>
+              {product.originalPrice && (
+                <>
+                  <span class="text-xl text-boho-dark/60 line-through">
+                    {product.originalPrice.toFixed(2)} €
+                  </span>
+                  <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded">
+                    -{product.discount}%
+                  </span>
+                </>
+              )}
+            </div>
+
+            <!-- Stock Status -->
+            <div class="mb-6">
+              {product.inStock ? (
+                <div class="flex items-center text-green-600">
+                  <i class="fas fa-check-circle mr-2"></i>
+                  <span class="font-medium">Auf Lager</span>
+                  {product.stock <= 5 && (
+                    <span class="ml-2 text-sm text-orange-600">
+                      (Nur noch {product.stock} verfügbar)
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <div class="flex items-center text-red-600">
+                  <i class="fas fa-times-circle mr-2"></i>
+                  <span class="font-medium">Nicht auf Lager</span>
+                </div>
+              )}
+            </div>
+
+            <!-- Product Description -->
+            <div class="mb-6">
+              <p class="text-boho-dark/80 leading-relaxed">
+                {product.description}
+              </p>
+            </div>
+
+            <!-- Product Options -->
+            <div class="space-y-4 mb-6">
+              <!-- Size Selection -->
+              {product.variants && product.variants.length > 0 && (
+                <div>
+                  <label class="block text-sm font-medium text-boho-dark mb-2">Größe</label>
+                  <div class="flex flex-wrap gap-2">
+                    {product.variants.map((variant) => (
+                      <button 
+                        class={`px-4 py-2 border rounded-lg text-sm font-medium transition-colors ${
+                          variant.inStock 
+                            ? 'border-boho-accent text-boho-dark hover:bg-boho-beige' 
+                            : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                        }`}
+                        disabled={!variant.inStock}
+                      >
+                        {variant.name}
+                        {!variant.inStock && ' (Ausverkauft)'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <!-- Color Selection -->
+              {product.colors && product.colors.length > 0 && (
+                <div>
+                  <label class="block text-sm font-medium text-boho-dark mb-2">Farbe</label>
+                  <div class="flex flex-wrap gap-2">
+                    {product.colors.map((color) => (
+                      <button 
+                        class={`w-10 h-10 rounded-full border-2 transition-colors ${
+                          color.inStock 
+                            ? 'border-boho-accent hover:border-boho-pink' 
+                            : 'border-gray-300 opacity-50 cursor-not-allowed'
+                        }`}
+                        style={`background-color: ${color.hex}`}
+                        disabled={!color.inStock}
+                        title={color.name}
+                      ></button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <!-- Quantity -->
+              <div>
+                <label class="block text-sm font-medium text-boho-dark mb-2">Anzahl</label>
+                <div class="flex items-center space-x-2">
+                  <button class="quantity-btn w-8 h-8 flex items-center justify-center border border-boho-accent rounded hover:bg-boho-beige transition-colors">
+                    <i class="fas fa-minus text-sm"></i>
+                  </button>
+                  <input 
+                    type="number" 
+                    value="1" 
+                    min="1" 
+                    max="10"
+                    class="w-16 text-center border border-boho-accent rounded focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                  />
+                  <button class="quantity-btn w-8 h-8 flex items-center justify-center border border-boho-accent rounded hover:bg-boho-beige transition-colors">
+                    <i class="fas fa-plus text-sm"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+              <button 
+                class="w-full bg-boho-pink text-white font-medium py-3 px-6 rounded-lg hover:bg-boho-brown transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!product.inStock}
+              >
+                <i class="fas fa-shopping-cart mr-2"></i>
+                {product.inStock ? 'In den Warenkorb' : 'Nicht verfügbar'}
+              </button>
+              
+              <div class="flex space-x-3">
+                <button class="flex-1 border border-boho-accent text-boho-dark font-medium py-3 px-6 rounded-lg hover:bg-boho-beige transition-colors">
+                  <i class="fas fa-heart mr-2"></i>
+                  Merken
+                </button>
+                <button class="flex-1 border border-boho-accent text-boho-dark font-medium py-3 px-6 rounded-lg hover:bg-boho-beige transition-colors">
+                  <i class="fas fa-balance-scale mr-2"></i>
+                  Vergleichen
+                </button>
+                <button class="flex-1 border border-boho-accent text-boho-dark font-medium py-3 px-6 rounded-lg hover:bg-boho-beige transition-colors">
+                  <i class="fas fa-share-alt mr-2"></i>
+                  Teilen
+                </button>
+              </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="mt-6 bg-boho-beige rounded-lg p-4">
+              <h3 class="font-semibold text-boho-dark mb-3">Produktdetails</h3>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-boho-dark/70">Artikelnummer:</span>
+                  <span class="text-boho-dark font-medium ml-2">{product.sku}</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Material:</span>
+                  <span class="text-boho-dark font-medium ml-2">{product.material}</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Gewicht:</span>
+                  <span class="text-boho-dark font-medium ml-2">{product.weight}</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Abmessungen:</span>
+                  <span class="text-boho-dark font-medium ml-2">{product.dimensions}</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Herkunft:</span>
+                  <span class="text-boho-dark font-medium ml-2">{product.origin}</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Handgefertigt:</span>
+                  <span class="text-boho-dark font-medium ml-2">
+                    {product.handmade ? 'Ja' : 'Nein'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trust Signals -->
+            <div class="mt-6 grid grid-cols-2 gap-4 text-sm">
+              <div class="flex items-center text-boho-dark/70">
+                <i class="fas fa-shipping-fast text-boho-pink mr-2"></i>
+                <span>Kostenloser Versand ab 39,90 €</span>
+              </div>
+              <div class="flex items-center text-boho-dark/70">
+                <i class="fas fa-undo text-boho-pink mr-2"></i>
+                <span>30 Tage Rückgaberecht</span>
+              </div>
+              <div class="flex items-center text-boho-dark/70">
+                <i class="fas fa-shield-alt text-boho-pink mr-2"></i>
+                <span>Sichere Bezahlung</span>
+              </div>
+              <div class="flex items-center text-boho-dark/70">
+                <i class="fas fa-hand-holding-heart text-boho-pink mr-2"></i>
+                <span>Handgefertigt in Deutschland</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between p-6 border-t border-boho-accent/20 bg-boho-beige">
+        <div class="flex items-center space-x-4">
+          <a 
+            href={`/products/${product.slug}`}
+            class="text-boho-pink hover:text-boho-brown transition-colors"
+          >
+            <i class="fas fa-external-link-alt mr-2"></i>
+            Vollständige Produktseite ansehen
+          </a>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+          <button 
+            id="close-quick-view-footer"
+            class="px-4 py-2 border border-boho-accent text-boho-dark rounded-lg hover:bg-boho-beige transition-colors"
+          >
+            Schließen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .quantity-btn {
+    transition: all 0.2s ease;
+  }
+
+  .quantity-btn:hover {
+    background-color: var(--boho-pink);
+    color: white;
+    border-color: var(--boho-pink);
+  }
+
+  .thumbnail-btn {
+    transition: all 0.2s ease;
+  }
+
+  .thumbnail-btn:hover {
+    border-color: var(--boho-pink);
+  }
+
+  .thumbnail-btn.active {
+    border-color: var(--boho-pink);
+  }
+
+  /* Modal animations */
+  .modal-enter {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  .modal-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.2s ease-out;
+  }
+
+  .modal-exit {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .modal-exit-active {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.2s ease-in;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .grid-cols-1 {
+      grid-template-columns: 1fr;
+    }
+    
+    .product-images {
+      order: 2;
+    }
+    
+    .product-info {
+      order: 1;
+    }
+  }
+
+  /* Loading states */
+  .loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--boho-pink);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+<script>
+  // Product quick view functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('quick-view-modal');
+    const backdrop = document.getElementById('quick-view-backdrop');
+    const closeBtns = document.querySelectorAll('#close-quick-view, #close-quick-view-footer');
+    const prevBtn = document.getElementById('prev-image');
+    const nextBtn = document.getElementById('next-image');
+    const thumbnailBtns = document.querySelectorAll('.thumbnail-btn');
+    const quantityBtns = document.querySelectorAll('.quantity-btn');
+    const quantityInput = document.querySelector('input[type="number"]');
+    const addToCartBtn = document.querySelector('button[class*="bg-boho-pink"]');
+    const wishlistBtn = document.querySelector('button[class*="border-boho-accent"]:first-of-type');
+    const compareBtn = document.querySelector('button[class*="border-boho-accent"]:nth-of-type(2)');
+    const shareBtn = document.querySelector('button[class*="border-boho-accent"]:last-of-type');
+
+    let currentImageIndex = 0;
+    const images = [
+      "/images/products/tibet-armband.jpg",
+      "/images/products/tibet-armband-detail.jpg", 
+      "/images/products/tibet-armband-worn.jpg"
+    ];
+
+    // Open modal
+    function openQuickView(productId) {
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        
+        // Load product data
+        loadProductData(productId);
+        
+        // Reset image index
+        currentImageIndex = 0;
+        updateMainImage();
+        updateThumbnails();
+      }
+    }
+
+    // Close modal
+    function closeQuickView() {
+      if (modal) {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }
+    }
+
+    // Load product data
+    function loadProductData(productId) {
+      // In a real app, this would fetch product data from API
+      console.log('Loading product data for:', productId);
+    }
+
+    // Update main image
+    function updateMainImage() {
+      const mainImage = document.getElementById('quick-view-main-image');
+      if (mainImage && images[currentImageIndex]) {
+        mainImage.src = images[currentImageIndex];
+      }
+    }
+
+    // Update thumbnails
+    function updateThumbnails() {
+      thumbnailBtns.forEach((btn, index) => {
+        if (index === currentImageIndex) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // Event listeners
+    closeBtns.forEach(btn => {
+      btn.addEventListener('click', closeQuickView);
+    });
+
+    if (backdrop) {
+      backdrop.addEventListener('click', closeQuickView);
+    }
+
+    // Image navigation
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function() {
+        currentImageIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
+        updateMainImage();
+        updateThumbnails();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function() {
+        currentImageIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
+        updateMainImage();
+        updateThumbnails();
+      });
+    }
+
+    // Thumbnail navigation
+    thumbnailBtns.forEach((btn, index) => {
+      btn.addEventListener('click', function() {
+        currentImageIndex = index;
+        updateMainImage();
+        updateThumbnails();
+      });
+    });
+
+    // Quantity controls
+    quantityBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const isIncrease = this.querySelector('.fa-plus');
+        const currentValue = parseInt(quantityInput.value);
+        
+        if (isIncrease && currentValue < 10) {
+          quantityInput.value = currentValue + 1;
+        } else if (!isIncrease && currentValue > 1) {
+          quantityInput.value = currentValue - 1;
+        }
+      });
+    });
+
+    // Add to cart
+    if (addToCartBtn) {
+      addToCartBtn.addEventListener('click', function() {
+        if (!this.disabled) {
+          showNotification('Produkt zum Warenkorb hinzugefügt!', 'success');
+          closeQuickView();
+        }
+      });
+    }
+
+    // Wishlist
+    if (wishlistBtn) {
+      wishlistBtn.addEventListener('click', function() {
+        showNotification('Produkt zur Wunschliste hinzugefügt!', 'success');
+      });
+    }
+
+    // Compare
+    if (compareBtn) {
+      compareBtn.addEventListener('click', function() {
+        showNotification('Produkt zum Vergleich hinzugefügt!', 'success');
+      });
+    }
+
+    // Share
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function() {
+        if (navigator.share) {
+          navigator.share({
+            title: 'Schau dir dieses Produkt an!',
+            text: 'Entdecke dieses handgefertigte Schmuckstück bei Casa Petrada',
+            url: window.location.href
+          });
+        } else {
+          navigator.clipboard.writeText(window.location.href).then(() => {
+            showNotification('Link in die Zwischenablage kopiert!', 'success');
+          });
+        }
+      });
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (!modal.classList.contains('hidden')) {
+        if (e.key === 'Escape') {
+          closeQuickView();
+        } else if (e.key === 'ArrowLeft') {
+          currentImageIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
+          updateMainImage();
+          updateThumbnails();
+        } else if (e.key === 'ArrowRight') {
+          currentImageIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
+          updateMainImage();
+          updateThumbnails();
+        }
+      }
+    });
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ${
+        type === 'success' ? 'bg-green-600' : 
+        type === 'error' ? 'bg-red-600' : 
+        'bg-boho-pink'
+      }`;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Global function to open quick view
+    window.openQuickView = function(productId) {
+      openQuickView(productId);
+    };
+
+    // Initialize
+    if (showModal) {
+      openQuickView(productId);
+    }
+  });
+</script>

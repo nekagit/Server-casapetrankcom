@@ -1,0 +1,298 @@
+---
+// Performance Monitoring Component
+export interface Props {
+  enableCoreWebVitals?: boolean;
+  enableResourceTiming?: boolean;
+  enableUserTiming?: boolean;
+  enableNavigationTiming?: boolean;
+  enableLCP?: boolean;
+  enableFID?: boolean;
+  enableCLS?: boolean;
+  enableFCP?: boolean;
+  enableTTFB?: boolean;
+  apiEndpoint?: string;
+}
+
+const {
+  enableCoreWebVitals = true,
+  enableResourceTiming = true,
+  enableUserTiming = true,
+  enableNavigationTiming = true,
+  enableLCP = true,
+  enableFID = true,
+  enableCLS = true,
+  enableFCP = true,
+  enableTTFB = true,
+  apiEndpoint = '/api/performance'
+} = Astro.props;
+---
+
+<script>
+  // Performance Monitoring Script
+  class PerformanceMonitor {
+    private apiEndpoint: string;
+    private metrics: Record<string, any> = {};
+
+    constructor(apiEndpoint: string) {
+      this.apiEndpoint = apiEndpoint;
+      this.init();
+    }
+
+    private init() {
+      if (typeof window === 'undefined') return;
+
+      // Wait for page load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => this.startMonitoring());
+      } else {
+        this.startMonitoring();
+      }
+    }
+
+    private startMonitoring() {
+      if (true) { // enableCoreWebVitals
+        this.monitorCoreWebVitals();
+      }
+
+      if (true) { // enableResourceTiming
+        this.monitorResourceTiming();
+      }
+
+      if (true) { // enableUserTiming
+        this.monitorUserTiming();
+      }
+
+      if (true) { // enableNavigationTiming
+        this.monitorNavigationTiming();
+      }
+
+      // Send metrics after page load
+      window.addEventListener('load', () => {
+        setTimeout(() => this.sendMetrics(), 2000);
+      });
+    }
+
+    private monitorCoreWebVitals() {
+      // Largest Contentful Paint (LCP)
+      if (true && 'PerformanceObserver' in window) { // enableLCP
+        try {
+          const lcpObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            const lastEntry = entries[entries.length - 1];
+            this.metrics.lcp = {
+              value: lastEntry.startTime,
+              rating: this.getRating('lcp', lastEntry.startTime),
+              timestamp: Date.now()
+            };
+          });
+          lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+        } catch (error) {
+          console.warn('LCP monitoring not supported:', error);
+        }
+      }
+
+      // First Input Delay (FID)
+      if (true && 'PerformanceObserver' in window) { // enableFID
+        try {
+          const fidObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach((entry: any) => {
+              this.metrics.fid = {
+                value: entry.processingStart - entry.startTime,
+                rating: this.getRating('fid', entry.processingStart - entry.startTime),
+                timestamp: Date.now()
+              };
+            });
+          });
+          fidObserver.observe({ entryTypes: ['first-input'] });
+        } catch (error) {
+          console.warn('FID monitoring not supported:', error);
+        }
+      }
+
+      // Cumulative Layout Shift (CLS)
+      if (true && 'PerformanceObserver' in window) { // enableCLS
+        try {
+          let clsValue = 0;
+          const clsObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach((entry: any) => {
+              if (!entry.hadRecentInput) {
+                clsValue += entry.value;
+              }
+            });
+            this.metrics.cls = {
+              value: clsValue,
+              rating: this.getRating('cls', clsValue),
+              timestamp: Date.now()
+            };
+          });
+          clsObserver.observe({ entryTypes: ['layout-shift'] });
+        } catch (error) {
+          console.warn('CLS monitoring not supported:', error);
+        }
+      }
+
+      // First Contentful Paint (FCP)
+      if (true && 'PerformanceObserver' in window) { // enableFCP
+        try {
+          const fcpObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach((entry: any) => {
+              this.metrics.fcp = {
+                value: entry.startTime,
+                rating: this.getRating('fcp', entry.startTime),
+                timestamp: Date.now()
+              };
+            });
+          });
+          fcpObserver.observe({ entryTypes: ['paint'] });
+        } catch (error) {
+          console.warn('FCP monitoring not supported:', error);
+        }
+      }
+
+      // Time to First Byte (TTFB)
+      if (true) { // enableTTFB
+        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        if (navigation) {
+          this.metrics.ttfb = {
+            value: navigation.responseStart - navigation.requestStart,
+            rating: this.getRating('ttfb', navigation.responseStart - navigation.requestStart),
+            timestamp: Date.now()
+          };
+        }
+      }
+    }
+
+    private monitorResourceTiming() {
+      if ('PerformanceObserver' in window) {
+        try {
+          const resourceObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach((entry: any) => {
+              if (entry.initiatorType === 'img' || entry.initiatorType === 'script' || entry.initiatorType === 'link') {
+                this.metrics.resources = this.metrics.resources || [];
+                this.metrics.resources.push({
+                  name: entry.name,
+                  type: entry.initiatorType,
+                  duration: entry.duration,
+                  size: entry.transferSize,
+                  timestamp: Date.now()
+                });
+              }
+            });
+          });
+          resourceObserver.observe({ entryTypes: ['resource'] });
+        } catch (error) {
+          console.warn('Resource timing monitoring not supported:', error);
+        }
+      }
+    }
+
+    private monitorUserTiming() {
+      // Monitor custom user timing marks
+      if ('PerformanceObserver' in window) {
+        try {
+          const userTimingObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach((entry: any) => {
+              this.metrics.userTiming = this.metrics.userTiming || [];
+              this.metrics.userTiming.push({
+                name: entry.name,
+                startTime: entry.startTime,
+                duration: entry.duration,
+                timestamp: Date.now()
+              });
+            });
+          });
+          userTimingObserver.observe({ entryTypes: ['measure', 'mark'] });
+        } catch (error) {
+          console.warn('User timing monitoring not supported:', error);
+        }
+      }
+    }
+
+    private monitorNavigationTiming() {
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      if (navigation) {
+        this.metrics.navigation = {
+          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+          loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
+          domInteractive: navigation.domInteractive - navigation.fetchStart,
+          totalTime: navigation.loadEventEnd - navigation.fetchStart,
+          timestamp: Date.now()
+        };
+      }
+    }
+
+    private getRating(metric: string, value: number): string {
+      const thresholds: Record<string, { good: number; needsImprovement: number }> = {
+        lcp: { good: 2500, needsImprovement: 4000 },
+        fid: { good: 100, needsImprovement: 300 },
+        cls: { good: 0.1, needsImprovement: 0.25 },
+        fcp: { good: 1800, needsImprovement: 3000 },
+        ttfb: { good: 800, needsImprovement: 1800 }
+      };
+
+      const threshold = thresholds[metric];
+      if (!threshold) return 'unknown';
+
+      if (value <= threshold.good) return 'good';
+      if (value <= threshold.needsImprovement) return 'needs-improvement';
+      return 'poor';
+    }
+
+    private async sendMetrics() {
+      try {
+        const payload = {
+          url: window.location.href,
+          userAgent: navigator.userAgent,
+          timestamp: Date.now(),
+          metrics: this.metrics,
+          connection: this.getConnectionInfo(),
+          viewport: this.getViewportInfo()
+        };
+
+        // Send to API endpoint
+        await fetch(this.apiEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        console.log('Performance metrics sent:', payload);
+      } catch (error) {
+        console.warn('Failed to send performance metrics:', error);
+      }
+    }
+
+    private getConnectionInfo() {
+      const connection = (navigator as any).connection;
+      if (connection) {
+        return {
+          effectiveType: connection.effectiveType,
+          downlink: connection.downlink,
+          rtt: connection.rtt,
+          saveData: connection.saveData
+        };
+      }
+      return null;
+    }
+
+    private getViewportInfo() {
+      return {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        devicePixelRatio: window.devicePixelRatio
+      };
+    }
+  }
+
+  // Initialize performance monitoring
+  if (typeof window !== 'undefined') {
+    new PerformanceMonitor('/api/performance');
+  }
+</script>

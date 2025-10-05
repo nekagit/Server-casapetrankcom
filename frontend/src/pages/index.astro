@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ShippingBanner from '../components/ShippingBanner.astro';
+import Hero from '../components/Hero.astro';
+import CategoryGrid from '../components/CategoryGrid.astro';
+import Features from '../components/Features.astro';
+import Testimonials from '../components/Testimonials.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+---
+
+<Layout 
+  title="Casa Petrada - Handgemachter Boho Schmuck & stilvolle Mode"
+  description="Entdecke unsere einzigartigen handgefertigten Boho Schmuckstücke und stilvolle Mode. Versandkostenfrei ab 39,90 €."
+  image="/images/products/korsika-kette.jpg"
+>
+  <!-- Shipping Banner -->
+  <ShippingBanner />
+  
+  <!-- Hero Section -->
+  <Hero />
+  
+  <!-- Category Grid -->
+  <CategoryGrid />
+  
+  <!-- Features Section -->
+  <Features />
+  
+  <!-- Testimonials Section -->
+  <Testimonials />
+  
+  <!-- Newsletter Section -->
+  <section class="py-20 bg-boho-pink">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <NewsletterSignup 
+        title="Bleib auf dem Laufenden"
+        description="Erhalte exklusive Angebote und Neuigkeiten über unsere neuesten handgefertigten Stücke"
+        source="homepage"
+        className="text-white"
+      />
+    </div>
+  </section>
+</Layout>

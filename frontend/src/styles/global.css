@@ -1,0 +1,140 @@
+/* Casa Petrada Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* CSS Variables for Casa Petrada Brand */
+:root {
+  --boho-beige: #f8f6f2;
+  --boho-pink: #c4a484;
+  --boho-brown: #a68b5b;
+  --boho-dark: #2c2c2c;
+  --boho-light: #fefcf8;
+  --boho-accent: #e8d5c4;
+  --boho-text-light: #ffffff;
+  --boho-text-muted: #9ca3af;
+  --boho-text-dark: #374151;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--boho-light);
+  color: var(--boho-dark);
+  line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--boho-dark);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--boho-beige);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--boho-pink);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--boho-brown);
+}
+
+/* Focus styles */
+*:focus {
+  outline: 2px solid var(--boho-pink);
+  outline-offset: 2px;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: var(--boho-pink);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--boho-brown);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 2px solid var(--boho-pink);
+  color: var(--boho-pink);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background-color: var(--boho-pink);
+  color: white;
+}
+
+/* Card styles */
+.card {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--boho-accent);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Input styles */
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--boho-accent);
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.input:focus {
+  border-color: var(--boho-pink);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(212, 175, 140, 0.2);
+}
+
+/* Utility classes */
+.text-boho {
+  color: var(--boho-dark);
+}
+
+.bg-boho {
+  background-color: var(--boho-beige);
+}
+
+.border-boho {
+  border-color: var(--boho-pink);
+}

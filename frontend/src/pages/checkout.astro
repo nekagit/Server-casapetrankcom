@@ -1,0 +1,928 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock checkout data - in real app this would come from API
+const cartItems = [
+  {
+    id: 1,
+    product: {
+      id: 1,
+      name: "Tibet Armband",
+      slug: "tibet-armband",
+      price: 24.90,
+      image: "/images/products/tibet-armband.jpg"
+    },
+    quantity: 2,
+    size: "M",
+    color: "Braun"
+  },
+  {
+    id: 2,
+    product: {
+      id: 2,
+      name: "Boho Kette mit Anhänger",
+      slug: "boho-kette-anhaenger",
+      price: 39.90,
+      image: "/images/products/product_1.jpg"
+    },
+    quantity: 1,
+    size: "One Size",
+    color: "Gold"
+  }
+];
+
+const subtotal = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+const shipping = 0; // Free shipping over 39.90
+const total = subtotal + shipping;
+
+// Mock user data
+const user = {
+  firstName: "Sarah",
+  lastName: "Müller",
+  email: "sarah.mueller@email.de",
+  phone: "+49 123 456789"
+};
+
+// Mock addresses
+const addresses = {
+  shipping: {
+    firstName: "Sarah",
+    lastName: "Müller",
+    company: "",
+    street: "Musterstraße 123",
+    city: "Musterstadt",
+    zipCode: "12345",
+    country: "Deutschland"
+  },
+  billing: {
+    firstName: "Sarah",
+    lastName: "Müller",
+    company: "",
+    street: "Musterstraße 123",
+    city: "Musterstadt",
+    zipCode: "12345",
+    country: "Deutschland"
+  }
+};
+---
+
+<Layout 
+  title="Kasse - Casa Petrada"
+  description="Sichere Bezahlung bei Casa Petrada. Handgefertigter Boho Schmuck und stilvolle Mode."
+>
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/" class="text-boho-dark hover:text-boho-pink transition-colors">Home</a>
+        <span class="text-boho-dark/60">/</span>
+        <a href="/cart" class="text-boho-dark hover:text-boho-pink transition-colors">Warenkorb</a>
+        <span class="text-boho-dark/60">/</span>
+        <span class="text-boho-dark/60">Kasse</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Checkout Content -->
+  <section class="py-8 lg:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Checkout Form -->
+        <div class="lg:col-span-2">
+          <form id="checkout-form" class="space-y-8">
+            <!-- Step 1: Contact Information -->
+            <div class="checkout-step active" data-step="1">
+              <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6">
+                <div class="flex items-center mb-6">
+                  <div class="w-8 h-8 bg-boho-pink text-white rounded-full flex items-center justify-center text-sm font-semibold mr-3">1</div>
+                  <h2 class="text-xl font-semibold text-boho-dark">Kontaktinformationen</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label for="firstName" class="block text-sm font-medium text-boho-dark mb-2">Vorname *</label>
+                    <input 
+                      type="text" 
+                      id="firstName" 
+                      name="firstName" 
+                      value={user.firstName}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div>
+                    <label for="lastName" class="block text-sm font-medium text-boho-dark mb-2">Nachname *</label>
+                    <input 
+                      type="text" 
+                      id="lastName" 
+                      name="lastName" 
+                      value={user.lastName}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div>
+                    <label for="email" class="block text-sm font-medium text-boho-dark mb-2">E-Mail *</label>
+                    <input 
+                      type="email" 
+                      id="email" 
+                      name="email" 
+                      value={user.email}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div>
+                    <label for="phone" class="block text-sm font-medium text-boho-dark mb-2">Telefon</label>
+                    <input 
+                      type="tel" 
+                      id="phone" 
+                      name="phone" 
+                      value={user.phone}
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                </div>
+
+                <div class="mt-6">
+                  <label class="flex items-center">
+                    <input type="checkbox" class="mr-2" />
+                    <span class="text-sm text-boho-dark">Ich möchte Updates zu meiner Bestellung per E-Mail erhalten</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Shipping Address -->
+            <div class="checkout-step" data-step="2">
+              <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6">
+                <div class="flex items-center mb-6">
+                  <div class="w-8 h-8 bg-boho-pink text-white rounded-full flex items-center justify-center text-sm font-semibold mr-3">2</div>
+                  <h2 class="text-xl font-semibold text-boho-dark">Lieferadresse</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label for="shippingFirstName" class="block text-sm font-medium text-boho-dark mb-2">Vorname *</label>
+                    <input 
+                      type="text" 
+                      id="shippingFirstName" 
+                      name="shippingFirstName" 
+                      value={addresses.shipping.firstName}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div>
+                    <label for="shippingLastName" class="block text-sm font-medium text-boho-dark mb-2">Nachname *</label>
+                    <input 
+                      type="text" 
+                      id="shippingLastName" 
+                      name="shippingLastName" 
+                      value={addresses.shipping.lastName}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label for="shippingCompany" class="block text-sm font-medium text-boho-dark mb-2">Firma (optional)</label>
+                    <input 
+                      type="text" 
+                      id="shippingCompany" 
+                      name="shippingCompany" 
+                      value={addresses.shipping.company}
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label for="shippingStreet" class="block text-sm font-medium text-boho-dark mb-2">Straße und Hausnummer *</label>
+                    <input 
+                      type="text" 
+                      id="shippingStreet" 
+                      name="shippingStreet" 
+                      value={addresses.shipping.street}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div>
+                    <label for="shippingZipCode" class="block text-sm font-medium text-boho-dark mb-2">PLZ *</label>
+                    <input 
+                      type="text" 
+                      id="shippingZipCode" 
+                      name="shippingZipCode" 
+                      value={addresses.shipping.zipCode}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div>
+                    <label for="shippingCity" class="block text-sm font-medium text-boho-dark mb-2">Stadt *</label>
+                    <input 
+                      type="text" 
+                      id="shippingCity" 
+                      name="shippingCity" 
+                      value={addresses.shipping.city}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label for="shippingCountry" class="block text-sm font-medium text-boho-dark mb-2">Land *</label>
+                    <select 
+                      id="shippingCountry" 
+                      name="shippingCountry" 
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    >
+                      <option value="Deutschland" selected>Deutschland</option>
+                      <option value="Österreich">Österreich</option>
+                      <option value="Schweiz">Schweiz</option>
+                      <option value="Frankreich">Frankreich</option>
+                      <option value="Italien">Italien</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mt-6">
+                  <label class="flex items-center">
+                    <input type="checkbox" id="sameAsBilling" class="mr-2" />
+                    <span class="text-sm text-boho-dark">Rechnungsadresse ist identisch mit Lieferadresse</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: Billing Address -->
+            <div class="checkout-step" data-step="3">
+              <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6">
+                <div class="flex items-center mb-6">
+                  <div class="w-8 h-8 bg-boho-pink text-white rounded-full flex items-center justify-center text-sm font-semibold mr-3">3</div>
+                  <h2 class="text-xl font-semibold text-boho-dark">Rechnungsadresse</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label for="billingFirstName" class="block text-sm font-medium text-boho-dark mb-2">Vorname *</label>
+                    <input 
+                      type="text" 
+                      id="billingFirstName" 
+                      name="billingFirstName" 
+                      value={addresses.billing.firstName}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div>
+                    <label for="billingLastName" class="block text-sm font-medium text-boho-dark mb-2">Nachname *</label>
+                    <input 
+                      type="text" 
+                      id="billingLastName" 
+                      name="billingLastName" 
+                      value={addresses.billing.lastName}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label for="billingCompany" class="block text-sm font-medium text-boho-dark mb-2">Firma (optional)</label>
+                    <input 
+                      type="text" 
+                      id="billingCompany" 
+                      name="billingCompany" 
+                      value={addresses.billing.company}
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label for="billingStreet" class="block text-sm font-medium text-boho-dark mb-2">Straße und Hausnummer *</label>
+                    <input 
+                      type="text" 
+                      id="billingStreet" 
+                      name="billingStreet" 
+                      value={addresses.billing.street}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div>
+                    <label for="billingZipCode" class="block text-sm font-medium text-boho-dark mb-2">PLZ *</label>
+                    <input 
+                      type="text" 
+                      id="billingZipCode" 
+                      name="billingZipCode" 
+                      value={addresses.billing.zipCode}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div>
+                    <label for="billingCity" class="block text-sm font-medium text-boho-dark mb-2">Stadt *</label>
+                    <input 
+                      type="text" 
+                      id="billingCity" 
+                      name="billingCity" 
+                      value={addresses.billing.city}
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label for="billingCountry" class="block text-sm font-medium text-boho-dark mb-2">Land *</label>
+                    <select 
+                      id="billingCountry" 
+                      name="billingCountry" 
+                      required
+                      class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                    >
+                      <option value="Deutschland" selected>Deutschland</option>
+                      <option value="Österreich">Österreich</option>
+                      <option value="Schweiz">Schweiz</option>
+                      <option value="Frankreich">Frankreich</option>
+                      <option value="Italien">Italien</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: Payment Method -->
+            <div class="checkout-step" data-step="4">
+              <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6">
+                <div class="flex items-center mb-6">
+                  <div class="w-8 h-8 bg-boho-pink text-white rounded-full flex items-center justify-center text-sm font-semibold mr-3">4</div>
+                  <h2 class="text-xl font-semibold text-boho-dark">Zahlungsart</h2>
+                </div>
+
+                <div class="space-y-4">
+                  <!-- Credit Card -->
+                  <div class="payment-method">
+                    <label class="flex items-center p-4 border border-boho-accent rounded-lg cursor-pointer hover:bg-boho-beige transition-colors">
+                      <input type="radio" name="paymentMethod" value="creditcard" class="mr-3" checked />
+                      <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <h3 class="font-semibold text-boho-dark">Kreditkarte</h3>
+                            <p class="text-sm text-boho-dark/70">Visa, Mastercard, American Express</p>
+                          </div>
+                          <div class="flex space-x-2">
+                            <i class="fab fa-cc-visa text-2xl text-blue-600"></i>
+                            <i class="fab fa-cc-mastercard text-2xl text-red-600"></i>
+                            <i class="fab fa-cc-amex text-2xl text-blue-600"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </label>
+
+                    <!-- Credit Card Form -->
+                    <div class="credit-card-form mt-4 p-4 bg-boho-beige rounded-lg">
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                          <label for="cardNumber" class="block text-sm font-medium text-boho-dark mb-2">Kartennummer *</label>
+                          <input 
+                            type="text" 
+                            id="cardNumber" 
+                            name="cardNumber" 
+                            placeholder="1234 5678 9012 3456"
+                            class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                          />
+                        </div>
+                        <div>
+                          <label for="expiryDate" class="block text-sm font-medium text-boho-dark mb-2">Ablaufdatum *</label>
+                          <input 
+                            type="text" 
+                            id="expiryDate" 
+                            name="expiryDate" 
+                            placeholder="MM/JJ"
+                            class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                          />
+                        </div>
+                        <div>
+                          <label for="cvv" class="block text-sm font-medium text-boho-dark mb-2">CVV *</label>
+                          <input 
+                            type="text" 
+                            id="cvv" 
+                            name="cvv" 
+                            placeholder="123"
+                            class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                          />
+                        </div>
+                        <div class="md:col-span-2">
+                          <label for="cardName" class="block text-sm font-medium text-boho-dark mb-2">Name auf der Karte *</label>
+                          <input 
+                            type="text" 
+                            id="cardName" 
+                            name="cardName" 
+                            placeholder="Max Mustermann"
+                            class="w-full px-3 py-2 border border-boho-accent rounded-lg focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- PayPal -->
+                  <div class="payment-method">
+                    <label class="flex items-center p-4 border border-boho-accent rounded-lg cursor-pointer hover:bg-boho-beige transition-colors">
+                      <input type="radio" name="paymentMethod" value="paypal" class="mr-3" />
+                      <div class="flex items-center justify-between flex-1">
+                        <div>
+                          <h3 class="font-semibold text-boho-dark">PayPal</h3>
+                          <p class="text-sm text-boho-dark/70">Sicher und schnell bezahlen</p>
+                        </div>
+                        <i class="fab fa-paypal text-3xl text-blue-600"></i>
+                      </div>
+                    </label>
+                  </div>
+
+                  <!-- Apple Pay -->
+                  <div class="payment-method">
+                    <label class="flex items-center p-4 border border-boho-accent rounded-lg cursor-pointer hover:bg-boho-beige transition-colors">
+                      <input type="radio" name="paymentMethod" value="applepay" class="mr-3" />
+                      <div class="flex items-center justify-between flex-1">
+                        <div>
+                          <h3 class="font-semibold text-boho-dark">Apple Pay</h3>
+                          <p class="text-sm text-boho-dark/70">Touch ID oder Face ID</p>
+                        </div>
+                        <i class="fab fa-apple-pay text-3xl text-black"></i>
+                      </div>
+                    </label>
+                  </div>
+
+                  <!-- Google Pay -->
+                  <div class="payment-method">
+                    <label class="flex items-center p-4 border border-boho-accent rounded-lg cursor-pointer hover:bg-boho-beige transition-colors">
+                      <input type="radio" name="paymentMethod" value="googlepay" class="mr-3" />
+                      <div class="flex items-center justify-between flex-1">
+                        <div>
+                          <h3 class="font-semibold text-boho-dark">Google Pay</h3>
+                          <p class="text-sm text-boho-dark/70">Schnell und sicher</p>
+                        </div>
+                        <i class="fab fa-google-pay text-3xl text-blue-600"></i>
+                      </div>
+                    </label>
+                  </div>
+
+                  <!-- Klarna -->
+                  <div class="payment-method">
+                    <label class="flex items-center p-4 border border-boho-accent rounded-lg cursor-pointer hover:bg-boho-beige transition-colors">
+                      <input type="radio" name="paymentMethod" value="klarna" class="mr-3" />
+                      <div class="flex items-center justify-between flex-1">
+                        <div>
+                          <h3 class="font-semibold text-boho-dark">Klarna</h3>
+                          <p class="text-sm text-boho-dark/70">Jetzt kaufen, später bezahlen</p>
+                        </div>
+                        <div class="w-12 h-8 bg-black rounded flex items-center justify-center">
+                          <span class="text-white font-bold text-sm">K</span>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 5: Review & Place Order -->
+            <div class="checkout-step" data-step="5">
+              <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6">
+                <div class="flex items-center mb-6">
+                  <div class="w-8 h-8 bg-boho-pink text-white rounded-full flex items-center justify-center text-sm font-semibold mr-3">5</div>
+                  <h2 class="text-xl font-semibold text-boho-dark">Bestellung überprüfen</h2>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="bg-boho-beige rounded-lg p-4">
+                    <h3 class="font-semibold text-boho-dark mb-2">Zusammenfassung</h3>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex justify-between">
+                        <span>Zwischensumme:</span>
+                        <span>{subtotal.toFixed(2)} €</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Versand:</span>
+                        <span class="text-green-600 font-medium">Kostenlos</span>
+                      </div>
+                      <div class="flex justify-between font-semibold text-lg border-t border-boho-accent pt-2">
+                        <span>Gesamt:</span>
+                        <span>{total.toFixed(2)} €</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-boho-beige rounded-lg p-4">
+                    <h3 class="font-semibold text-boho-dark mb-2">Artikel</h3>
+                    <div class="space-y-2">
+                      {cartItems.map((item) => (
+                        <div class="flex items-center space-x-3">
+                          <img src={item.product.image} alt={item.product.name} class="w-12 h-12 object-cover rounded" />
+                          <div class="flex-1">
+                            <p class="text-sm font-medium text-boho-dark">{item.product.name}</p>
+                            <p class="text-xs text-boho-dark/70">{item.size} • {item.color} • {item.quantity}x</p>
+                          </div>
+                          <p class="text-sm font-medium text-boho-dark">{(item.product.price * item.quantity).toFixed(2)} €</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div class="bg-boho-beige rounded-lg p-4">
+                    <h3 class="font-semibold text-boho-dark mb-2">Lieferadresse</h3>
+                    <p class="text-sm text-boho-dark">
+                      {addresses.shipping.firstName} {addresses.shipping.lastName}<br>
+                      {addresses.shipping.street}<br>
+                      {addresses.shipping.zipCode} {addresses.shipping.city}<br>
+                      {addresses.shipping.country}
+                    </p>
+                  </div>
+
+                  <div class="bg-boho-beige rounded-lg p-4">
+                    <h3 class="font-semibold text-boho-dark mb-2">Zahlungsart</h3>
+                    <p class="text-sm text-boho-dark">Kreditkarte (Visa/Mastercard)</p>
+                  </div>
+
+                  <div class="mt-6">
+                    <label class="flex items-start">
+                      <input type="checkbox" id="terms" required class="mt-1 mr-3" />
+                      <span class="text-sm text-boho-dark">
+                        Ich habe die <a href="/agb" class="text-boho-pink hover:text-boho-brown">AGB</a> und 
+                        <a href="/datenschutz" class="text-boho-pink hover:text-boho-brown">Datenschutzerklärung</a> gelesen und stimme zu. *
+                      </span>
+                    </label>
+                  </div>
+
+                  <div class="mt-6">
+                    <label class="flex items-start">
+                      <input type="checkbox" id="newsletter" class="mt-1 mr-3" />
+                      <span class="text-sm text-boho-dark">
+                        Ich möchte den Casa Petrada Newsletter erhalten und über neue Produkte und Angebote informiert werden.
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between">
+              <button type="button" id="prev-step" class="px-6 py-3 border border-boho-accent text-boho-dark rounded-lg hover:bg-boho-beige transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Zurück
+              </button>
+              <button type="button" id="next-step" class="px-6 py-3 bg-boho-pink text-white rounded-lg hover:bg-boho-brown transition-colors">
+                Weiter
+                <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 sticky top-4">
+            <div class="px-6 py-4 border-b border-boho-accent/20">
+              <h2 class="text-xl font-semibold text-boho-dark">Bestellübersicht</h2>
+            </div>
+
+            <div class="px-6 py-4 space-y-4">
+              <!-- Cart Items -->
+              <div class="space-y-3">
+                {cartItems.map((item) => (
+                  <div class="flex items-center space-x-3">
+                    <img src={item.product.image} alt={item.product.name} class="w-12 h-12 object-cover rounded" />
+                    <div class="flex-1">
+                      <p class="text-sm font-medium text-boho-dark">{item.product.name}</p>
+                      <p class="text-xs text-boho-dark/70">{item.size} • {item.color}</p>
+                      <p class="text-xs text-boho-dark/70">Anzahl: {item.quantity}</p>
+                    </div>
+                    <p class="text-sm font-medium text-boho-dark">{(item.product.price * item.quantity).toFixed(2)} €</p>
+                  </div>
+                ))}
+              </div>
+
+              <!-- Totals -->
+              <div class="border-t border-boho-accent/20 pt-4 space-y-2">
+                <div class="flex justify-between text-boho-dark">
+                  <span>Zwischensumme</span>
+                  <span>{subtotal.toFixed(2)} €</span>
+                </div>
+                <div class="flex justify-between text-boho-dark">
+                  <span>Versand</span>
+                  <span class="text-green-600 font-medium">Kostenlos</span>
+                </div>
+                <div class="flex justify-between text-lg font-semibold text-boho-dark border-t border-boho-accent/20 pt-2">
+                  <span>Gesamt</span>
+                  <span>{total.toFixed(2)} €</span>
+                </div>
+              </div>
+
+              <!-- Security Info -->
+              <div class="text-center text-sm text-boho-dark/70">
+                <i class="fas fa-shield-alt mr-1"></i>
+                Sichere Bezahlung mit SSL-Verschlüsselung
+              </div>
+
+              <!-- Trust Signals -->
+              <div class="space-y-2 text-sm text-boho-dark/70">
+                <div class="flex items-center">
+                  <i class="fas fa-check text-green-600 mr-2"></i>
+                  Kostenloser Versand ab 39,90 €
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-check text-green-600 mr-2"></i>
+                  30 Tage Rückgaberecht
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-check text-green-600 mr-2"></i>
+                  Sichere Bezahlung
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .checkout-step {
+    display: none;
+  }
+
+  .checkout-step.active {
+    display: block;
+  }
+
+  .payment-method input[type="radio"] {
+    display: none;
+  }
+
+  .payment-method input[type="radio"]:checked + .flex {
+    background-color: var(--boho-pink);
+    color: white;
+    border-color: var(--boho-pink);
+  }
+
+  .credit-card-form {
+    display: none;
+  }
+
+  .payment-method input[type="radio"]:checked ~ .credit-card-form {
+    display: block;
+  }
+
+  /* Form validation styles */
+  .form-error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+  }
+
+  .error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  /* Loading states */
+  .loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--boho-pink);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .checkout-step {
+      padding: 1rem;
+    }
+    
+    .payment-method {
+      margin-bottom: 1rem;
+    }
+  }
+</style>
+
+<script>
+  // Checkout functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    let currentStep = 1;
+    const totalSteps = 5;
+    const form = document.getElementById('checkout-form');
+    const prevBtn = document.getElementById('prev-step');
+    const nextBtn = document.getElementById('next-step');
+    const steps = document.querySelectorAll('.checkout-step');
+
+    // Initialize
+    updateStepDisplay();
+    updateNavigationButtons();
+
+    // Navigation
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function() {
+        if (currentStep > 1) {
+          currentStep--;
+          updateStepDisplay();
+          updateNavigationButtons();
+        }
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function() {
+        if (validateCurrentStep()) {
+          if (currentStep < totalSteps) {
+            currentStep++;
+            updateStepDisplay();
+            updateNavigationButtons();
+          } else {
+            // Final step - place order
+            placeOrder();
+          }
+        }
+      });
+    }
+
+    // Same as billing address checkbox
+    const sameAsBillingCheckbox = document.getElementById('sameAsBilling');
+    if (sameAsBillingCheckbox) {
+      sameAsBillingCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+          copyShippingToBilling();
+        }
+      });
+    }
+
+    // Payment method changes
+    const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+    paymentMethods.forEach(method => {
+      method.addEventListener('change', function() {
+        updatePaymentForm();
+      });
+    });
+
+    // Form validation
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach(input => {
+      input.addEventListener('blur', function() {
+        validateField(this);
+      });
+    });
+
+    function updateStepDisplay() {
+      steps.forEach((step, index) => {
+        if (index + 1 === currentStep) {
+          step.classList.add('active');
+        } else {
+          step.classList.remove('active');
+        }
+      });
+    }
+
+    function updateNavigationButtons() {
+      if (prevBtn) {
+        prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
+      }
+      
+      if (nextBtn) {
+        if (currentStep === totalSteps) {
+          nextBtn.innerHTML = '<i class="fas fa-lock mr-2"></i>Bestellung aufgeben';
+          nextBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+          nextBtn.classList.remove('bg-boho-pink', 'hover:bg-boho-brown');
+        } else {
+          nextBtn.innerHTML = 'Weiter <i class="fas fa-arrow-right ml-2"></i>';
+          nextBtn.classList.add('bg-boho-pink', 'hover:bg-boho-brown');
+          nextBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+        }
+      }
+    }
+
+    function validateCurrentStep() {
+      const currentStepElement = document.querySelector(`[data-step="${currentStep}"]`);
+      const requiredFields = currentStepElement.querySelectorAll('input[required], select[required]');
+      let isValid = true;
+
+      requiredFields.forEach(field => {
+        if (!validateField(field)) {
+          isValid = false;
+        }
+      });
+
+      return isValid;
+    }
+
+    function validateField(field) {
+      const value = field.value.trim();
+      const isRequired = field.hasAttribute('required');
+      let isValid = true;
+
+      // Remove previous error styling
+      field.classList.remove('form-error');
+      const existingError = field.parentNode.querySelector('.error-message');
+      if (existingError) {
+        existingError.remove();
+      }
+
+      if (isRequired && !value) {
+        isValid = false;
+        showFieldError(field, 'Dieses Feld ist erforderlich');
+      } else if (field.type === 'email' && value && !isValidEmail(value)) {
+        isValid = false;
+        showFieldError(field, 'Bitte geben Sie eine gültige E-Mail-Adresse ein');
+      } else if (field.type === 'tel' && value && !isValidPhone(value)) {
+        isValid = false;
+        showFieldError(field, 'Bitte geben Sie eine gültige Telefonnummer ein');
+      }
+
+      return isValid;
+    }
+
+    function showFieldError(field, message) {
+      field.classList.add('form-error');
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.textContent = message;
+      field.parentNode.appendChild(errorDiv);
+    }
+
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    function isValidPhone(phone) {
+      const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
+      return phoneRegex.test(phone);
+    }
+
+    function copyShippingToBilling() {
+      const shippingFields = ['firstName', 'lastName', 'company', 'street', 'zipCode', 'city', 'country'];
+      shippingFields.forEach(field => {
+        const shippingField = document.getElementById(`shipping${field.charAt(0).toUpperCase() + field.slice(1)}`);
+        const billingField = document.getElementById(`billing${field.charAt(0).toUpperCase() + field.slice(1)}`);
+        
+        if (shippingField && billingField) {
+          billingField.value = shippingField.value;
+        }
+      });
+    }
+
+    function updatePaymentForm() {
+      const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+      const creditCardForm = document.querySelector('.credit-card-form');
+      
+      if (selectedMethod && selectedMethod.value === 'creditcard') {
+        creditCardForm.style.display = 'block';
+      } else {
+        creditCardForm.style.display = 'none';
+      }
+    }
+
+    function placeOrder() {
+      // Validate final step
+      if (!validateCurrentStep()) {
+        return;
+      }
+
+      // Check terms and conditions
+      const termsCheckbox = document.getElementById('terms');
+      if (!termsCheckbox.checked) {
+        alert('Bitte akzeptieren Sie die AGB und Datenschutzerklärung.');
+        return;
+      }
+
+      // Show loading state
+      nextBtn.classList.add('loading');
+      nextBtn.disabled = true;
+
+      // Simulate order placement
+      setTimeout(() => {
+        // In a real app, this would submit the order to the backend
+        console.log('Order placed successfully');
+        
+        // Redirect to success page
+        window.location.href = '/order-success';
+      }, 2000);
+    }
+
+    // Initialize payment form
+    updatePaymentForm();
+  });
+</script>

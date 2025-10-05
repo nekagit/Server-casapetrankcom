@@ -1,0 +1,798 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductGallery from '../../components/ProductGallery.astro';
+import ProductImage from '../../components/ProductImage.astro';
+
+// Mock product data - in real app this would come from API
+const product = {
+  id: 1,
+  name: "Tibet Armband",
+  slug: "tibet-armband",
+  price: 24.90,
+  originalPrice: 29.90,
+  discount: 17,
+  description: "Handgefertigtes Tibet Armband aus natürlichen Materialien. Dieses einzigartige Armband wird traditionell in Tibet hergestellt und verkörpert die spirituelle Bedeutung der tibetischen Kultur.",
+  longDescription: `
+    <p>Unser Tibet Armband ist ein handgefertigtes Meisterwerk, das die reiche Tradition der tibetischen Schmuckkunst widerspiegelt. Jedes Armband wird von erfahrenen Handwerkern in Tibet gefertigt und erzählt seine eigene Geschichte.</p>
+    
+    <h3>Materialien & Verarbeitung</h3>
+    <p>Das Armband besteht aus hochwertigen, natürlichen Materialien:</p>
+    <ul>
+      <li>Genuine Tibetische Perlen</li>
+      <li>Handgefertigte Metallperlen</li>
+      <li>Robuste Baumwollschnur</li>
+      <li>Traditionelle Verarbeitungstechniken</li>
+    </ul>
+    
+    <h3>Größen & Passform</h3>
+    <p>Das Armband ist in verschiedenen Größen erhältlich und passt sich perfekt an Ihr Handgelenk an. Die flexible Konstruktion sorgt für optimalen Tragekomfort.</p>
+    
+    <h3>Pflegehinweise</h3>
+    <p>Um die Schönheit Ihres Tibet Armbands zu erhalten, empfehlen wir:</p>
+    <ul>
+      <li>Vorsichtiges Abwischen mit einem trockenen Tuch</li>
+      <li>Vermeiden Sie direkten Kontakt mit Wasser</li>
+      <li>Bewahren Sie es an einem trockenen Ort auf</li>
+    </ul>
+  `,
+  images: [
+    {
+      id: "1",
+      src: "/images/products/tibet-armband.jpg",
+      alt: "Tibet Armband - Hauptansicht",
+      caption: "Hauptansicht des Tibet Armbands",
+      isMain: true
+    },
+    {
+      id: "2", 
+      src: "/images/products/tibet-armband-detail.jpg",
+      alt: "Tibet Armband - Detailansicht",
+      caption: "Detailansicht der Perlen",
+      isMain: false
+    },
+    {
+      id: "3",
+      src: "/images/products/tibet-armband-worn.jpg", 
+      alt: "Tibet Armband - getragen",
+      caption: "Das Armband am Handgelenk",
+      isMain: false
+    }
+  ],
+  category: "Armbänder",
+  subcategory: "Einfacharmbänder",
+  tags: ["Tibet", "Handgefertigt", "Naturstein", "Spirituell"],
+  inStock: true,
+  stock: 15,
+  sku: "CP-ARM-001",
+  weight: 25,
+  dimensions: "18cm x 2cm",
+  material: "Perlen, Metall, Baumwolle",
+  color: "Braun, Gold",
+  size: "One Size",
+  care: "Trocken abwischen, vor Wasser schützen",
+  origin: "Tibet",
+  handmade: true,
+  rating: 4.8,
+  reviewCount: 127,
+  isFeatured: true,
+  isBestseller: true,
+  isNew: false,
+  variants: [
+    {
+      id: "size-s",
+      name: "Größe S",
+      price: 24.90,
+      inStock: true,
+      stock: 8
+    },
+    {
+      id: "size-m", 
+      name: "Größe M",
+      price: 24.90,
+      inStock: true,
+      stock: 15
+    },
+    {
+      id: "size-l",
+      name: "Größe L", 
+      price: 24.90,
+      inStock: false,
+      stock: 0
+    }
+  ],
+  colors: [
+    {
+      id: "brown",
+      name: "Braun",
+      hex: "#8B4513",
+      image: "/images/products/tibet-armband-brown.jpg",
+      inStock: true
+    },
+    {
+      id: "gold",
+      name: "Gold",
+      hex: "#FFD700", 
+      image: "/images/products/tibet-armband-gold.jpg",
+      inStock: true
+    },
+    {
+      id: "silver",
+      name: "Silber",
+      hex: "#C0C0C0",
+      image: "/images/products/tibet-armband-silver.jpg",
+      inStock: false
+    }
+  ],
+  relatedProducts: [
+    {
+      id: 2,
+      name: "Boho Kette mit Anhänger",
+      slug: "boho-kette-anhaenger",
+      price: 39.90,
+      image: "/images/products/product_1.jpg",
+      rating: 4.6
+    },
+    {
+      id: 3,
+      name: "Mondstein Ohrringe",
+      slug: "mondstein-ohrringe", 
+      price: 49.90,
+      image: "/images/products/product_3.jpg",
+      rating: 4.4
+    },
+    {
+      id: 4,
+      name: "Feder Fußkettchen",
+      slug: "feder-fusskettchen",
+      price: 19.90,
+      image: "/images/products/product_4.jpg",
+      rating: 4.2
+    }
+  ],
+  reviews: [
+    {
+      id: 1,
+      author: "Sarah M.",
+      rating: 5,
+      date: "2024-01-15",
+      title: "Wunderschönes Armband!",
+      content: "Das Armband ist noch schöner als auf den Bildern. Die Verarbeitung ist sehr hochwertig und es liegt perfekt am Handgelenk. Sehr empfehlenswert!",
+      verified: true,
+      helpful: 12
+    },
+    {
+      id: 2,
+      author: "Anna K.",
+      rating: 4,
+      date: "2024-01-10", 
+      title: "Sehr schön, aber...",
+      content: "Das Armband ist wirklich schön und handgefertigt. Die Lieferung war schnell. Einziger kleiner Minuspunkt: Es ist etwas kleiner als erwartet.",
+      verified: true,
+      helpful: 8
+    }
+  ]
+};
+
+// Get product from URL parameter
+const { slug } = Astro.params;
+const currentProduct = product; // In real app, fetch by slug
+
+// Generate breadcrumb
+const breadcrumb = [
+  { name: "Home", href: "/" },
+  { name: "Armbänder", href: "/armbaender" },
+  { name: "Einfacharmbänder", href: "/armbaender/einfacharmbaender" },
+  { name: currentProduct.name, href: `/products/${currentProduct.slug}` }
+];
+
+// Generate structured data
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": currentProduct.name,
+  "description": currentProduct.description,
+  "image": currentProduct.images.map(img => img.src),
+  "sku": currentProduct.sku,
+  "brand": {
+    "@type": "Brand",
+    "name": "Casa Petrada"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": currentProduct.price,
+    "priceCurrency": "EUR",
+    "availability": currentProduct.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+    "seller": {
+      "@type": "Organization",
+      "name": "Casa Petrada"
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": currentProduct.rating,
+    "reviewCount": currentProduct.reviewCount
+  }
+};
+---
+
+<Layout 
+  title={`${currentProduct.name} - Casa Petrada`}
+  description={currentProduct.description}
+  image={currentProduct.images[0].src}
+>
+  <!-- Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        {breadcrumb.map((item, index) => (
+          <>
+            {index > 0 && <span class="text-boho-dark/60">/</span>}
+            {index === breadcrumb.length - 1 ? (
+              <span class="text-boho-dark/60">{item.name}</span>
+            ) : (
+              <a href={item.href} class="text-boho-dark hover:text-boho-pink transition-colors">{item.name}</a>
+            )}
+          </>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  <!-- Product Details -->
+  <section class="py-8 lg:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <!-- Product Images -->
+        <div class="product-images">
+          <ProductGallery 
+            images={currentProduct.images}
+            productName={currentProduct.name}
+            showThumbnails={true}
+            showZoom={true}
+            showFullscreen={true}
+            autoplay={false}
+          />
+        </div>
+
+        <!-- Product Information -->
+        <div class="product-info">
+          <!-- Product Header -->
+          <div class="mb-6">
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="text-sm text-boho-dark/70">{currentProduct.category}</span>
+              <span class="text-boho-dark/30">•</span>
+              <span class="text-sm text-boho-dark/70">{currentProduct.subcategory}</span>
+            </div>
+            
+            <h1 class="text-3xl lg:text-4xl font-serif font-bold text-boho-dark mb-4">
+              {currentProduct.name}
+            </h1>
+
+            <!-- Rating -->
+            <div class="flex items-center space-x-2 mb-4">
+              <div class="flex items-center">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <i class={`fas fa-star text-sm ${i < Math.floor(currentProduct.rating) ? 'text-yellow-400' : 'text-gray-300'}`}></i>
+                ))}
+              </div>
+              <span class="text-sm text-boho-dark/70">
+                {currentProduct.rating} ({currentProduct.reviewCount} Bewertungen)
+              </span>
+            </div>
+
+            <!-- Price -->
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="text-3xl font-bold text-boho-dark">
+                {currentProduct.price.toFixed(2)} €
+              </span>
+              {currentProduct.originalPrice && (
+                <>
+                  <span class="text-xl text-boho-dark/60 line-through">
+                    {currentProduct.originalPrice.toFixed(2)} €
+                  </span>
+                  <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded">
+                    -{currentProduct.discount}%
+                  </span>
+                </>
+              )}
+            </div>
+
+            <!-- Stock Status -->
+            <div class="mb-6">
+              {currentProduct.inStock ? (
+                <div class="flex items-center text-green-600">
+                  <i class="fas fa-check-circle mr-2"></i>
+                  <span class="font-medium">Auf Lager</span>
+                  {currentProduct.stock <= 5 && (
+                    <span class="ml-2 text-sm text-orange-600">
+                      (Nur noch {currentProduct.stock} verfügbar)
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <div class="flex items-center text-red-600">
+                  <i class="fas fa-times-circle mr-2"></i>
+                  <span class="font-medium">Nicht auf Lager</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <!-- Product Description -->
+          <div class="mb-6">
+            <p class="text-boho-dark/80 leading-relaxed">
+              {currentProduct.description}
+            </p>
+          </div>
+
+          <!-- Product Options -->
+          <div class="space-y-6">
+            <!-- Size Selection -->
+            {currentProduct.variants && currentProduct.variants.length > 0 && (
+              <div>
+                <label class="block text-sm font-medium text-boho-dark mb-3">Größe</label>
+                <div class="flex flex-wrap gap-2">
+                  {currentProduct.variants.map((variant) => (
+                    <button 
+                      class={`px-4 py-2 border rounded-lg text-sm font-medium transition-colors ${
+                        variant.inStock 
+                          ? 'border-boho-accent text-boho-dark hover:bg-boho-beige' 
+                          : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                      }`}
+                      disabled={!variant.inStock}
+                    >
+                      {variant.name}
+                      {!variant.inStock && ' (Ausverkauft)'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- Color Selection -->
+            {currentProduct.colors && currentProduct.colors.length > 0 && (
+              <div>
+                <label class="block text-sm font-medium text-boho-dark mb-3">Farbe</label>
+                <div class="flex flex-wrap gap-2">
+                  {currentProduct.colors.map((color) => (
+                    <button 
+                      class={`w-10 h-10 rounded-full border-2 transition-colors ${
+                        color.inStock 
+                          ? 'border-boho-accent hover:border-boho-pink' 
+                          : 'border-gray-300 opacity-50 cursor-not-allowed'
+                      }`}
+                      style={`background-color: ${color.hex}`}
+                      disabled={!color.inStock}
+                      title={color.name}
+                    ></button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- Quantity -->
+            <div>
+              <label class="block text-sm font-medium text-boho-dark mb-3">Anzahl</label>
+              <div class="flex items-center space-x-2">
+                <button class="quantity-btn w-8 h-8 flex items-center justify-center border border-boho-accent rounded hover:bg-boho-beige transition-colors">
+                  <i class="fas fa-minus text-sm"></i>
+                </button>
+                <input 
+                  type="number" 
+                  value="1" 
+                  min="1" 
+                  max="10"
+                  class="w-16 text-center border border-boho-accent rounded focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                />
+                <button class="quantity-btn w-8 h-8 flex items-center justify-center border border-boho-accent rounded hover:bg-boho-beige transition-colors">
+                  <i class="fas fa-plus text-sm"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Add to Cart Button -->
+            <div class="space-y-3">
+              <button 
+                class="w-full bg-boho-pink text-white font-medium py-3 px-6 rounded-lg hover:bg-boho-brown transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!currentProduct.inStock}
+              >
+                <i class="fas fa-shopping-cart mr-2"></i>
+                {currentProduct.inStock ? 'In den Warenkorb' : 'Nicht verfügbar'}
+              </button>
+              
+              <div class="flex space-x-3">
+                <button class="flex-1 border border-boho-accent text-boho-dark font-medium py-3 px-6 rounded-lg hover:bg-boho-beige transition-colors">
+                  <i class="fas fa-heart mr-2"></i>
+                  Merken
+                </button>
+                <button class="flex-1 border border-boho-accent text-boho-dark font-medium py-3 px-6 rounded-lg hover:bg-boho-beige transition-colors">
+                  <i class="fas fa-share-alt mr-2"></i>
+                  Teilen
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Details -->
+          <div class="mt-8 space-y-4">
+            <div class="bg-boho-beige rounded-lg p-4">
+              <h3 class="font-semibold text-boho-dark mb-3">Produktdetails</h3>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-boho-dark/70">Artikelnummer:</span>
+                  <span class="text-boho-dark font-medium ml-2">{currentProduct.sku}</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Material:</span>
+                  <span class="text-boho-dark font-medium ml-2">{currentProduct.material}</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Gewicht:</span>
+                  <span class="text-boho-dark font-medium ml-2">{currentProduct.weight}g</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Abmessungen:</span>
+                  <span class="text-boho-dark font-medium ml-2">{currentProduct.dimensions}</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Herkunft:</span>
+                  <span class="text-boho-dark font-medium ml-2">{currentProduct.origin}</span>
+                </div>
+                <div>
+                  <span class="text-boho-dark/70">Handgefertigt:</span>
+                  <span class="text-boho-dark font-medium ml-2">
+                    {currentProduct.handmade ? 'Ja' : 'Nein'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Care Instructions -->
+            <div class="bg-boho-beige rounded-lg p-4">
+              <h3 class="font-semibold text-boho-dark mb-3">Pflegehinweise</h3>
+              <p class="text-sm text-boho-dark/80">{currentProduct.care}</p>
+            </div>
+
+            <!-- Trust Signals -->
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div class="flex items-center text-boho-dark/70">
+                <i class="fas fa-shipping-fast text-boho-pink mr-2"></i>
+                <span>Kostenloser Versand ab 39,90 €</span>
+              </div>
+              <div class="flex items-center text-boho-dark/70">
+                <i class="fas fa-undo text-boho-pink mr-2"></i>
+                <span>30 Tage Rückgaberecht</span>
+              </div>
+              <div class="flex items-center text-boho-dark/70">
+                <i class="fas fa-shield-alt text-boho-pink mr-2"></i>
+                <span>Sichere Bezahlung</span>
+              </div>
+              <div class="flex items-center text-boho-dark/70">
+                <i class="fas fa-hand-holding-heart text-boho-pink mr-2"></i>
+                <span>Handgefertigt in Deutschland</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Tabs -->
+  <section class="py-8 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20">
+        <!-- Tab Navigation -->
+        <div class="border-b border-boho-accent/20">
+          <nav class="flex space-x-8 px-6">
+            <button class="product-tab active py-4 text-sm font-medium text-boho-pink border-b-2 border-boho-pink">
+              Beschreibung
+            </button>
+            <button class="product-tab py-4 text-sm font-medium text-boho-dark/70 hover:text-boho-pink transition-colors">
+              Bewertungen ({currentProduct.reviewCount})
+            </button>
+            <button class="product-tab py-4 text-sm font-medium text-boho-dark/70 hover:text-boho-pink transition-colors">
+              Versand & Rückgabe
+            </button>
+            <button class="product-tab py-4 text-sm font-medium text-boho-dark/70 hover:text-boho-pink transition-colors">
+              Größenberatung
+            </button>
+          </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="p-6">
+          <!-- Description Tab -->
+          <div class="product-tab-content active">
+            <div class="prose max-w-none" set:html={currentProduct.longDescription}></div>
+          </div>
+
+          <!-- Reviews Tab -->
+          <div class="product-tab-content">
+            <div class="space-y-6">
+              {currentProduct.reviews.map((review) => (
+                <div class="border-b border-boho-accent/20 pb-6 last:border-b-0">
+                  <div class="flex items-start justify-between mb-3">
+                    <div>
+                      <div class="flex items-center space-x-2">
+                        <span class="font-medium text-boho-dark">{review.author}</span>
+                        {review.verified && (
+                          <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
+                            Verifiziert
+                          </span>
+                        )}
+                      </div>
+                      <div class="flex items-center space-x-2 mt-1">
+                        <div class="flex items-center">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <i class={`fas fa-star text-sm ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}></i>
+                          ))}
+                        </div>
+                        <span class="text-sm text-boho-dark/70">{review.date}</span>
+                      </div>
+                    </div>
+                    <button class="text-boho-dark/60 hover:text-boho-pink transition-colors">
+                      <i class="fas fa-thumbs-up"></i>
+                      <span class="ml-1 text-sm">{review.helpful}</span>
+                    </button>
+                  </div>
+                  <h4 class="font-medium text-boho-dark mb-2">{review.title}</h4>
+                  <p class="text-boho-dark/80">{review.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Shipping Tab -->
+          <div class="product-tab-content">
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-semibold text-boho-dark mb-2">Versandkosten</h3>
+                <p class="text-boho-dark/80">Kostenloser Versand ab 39,90 €. Standardversand 4,90 €.</p>
+              </div>
+              <div>
+                <h3 class="font-semibold text-boho-dark mb-2">Lieferzeit</h3>
+                <p class="text-boho-dark/80">1-3 Werktage innerhalb Deutschlands.</p>
+              </div>
+              <div>
+                <h3 class="font-semibold text-boho-dark mb-2">Rückgabe</h3>
+                <p class="text-boho-dark/80">30 Tage Rückgaberecht. Kostenlose Rücksendung.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Size Guide Tab -->
+          <div class="product-tab-content">
+            <div class="space-y-4">
+              <h3 class="font-semibold text-boho-dark mb-4">Größenberatung</h3>
+              <div class="bg-boho-beige rounded-lg p-4">
+                <p class="text-boho-dark/80 mb-4">
+                  Um die richtige Größe zu finden, messen Sie Ihr Handgelenk mit einem flexiblen Maßband.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span class="font-medium text-boho-dark">Größe S:</span>
+                    <span class="text-boho-dark/80 ml-2">14-16 cm</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-boho-dark">Größe M:</span>
+                    <span class="text-boho-dark/80 ml-2">16-18 cm</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-boho-dark">Größe L:</span>
+                    <span class="text-boho-dark/80 ml-2">18-20 cm</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Products -->
+  <section class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-serif font-bold text-boho-dark mb-8">Ähnliche Produkte</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {currentProduct.relatedProducts.map((product) => (
+          <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 overflow-hidden hover:shadow-md transition-shadow">
+            <a href={`/products/${product.slug}`}>
+              <img 
+                src={product.image} 
+                alt={product.name}
+                class="w-full h-48 object-cover"
+              />
+            </a>
+            <div class="p-4">
+              <h3 class="font-semibold text-boho-dark mb-2">
+                <a href={`/products/${product.slug}`} class="hover:text-boho-pink transition-colors">
+                  {product.name}
+                </a>
+              </h3>
+              <div class="flex items-center justify-between">
+                <span class="text-lg font-bold text-boho-dark">{product.price.toFixed(2)} €</span>
+                <div class="flex items-center">
+                  <div class="flex items-center">
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <i class={`fas fa-star text-sm ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}></i>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .product-tab {
+    transition: all 0.3s ease;
+  }
+
+  .product-tab.active {
+    color: var(--boho-pink);
+    border-bottom-color: var(--boho-pink);
+  }
+
+  .product-tab-content {
+    display: none;
+  }
+
+  .product-tab-content.active {
+    display: block;
+  }
+
+  .quantity-btn {
+    transition: all 0.2s ease;
+  }
+
+  .quantity-btn:hover {
+    background-color: var(--boho-pink);
+    color: white;
+    border-color: var(--boho-pink);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .product-images {
+      margin-bottom: 2rem;
+    }
+    
+    .product-tab {
+      padding: 0.75rem 0;
+      font-size: 0.875rem;
+    }
+  }
+</style>
+
+<script>
+  // Product page functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Tab functionality
+    const tabs = document.querySelectorAll('.product-tab');
+    const tabContents = document.querySelectorAll('.product-tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        // Remove active class from all tabs and contents
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+
+        // Add active class to clicked tab
+        this.classList.add('active');
+
+        // Show corresponding content
+        const tabIndex = Array.from(tabs).indexOf(this);
+        if (tabContents[tabIndex]) {
+          tabContents[tabIndex].classList.add('active');
+        }
+      });
+    });
+
+    // Quantity controls
+    const quantityInput = document.querySelector('input[type="number"]');
+    const quantityBtns = document.querySelectorAll('.quantity-btn');
+
+    quantityBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const isIncrease = this.querySelector('.fa-plus');
+        const currentValue = parseInt(quantityInput.value);
+        
+        if (isIncrease && currentValue < 10) {
+          quantityInput.value = currentValue + 1;
+        } else if (!isIncrease && currentValue > 1) {
+          quantityInput.value = currentValue - 1;
+        }
+      });
+    });
+
+    // Add to cart functionality
+    const addToCartBtn = document.querySelector('button[class*="bg-boho-pink"]');
+    if (addToCartBtn) {
+      addToCartBtn.addEventListener('click', function() {
+        // In a real app, this would add the product to cart
+        console.log('Product added to cart');
+        
+        // Show success message
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg z-50';
+        notification.textContent = 'Produkt zum Warenkorb hinzugefügt!';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      });
+    }
+
+    // Wishlist functionality
+    const wishlistBtn = document.querySelector('button[class*="border-boho-accent"]');
+    if (wishlistBtn) {
+      wishlistBtn.addEventListener('click', function() {
+        // In a real app, this would add to wishlist
+        console.log('Product added to wishlist');
+        
+        // Show success message
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-boho-pink text-white px-4 py-2 rounded-lg z-50';
+        notification.textContent = 'Produkt zur Wunschliste hinzugefügt!';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      });
+    }
+
+    // Share functionality
+    const shareBtn = document.querySelector('button[class*="border-boho-accent"]:last-child');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function() {
+        if (navigator.share) {
+          navigator.share({
+            title: document.title,
+            text: 'Schau dir dieses Produkt an:',
+            url: window.location.href
+          });
+        } else {
+          // Fallback: copy to clipboard
+          navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Link wurde in die Zwischenablage kopiert!');
+          });
+        }
+      });
+    }
+
+    // Variant selection
+    const variantBtns = document.querySelectorAll('button[class*="border-boho-accent"]');
+    variantBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Remove active class from all variant buttons
+        variantBtns.forEach(b => b.classList.remove('bg-boho-pink', 'text-white'));
+        
+        // Add active class to clicked button
+        this.classList.add('bg-boho-pink', 'text-white');
+      });
+    });
+
+    // Color selection
+    const colorBtns = document.querySelectorAll('button[class*="rounded-full"]');
+    colorBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Remove active class from all color buttons
+        colorBtns.forEach(b => b.classList.remove('border-boho-pink'));
+        
+        // Add active class to clicked button
+        this.classList.add('border-boho-pink');
+      });
+    });
+  });
+</script>

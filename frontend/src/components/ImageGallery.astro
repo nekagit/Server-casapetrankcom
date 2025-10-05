@@ -1,0 +1,332 @@
+---
+// Image Gallery Component
+export interface Props {
+  images: Array<{
+    id: string;
+    url: string;
+    alt: string;
+    caption?: string;
+    isMain?: boolean;
+  }>;
+  productName: string;
+  showThumbnails?: boolean;
+  showFullscreen?: boolean;
+  maxHeight?: string;
+  className?: string;
+}
+
+const {
+  images,
+  productName,
+  showThumbnails = true,
+  showFullscreen = true,
+  maxHeight = '500px',
+  className = ''
+} = Astro.props;
+
+const mainImage = images.find(img => img.isMain) || images[0];
+const otherImages = images.filter(img => img.id !== mainImage?.id);
+---
+
+<div class={`image-gallery ${className}`}>
+  <!-- Main Image -->
+  <div class="main-image-container mb-4">
+    <div class="relative overflow-hidden rounded-lg bg-boho-light" style={`max-height: ${maxHeight}`}>
+      {mainImage ? (
+        <img
+          src={mainImage.url}
+          alt={mainImage.alt || productName}
+          class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          loading="lazy"
+          data-gallery-image
+          data-image-id={mainImage.id}
+        />
+      ) : (
+        <div class="w-full h-64 bg-boho-accent/20 flex items-center justify-center">
+          <div class="text-center text-boho-dark/50">
+            <i class="fas fa-image text-4xl mb-2"></i>
+            <p>Kein Bild verfügbar</p>
+          </div>
+        </div>
+      )}
+      
+      <!-- Image Overlay -->
+      {showFullscreen && mainImage && (
+        <button 
+          class="absolute top-4 right-4 bg-white/90 hover:bg-white text-boho-dark p-2 rounded-full transition-colors"
+          onclick="openFullscreen()"
+          aria-label="Bild in Vollbild anzeigen"
+        >
+          <i class="fas fa-expand"></i>
+        </button>
+      )}
+      
+      <!-- Image Counter -->
+      {images.length > 1 && (
+        <div class="absolute bottom-4 left-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+          1 / {images.length}
+        </div>
+      )}
+    </div>
+    
+    <!-- Image Caption -->
+    {mainImage?.caption && (
+      <p class="text-sm text-boho-dark/70 mt-2 text-center">
+        {mainImage.caption}
+      </p>
+    )}
+  </div>
+
+  <!-- Thumbnail Gallery -->
+  {showThumbnails && images.length > 1 && (
+    <div class="thumbnail-gallery">
+      <div class="flex space-x-2 overflow-x-auto pb-2">
+        {images.map((image, index) => (
+          <button
+            class={`thumbnail-item flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
+              image.id === mainImage?.id 
+                ? 'border-boho-pink' 
+                : 'border-boho-accent hover:border-boho-pink'
+            }`}
+            onclick={`changeMainImage('${image.id}', ${index})`}
+            aria-label={`Bild ${index + 1} anzeigen`}
+          >
+            <img
+              src={image.url}
+              alt={image.alt || `${productName} - Bild ${index + 1}`}
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+<!-- Fullscreen Modal -->
+{showFullscreen && (
+  <div id="fullscreen-modal" class="fixed inset-0 bg-black/90 z-50 hidden">
+    <div class="flex items-center justify-center h-full p-4">
+      <div class="relative max-w-4xl max-h-full">
+        <!-- Close Button -->
+        <button 
+          class="absolute top-4 right-4 bg-white/90 hover:bg-white text-boho-dark p-2 rounded-full transition-colors z-10"
+          onclick="closeFullscreen()"
+          aria-label="Vollbild schließen"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        
+        <!-- Fullscreen Image -->
+        <img
+          id="fullscreen-image"
+          src=""
+          alt=""
+          class="max-w-full max-h-full object-contain rounded-lg"
+        />
+        
+        <!-- Navigation Arrows -->
+        {images.length > 1 && (
+          <>
+            <button 
+              class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-boho-dark p-3 rounded-full transition-colors"
+              onclick="previousImage()"
+              aria-label="Vorheriges Bild"
+            >
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button 
+              class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-boho-dark p-3 rounded-full transition-colors"
+              onclick="nextImage()"
+              aria-label="Nächstes Bild"
+            >
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </>
+        )}
+        
+        <!-- Image Counter -->
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+          <span id="fullscreen-counter">1 / {images.length}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .image-gallery {
+    position: relative;
+  }
+  
+  .thumbnail-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .thumbnail-item:hover {
+    transform: scale(1.05);
+  }
+  
+  .thumbnail-item.active {
+    border-color: var(--boho-pink);
+    box-shadow: 0 0 0 2px var(--boho-pink);
+  }
+  
+  #fullscreen-modal {
+    backdrop-filter: blur(4px);
+  }
+  
+  #fullscreen-modal img {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+</style>
+
+<script>
+  // Gallery state
+  let currentImageIndex = 0;
+  const images = {JSON.stringify(images)};
+  
+  // Change main image
+  function changeMainImage(imageId, index) {
+    const mainImage = document.querySelector('[data-gallery-image]');
+    const thumbnails = document.querySelectorAll('.thumbnail-item');
+    
+    if (mainImage) {
+      const image = images.find(img => img.id === imageId);
+      if (image) {
+        mainImage.src = image.url;
+        mainImage.alt = image.alt;
+        mainImage.setAttribute('data-image-id', imageId);
+        
+        // Update thumbnail selection
+        thumbnails.forEach((thumb, i) => {
+          thumb.classList.toggle('active', i === index);
+        });
+        
+        currentImageIndex = index;
+      }
+    }
+  }
+  
+  // Open fullscreen
+  function openFullscreen() {
+    const modal = document.getElementById('fullscreen-modal');
+    const fullscreenImage = document.getElementById('fullscreen-image');
+    const counter = document.getElementById('fullscreen-counter');
+    
+    if (modal && fullscreenImage) {
+      const mainImage = document.querySelector('[data-gallery-image]');
+      if (mainImage) {
+        fullscreenImage.src = mainImage.src;
+        fullscreenImage.alt = mainImage.alt;
+        
+        if (counter) {
+          counter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+        }
+        
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  }
+  
+  // Close fullscreen
+  function closeFullscreen() {
+    const modal = document.getElementById('fullscreen-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  }
+  
+  // Navigate images in fullscreen
+  function previousImage() {
+    if (currentImageIndex > 0) {
+      currentImageIndex--;
+      updateFullscreenImage();
+    }
+  }
+  
+  function nextImage() {
+    if (currentImageIndex < images.length - 1) {
+      currentImageIndex++;
+      updateFullscreenImage();
+    }
+  }
+  
+  function updateFullscreenImage() {
+    const fullscreenImage = document.getElementById('fullscreen-image');
+    const counter = document.getElementById('fullscreen-counter');
+    
+    if (fullscreenImage && images[currentImageIndex]) {
+      const image = images[currentImageIndex];
+      fullscreenImage.src = image.url;
+      fullscreenImage.alt = image.alt;
+      
+      if (counter) {
+        counter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+      }
+      
+      // Update main image and thumbnails
+      changeMainImage(image.id, currentImageIndex);
+    }
+  }
+  
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('fullscreen-modal');
+    if (modal && !modal.classList.contains('hidden')) {
+      switch (e.key) {
+        case 'Escape':
+          closeFullscreen();
+          break;
+        case 'ArrowLeft':
+          previousImage();
+          break;
+        case 'ArrowRight':
+          nextImage();
+          break;
+      }
+    }
+  });
+  
+  // Touch/swipe support for mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+  
+  document.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  });
+  
+  function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) > swipeThreshold) {
+      if (diff > 0) {
+        nextImage(); // Swipe left - next image
+      } else {
+        previousImage(); // Swipe right - previous image
+      }
+    }
+  }
+  
+  // Make functions globally available
+  window.changeMainImage = changeMainImage;
+  window.openFullscreen = openFullscreen;
+  window.closeFullscreen = closeFullscreen;
+  window.previousImage = previousImage;
+  window.nextImage = nextImage;
+</script>

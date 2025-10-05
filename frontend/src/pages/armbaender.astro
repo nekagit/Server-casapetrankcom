@@ -1,0 +1,158 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock product data - in real app this would come from API
+const products = [
+  {
+    id: 1,
+    name: "Tibet Armband",
+    price: 24.90,
+    originalPrice: 29.90,
+    image: "/images/products/tibet-armband.jpg",
+    category: "Einfacharmbänder",
+    description: "Handgefertigtes Armband aus natürlichen Materialien"
+  },
+  {
+    id: 2,
+    name: "Boho Wickelarmband",
+    price: 19.90,
+    image: "/images/products/product_1.jpg",
+    category: "Wickelarmbänder",
+    description: "Stylisches Wickelarmband im Boho-Stil"
+  },
+  {
+    id: 3,
+    name: "Naturstein Armband",
+    price: 32.90,
+    image: "/images/products/real_product_1.jpg",
+    category: "Einfacharmbänder",
+    description: "Elegantes Armband mit echten Natursteinen"
+  }
+];
+---
+
+<Layout 
+  title="Armbänder - Casa Petrada"
+  description="Entdecke unsere handgefertigten Armbänder. Einfacharmbänder und Wickelarmbänder im Boho-Stil."
+>
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-boho-beige to-boho-accent py-20 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-boho-dark mb-6">
+          Armbänder
+        </h1>
+        <p class="text-lg md:text-xl text-boho-dark/80 max-w-3xl mx-auto">
+          Handgefertigte Armbänder im Boho-Stil - Einfacharmbänder und Wickelarmbänder
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Section -->
+  <section class="py-8 bg-white border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap gap-4 justify-center">
+        <button class="px-6 py-2 bg-boho-pink text-white rounded-lg font-medium">
+          Alle Armbänder
+        </button>
+        <button class="px-6 py-2 bg-boho-accent text-boho-dark rounded-lg font-medium hover:bg-boho-pink hover:text-white transition-colors">
+          Einfacharmbänder
+        </button>
+        <button class="px-6 py-2 bg-boho-accent text-boho-dark rounded-lg font-medium hover:bg-boho-pink hover:text-white transition-colors">
+          Wickelarmbänder
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Grid -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {products.map((product) => (
+          <div class="card group">
+            <div class="relative overflow-hidden">
+              <img 
+                src={product.image} 
+                alt={product.name}
+                class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              {product.originalPrice && (
+                <div class="absolute top-4 left-4 bg-boho-pink text-white px-2 py-1 rounded text-sm font-semibold">
+                  Sale
+                </div>
+              )}
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <a href={`/product/${product.name.toLowerCase().replace(/\s+/g, '-')}`} class="opacity-0 group-hover:opacity-100 bg-white text-boho-pink px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-boho-pink hover:text-white">
+                  <i class="fas fa-eye mr-2"></i>
+                  Ansehen
+                </a>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="mb-2">
+                <span class="text-sm text-boho-pink font-medium">{product.category}</span>
+              </div>
+              <h3 class="text-xl font-semibold text-boho-dark mb-2">
+                <a href={`/product/${product.name.toLowerCase().replace(/\s+/g, '-')}`} class="hover:text-boho-pink transition-colors">
+                  {product.name}
+                </a>
+              </h3>
+              <p class="text-boho-dark/70 text-sm mb-4">{product.description}</p>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-2xl font-bold text-boho-dark">{product.price.toFixed(2)} €</span>
+                  {product.originalPrice && (
+                    <span class="text-lg text-boho-dark/50 line-through">{product.originalPrice.toFixed(2)} €</span>
+                  )}
+                </div>
+                <button class="bg-boho-pink text-white px-4 py-2 rounded-lg font-medium hover:bg-boho-brown transition-colors duration-300">
+                  <i class="fas fa-shopping-bag mr-1"></i>
+                  In den Warenkorb
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <!-- Load More Button -->
+      <div class="text-center mt-12">
+        <button class="btn-secondary">
+          <i class="fas fa-plus mr-2"></i>
+          Mehr Armbänder laden
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Info -->
+  <section class="py-20 bg-boho-light">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-serif font-bold text-boho-dark mb-6">
+        Handgefertigte Armbänder
+      </h2>
+      <p class="text-lg text-boho-dark/70 mb-8">
+        Unsere Armbänder werden mit Liebe und Sorgfalt von Hand gefertigt. 
+        Jedes Stück ist ein Unikat und wird aus hochwertigen, natürlichen Materialien hergestellt.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+        <div>
+          <h3 class="text-xl font-semibold text-boho-dark mb-3">Einfacharmbänder</h3>
+          <p class="text-boho-dark/70">
+            Klassische Armbänder mit natürlichen Materialien wie Holz, Stein und Metall. 
+            Perfekt für den täglichen Gebrauch und alle Anlässe.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-boho-dark mb-3">Wickelarmbänder</h3>
+          <p class="text-boho-dark/70">
+            Mehrfach um das Handgelenk gewickelte Armbänder für einen auffälligen Boho-Look. 
+            Ideal für besondere Anlässe und als Statement-Piece.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

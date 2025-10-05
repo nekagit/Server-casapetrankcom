@@ -1,0 +1,230 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock blog post data - in real app this would come from API
+const blogPost = {
+  id: 1,
+  title: "Boho Styling Trends 2024",
+  slug: "boho-styling-trends-2024",
+  content: `
+    <p>Das Jahr 2024 bringt spannende neue Trends im Boho-Styling mit sich. Wir zeigen dir, wie du diese Trends mit unseren handgefertigten Schmuckstücken perfekt umsetzen kannst.</p>
+    
+    <h2>Die wichtigsten Boho-Trends 2024</h2>
+    
+    <h3>1. Natürliche Materialien</h3>
+    <p>In diesem Jahr liegt der Fokus auf natürlichen, nachhaltigen Materialien. Unsere handgefertigten Armbänder aus Holz und Natursteinen passen perfekt zu diesem Trend.</p>
+    
+    <h3>2. Layering ist zurück</h3>
+    <p>Das Stapeln von Schmuckstücken ist wieder im Trend. Kombiniere verschiedene Armbänder und Ketten für einen authentischen Boho-Look.</p>
+    
+    <h3>3. Warme Erdtöne</h3>
+    <p>Die Farbpalette 2024 dreht sich um warme Erdtöne - perfekt für unsere Schmuckstücke in Beige, Braun und Gold.</p>
+    
+    <h2>Styling-Tipps für den perfekten Boho-Look</h2>
+    
+    <p>Hier sind unsere besten Tipps für einen authentischen Boho-Style:</p>
+    
+    <ul>
+      <li>Kombiniere verschiedene Texturen und Materialien</li>
+      <li>Lass deiner Kreativität freien Lauf beim Layering</li>
+      <li>Wähle Schmuckstücke, die zu deiner Persönlichkeit passen</li>
+      <li>Vergiss nicht die Details - auch kleine Accessoires machen den Unterschied</li>
+    </ul>
+    
+    <p>Mit unseren handgefertigten Schmuckstücken bist du perfekt für die Boho-Trends 2024 gerüstet. Jedes Stück ist ein Unikat und wird mit Liebe und Sorgfalt gefertigt.</p>
+  `,
+  excerpt: "Entdecke die neuesten Boho-Trends für 2024 und wie du sie mit unseren handgefertigten Schmuckstücken kombinierst.",
+  image: "/images/blog/boho-trends-2024.jpg",
+  author: "Casa Petrada Team",
+  date: "2024-01-15",
+  readTime: "5 Min",
+  category: "Styling",
+  tags: ["Boho", "Trends", "Styling", "2024"]
+};
+
+const { slug } = Astro.params;
+---
+
+<Layout 
+  title={`${blogPost.title} - Casa Petrada Blog`}
+  description={blogPost.excerpt}
+  image={blogPost.image}
+>
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/" class="text-boho-pink hover:text-boho-brown">Home</a>
+        <i class="fas fa-chevron-right text-boho-dark/50"></i>
+        <a href="/blog" class="text-boho-pink hover:text-boho-brown">Blog</a>
+        <i class="fas fa-chevron-right text-boho-dark/50"></i>
+        <span class="text-boho-dark">{blogPost.title}</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Article Header -->
+  <section class="py-12 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <div class="inline-block bg-boho-pink text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
+          {blogPost.category}
+        </div>
+        
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-boho-dark mb-6">
+          {blogPost.title}
+        </h1>
+        
+        <div class="flex items-center justify-center text-boho-dark/60 mb-6">
+          <span>{blogPost.author}</span>
+          <span class="mx-2">•</span>
+          <span>{new Date(blogPost.date).toLocaleDateString('de-DE')}</span>
+          <span class="mx-2">•</span>
+          <span>{blogPost.readTime} Lesezeit</span>
+        </div>
+      </div>
+      
+      <!-- Featured Image -->
+      <div class="relative mb-12">
+        <img 
+          src={blogPost.image} 
+          alt={blogPost.title}
+          class="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-lg"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Article Content -->
+  <section class="py-12 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="prose prose-lg max-w-none text-boho-dark/80">
+        <div set:html={blogPost.content}></div>
+      </div>
+      
+      <!-- Tags -->
+      <div class="mt-12 pt-8 border-t border-boho-accent">
+        <h3 class="text-lg font-semibold text-boho-dark mb-4">Tags</h3>
+        <div class="flex flex-wrap gap-2">
+          {blogPost.tags.map((tag) => (
+            <span class="bg-boho-accent text-boho-dark px-3 py-1 rounded-full text-sm">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Posts -->
+  <section class="py-20 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-serif font-bold text-boho-dark text-center mb-12">
+        Ähnliche Artikel
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <article class="card group">
+          <div class="relative overflow-hidden">
+            <img 
+              src="/images/blog/handgefertigt-schmuck.jpg" 
+              alt="Handgefertigter Schmuck"
+              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+          <div class="p-6">
+            <div class="text-sm text-boho-dark/60 mb-3">
+              <span>Handwerk</span>
+              <span class="mx-2">•</span>
+              <span>7 Min Lesezeit</span>
+            </div>
+            <h3 class="text-xl font-semibold text-boho-dark mb-3 group-hover:text-boho-pink transition-colors">
+              <a href="/blog/handgefertigter-schmuck-kunst-handwerk">Handgefertigter Schmuck - Die Kunst des Handwerks</a>
+            </h3>
+            <p class="text-boho-dark/70 mb-4">Erfahre mehr über die traditionelle Kunst des Schmuckhandwerks...</p>
+            <a href="/blog/handgefertigter-schmuck-kunst-handwerk" class="inline-flex items-center text-boho-pink hover:text-boho-brown font-medium transition-colors">
+              Weiterlesen
+              <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </article>
+        
+        <article class="card group">
+          <div class="relative overflow-hidden">
+            <img 
+              src="/images/blog/schmuck-pflege.jpg" 
+              alt="Schmuck Pflege"
+              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+          <div class="p-6">
+            <div class="text-sm text-boho-dark/60 mb-3">
+              <span>Pflege</span>
+              <span class="mx-2">•</span>
+              <span>4 Min Lesezeit</span>
+            </div>
+            <h3 class="text-xl font-semibold text-boho-dark mb-3 group-hover:text-boho-pink transition-colors">
+              <a href="/blog/schmuck-pflege-tipps">Schmuck richtig pflegen - Tipps für langanhaltende Schönheit</a>
+            </h3>
+            <p class="text-boho-dark/70 mb-4">Wie du deine handgefertigten Schmuckstücke richtig pflegst...</p>
+            <a href="/blog/schmuck-pflege-tipps" class="inline-flex items-center text-boho-pink hover:text-boho-brown font-medium transition-colors">
+              Weiterlesen
+              <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </article>
+        
+        <article class="card group">
+          <div class="relative overflow-hidden">
+            <img 
+              src="/images/blog/boho-styling.jpg" 
+              alt="Boho Styling"
+              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+          <div class="p-6">
+            <div class="text-sm text-boho-dark/60 mb-3">
+              <span>Styling</span>
+              <span class="mx-2">•</span>
+              <span>6 Min Lesezeit</span>
+            </div>
+            <h3 class="text-xl font-semibold text-boho-dark mb-3 group-hover:text-boho-pink transition-colors">
+              <a href="/blog/boho-styling-jeden-anlass">Boho Styling für jeden Anlass</a>
+            </h3>
+            <p class="text-boho-dark/70 mb-4">Von casual bis elegant - so kombinierst du Boho-Schmuck...</p>
+            <a href="/blog/boho-styling-jeden-anlass" class="inline-flex items-center text-boho-pink hover:text-boho-brown font-medium transition-colors">
+              Weiterlesen
+              <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter CTA -->
+  <section class="py-20 bg-boho-pink">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-white mb-4">
+        Gefällt dir dieser Artikel?
+      </h2>
+      <p class="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+        Erhalte weitere Tipps und Inspirationen direkt in dein Postfach
+      </p>
+      <form class="max-w-md mx-auto flex gap-4">
+        <input 
+          type="email" 
+          placeholder="Deine E-Mail-Adresse"
+          class="flex-1 px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-white/20"
+          required
+        />
+        <button 
+          type="submit"
+          class="bg-white text-boho-pink px-6 py-3 rounded-lg font-semibold hover:bg-boho-light transition-colors duration-300"
+        >
+          Anmelden
+        </button>
+      </form>
+    </div>
+  </section>
+</Layout>

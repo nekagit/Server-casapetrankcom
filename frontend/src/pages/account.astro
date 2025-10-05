@@ -1,0 +1,285 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock user data - in real app this would come from API
+const user = {
+  id: 1,
+  firstName: "Sarah",
+  lastName: "Müller",
+  email: "sarah.mueller@email.de",
+  phone: "+49 123 456789",
+  birthday: "1990-05-15",
+  memberSince: "2024-01-15",
+  totalOrders: 5,
+  totalSpent: 247.50
+};
+
+const recentOrders = [
+  {
+    id: "CP-2024-001",
+    date: "2024-01-20",
+    status: "Versendet",
+    total: 89.90,
+    items: [
+      { name: "Tibet Armband", quantity: 2, price: 24.90 },
+      { name: "Boho Kette", quantity: 1, price: 39.90 }
+    ]
+  },
+  {
+    id: "CP-2024-002", 
+    date: "2024-01-15",
+    status: "Geliefert",
+    total: 67.80,
+    items: [
+      { name: "Naturstein Armband", quantity: 1, price: 32.90 },
+      { name: "Wickelarmband", quantity: 1, price: 19.90 }
+    ]
+  }
+];
+
+const wishlist = [
+  {
+    id: 1,
+    name: "Boho Wickelarmband",
+    price: 19.90,
+    image: "/images/products/product_1.jpg",
+    slug: "boho-wickelarmband"
+  },
+  {
+    id: 2,
+    name: "Naturstein Kette",
+    price: 45.90,
+    image: "/images/products/real_product_1.jpg",
+    slug: "naturstein-kette"
+  }
+];
+---
+
+<Layout 
+  title="Mein Konto - Casa Petrada"
+  description="Verwalte dein Casa Petrada Konto und deine Bestellungen."
+>
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/" class="text-boho-pink hover:text-boho-brown">Home</a>
+        <i class="fas fa-chevron-right text-boho-dark/50"></i>
+        <span class="text-boho-dark">Mein Konto</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Account Header -->
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-2">
+            Hallo, {user.firstName}!
+          </h1>
+          <p class="text-boho-dark/70">
+            Willkommen zurück in deinem Casa Petrada Konto
+          </p>
+        </div>
+        <a href="/auth/login" class="text-boho-pink hover:text-boho-brown">
+          <i class="fas fa-sign-out-alt mr-2"></i>
+          Abmelden
+        </a>
+      </div>
+
+      <!-- Account Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="card p-6 text-center">
+          <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-shopping-bag text-xl text-boho-pink"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-boho-dark mb-1">{user.totalOrders}</h3>
+          <p class="text-boho-dark/70">Bestellungen</p>
+        </div>
+        
+        <div class="card p-6 text-center">
+          <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-euro-sign text-xl text-boho-pink"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-boho-dark mb-1">{user.totalSpent.toFixed(2)} €</h3>
+          <p class="text-boho-dark/70">Ausgegeben</p>
+        </div>
+        
+        <div class="card p-6 text-center">
+          <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-calendar text-xl text-boho-pink"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-boho-dark mb-1">
+            {new Date(user.memberSince).toLocaleDateString('de-DE', { month: 'short', year: 'numeric' })}
+          </h3>
+          <p class="text-boho-dark/70">Mitglied seit</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Account Content -->
+  <section class="py-12 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Navigation -->
+        <div class="lg:col-span-1">
+          <div class="card p-6">
+            <h2 class="text-xl font-semibold text-boho-dark mb-6">Mein Konto</h2>
+            <nav class="space-y-2">
+              <a href="#overview" class="flex items-center p-3 text-boho-dark hover:bg-boho-pink/10 rounded-lg transition-colors">
+                <i class="fas fa-tachometer-alt mr-3"></i>
+                Übersicht
+              </a>
+              <a href="#orders" class="flex items-center p-3 text-boho-dark hover:bg-boho-pink/10 rounded-lg transition-colors">
+                <i class="fas fa-shopping-bag mr-3"></i>
+                Bestellungen
+              </a>
+              <a href="#wishlist" class="flex items-center p-3 text-boho-dark hover:bg-boho-pink/10 rounded-lg transition-colors">
+                <i class="fas fa-heart mr-3"></i>
+                Merkliste
+              </a>
+              <a href="#addresses" class="flex items-center p-3 text-boho-dark hover:bg-boho-pink/10 rounded-lg transition-colors">
+                <i class="fas fa-map-marker-alt mr-3"></i>
+                Adressen
+              </a>
+              <a href="#profile" class="flex items-center p-3 text-boho-dark hover:bg-boho-pink/10 rounded-lg transition-colors">
+                <i class="fas fa-user mr-3"></i>
+                Profil
+              </a>
+              <a href="#newsletter" class="flex items-center p-3 text-boho-dark hover:bg-boho-pink/10 rounded-lg transition-colors">
+                <i class="fas fa-envelope mr-3"></i>
+                Newsletter
+              </a>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- Recent Orders -->
+          <div class="card p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold text-boho-dark">Letzte Bestellungen</h2>
+              <a href="#orders" class="text-boho-pink hover:text-boho-brown text-sm font-medium">
+                Alle anzeigen
+              </a>
+            </div>
+            
+            <div class="space-y-4">
+              {recentOrders.map((order) => (
+                <div class="border border-boho-accent rounded-lg p-4">
+                  <div class="flex items-center justify-between mb-3">
+                    <div>
+                      <h3 class="font-semibold text-boho-dark">Bestellung #{order.id}</h3>
+                      <p class="text-sm text-boho-dark/60">{new Date(order.date).toLocaleDateString('de-DE')}</p>
+                    </div>
+                    <div class="text-right">
+                      <p class="font-semibold text-boho-dark">{order.total.toFixed(2)} €</p>
+                      <span class={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                        order.status === 'Geliefert' ? 'bg-green-100 text-green-800' :
+                        order.status === 'Versendet' ? 'bg-blue-100 text-blue-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {order.status}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="text-sm text-boho-dark/70">
+                    {order.items.map((item, index) => (
+                      <span>
+                        {item.quantity}x {item.name}
+                        {index < order.items.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Wishlist -->
+          <div class="card p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold text-boho-dark">Merkliste</h2>
+              <a href="#wishlist" class="text-boho-pink hover:text-boho-brown text-sm font-medium">
+                Alle anzeigen
+              </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {wishlist.map((item) => (
+                <div class="flex items-center space-x-4 p-4 border border-boho-accent rounded-lg">
+                  <img 
+                    src={item.image} 
+                    alt={item.name}
+                    class="w-16 h-16 object-cover rounded"
+                  />
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-boho-dark mb-1">{item.name}</h3>
+                    <p class="text-boho-pink font-semibold">{item.price.toFixed(2)} €</p>
+                  </div>
+                  <div class="flex space-x-2">
+                    <button class="text-boho-pink hover:text-boho-brown">
+                      <i class="fas fa-shopping-bag"></i>
+                    </button>
+                    <button class="text-red-500 hover:text-red-700">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card p-6">
+            <h2 class="text-xl font-semibold text-boho-dark mb-6">Schnellzugriff</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <a href="/armbaender" class="flex items-center p-4 border border-boho-accent rounded-lg hover:bg-boho-pink/10 transition-colors">
+                <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center mr-4">
+                  <i class="fas fa-shopping-bag text-boho-pink"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-boho-dark">Weiter einkaufen</h3>
+                  <p class="text-sm text-boho-dark/70">Entdecke neue Stücke</p>
+                </div>
+              </a>
+              
+              <a href="/blog" class="flex items-center p-4 border border-boho-accent rounded-lg hover:bg-boho-pink/10 transition-colors">
+                <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center mr-4">
+                  <i class="fas fa-blog text-boho-pink"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-boho-dark">Blog lesen</h3>
+                  <p class="text-sm text-boho-dark/70">Tipps und Trends</p>
+                </div>
+              </a>
+              
+              <a href="/contact" class="flex items-center p-4 border border-boho-accent rounded-lg hover:bg-boho-pink/10 transition-colors">
+                <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center mr-4">
+                  <i class="fas fa-envelope text-boho-pink"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-boho-dark">Kontakt</h3>
+                  <p class="text-sm text-boho-dark/70">Hilfe und Support</p>
+                </div>
+              </a>
+              
+              <a href="/about" class="flex items-center p-4 border border-boho-accent rounded-lg hover:bg-boho-pink/10 transition-colors">
+                <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center mr-4">
+                  <i class="fas fa-heart text-boho-pink"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-boho-dark">Über uns</h3>
+                  <p class="text-sm text-boho-dark/70">Unsere Geschichte</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

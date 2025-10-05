@@ -1,0 +1,615 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// API Documentation Data
+const apiEndpoints = [
+  {
+    category: "Authentication",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/auth/register",
+        description: "Register a new user",
+        parameters: [
+          { name: "email", type: "string", required: true, description: "User email address" },
+          { name: "password", type: "string", required: true, description: "User password (min 8 characters)" },
+          { name: "firstName", type: "string", required: true, description: "User first name" },
+          { name: "lastName", type: "string", required: true, description: "User last name" }
+        ],
+        response: {
+          success: true,
+          data: {
+            id: 1,
+            email: "user@example.com",
+            firstName: "John",
+            lastName: "Doe",
+            createdAt: "2024-03-10T10:00:00Z"
+          }
+        }
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/login",
+        description: "Authenticate user",
+        parameters: [
+          { name: "email", type: "string", required: true, description: "User email address" },
+          { name: "password", type: "string", required: true, description: "User password" }
+        ],
+        response: {
+          success: true,
+          data: {
+            access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            token_type: "bearer",
+            expires_in: 3600
+          }
+        }
+      }
+    ]
+  },
+  {
+    category: "Products",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/products",
+        description: "Get all products with filtering and pagination",
+        parameters: [
+          { name: "skip", type: "integer", required: false, description: "Number of products to skip (default: 0)" },
+          { name: "limit", type: "integer", required: false, description: "Number of products to return (default: 20, max: 100)" },
+          { name: "category", type: "string", required: false, description: "Filter by category slug" },
+          { name: "search", type: "string", required: false, description: "Search in product name and description" },
+          { name: "featured", type: "boolean", required: false, description: "Filter featured products" },
+          { name: "bestseller", type: "boolean", required: false, description: "Filter bestseller products" }
+        ],
+        response: {
+          success: true,
+          data: {
+            products: [
+              {
+                id: 1,
+                name: "Tibet Armband",
+                slug: "tibet-armband",
+                price: 24.90,
+                description: "Handgefertigtes Tibet Armband",
+                category: "Armbänder",
+                inStock: true,
+                rating: 4.8,
+                reviewCount: 127,
+                images: ["/images/products/tibet-armband.jpg"]
+              }
+            ],
+            total: 156,
+            skip: 0,
+            limit: 20
+          }
+        }
+      },
+      {
+        method: "GET",
+        path: "/api/v1/products/{product_id}",
+        description: "Get single product by ID",
+        parameters: [
+          { name: "product_id", type: "integer", required: true, description: "Product ID" }
+        ],
+        response: {
+          success: true,
+          data: {
+            id: 1,
+            name: "Tibet Armband",
+            slug: "tibet-armband",
+            price: 24.90,
+            description: "Handgefertigtes Tibet Armband aus natürlichen Materialien",
+            category: "Armbänder",
+            subcategory: "Einfacharmbänder",
+            inStock: true,
+            stock: 15,
+            rating: 4.8,
+            reviewCount: 127,
+            images: ["/images/products/tibet-armband.jpg"],
+            variants: [
+              { id: "size-s", name: "Größe S", price: 24.90, inStock: true },
+              { id: "size-m", name: "Größe M", price: 24.90, inStock: true }
+            ],
+            colors: [
+              { id: "brown", name: "Braun", hex: "#8B4513", inStock: true },
+              { id: "gold", name: "Gold", hex: "#FFD700", inStock: true }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    category: "Orders",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/orders",
+        description: "Create a new order",
+        auth: true,
+        parameters: [
+          { name: "items", type: "array", required: true, description: "Array of order items" },
+          { name: "shipping_address", type: "object", required: true, description: "Shipping address" },
+          { name: "billing_address", type: "object", required: true, description: "Billing address" },
+          { name: "payment_method", type: "string", required: true, description: "Payment method" },
+          { name: "total_amount", type: "number", required: true, description: "Total order amount" }
+        ],
+        response: {
+          success: true,
+          data: {
+            id: 1,
+            order_number: "CP20240310001",
+            status: "pending",
+            total_amount: 89.90,
+            items: [
+              {
+                product_id: 1,
+                quantity: 2,
+                price: 24.90
+              }
+            ],
+            created_at: "2024-03-10T10:00:00Z"
+          }
+        }
+      },
+      {
+        method: "GET",
+        path: "/api/v1/orders",
+        description: "Get user orders",
+        auth: true,
+        response: {
+          success: true,
+          data: [
+            {
+              id: 1,
+              order_number: "CP20240310001",
+              status: "pending",
+              total_amount: 89.90,
+              created_at: "2024-03-10T10:00:00Z"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    category: "Reviews",
+    endpoints: [
+      {
+        method: "POST",
+        path: "/api/v1/reviews",
+        description: "Create a product review",
+        auth: true,
+        parameters: [
+          { name: "product_id", type: "integer", required: true, description: "Product ID" },
+          { name: "rating", type: "integer", required: true, description: "Rating (1-5)" },
+          { name: "title", type: "string", required: true, description: "Review title" },
+          { name: "content", type: "string", required: true, description: "Review content" }
+        ],
+        response: {
+          success: true,
+          data: {
+            id: 1,
+            product_id: 1,
+            user_id: 1,
+            rating: 5,
+            title: "Excellent product!",
+            content: "Really love this bracelet, great quality!",
+            created_at: "2024-03-10T10:00:00Z"
+          }
+        }
+      }
+    ]
+  }
+];
+
+const apiInfo = {
+  title: "Casa Petrada API Documentation",
+  version: "1.0.0",
+  baseUrl: "https://api.casa-petrada.de",
+  description: "RESTful API for Casa Petrada e-commerce platform",
+  contact: {
+    email: "api@casa-petrada.de",
+    website: "https://casa-petrada.de"
+  }
+};
+---
+
+<Layout 
+  title="API Dokumentation - Casa Petrada"
+  description="Umfassende API-Dokumentation für die Casa Petrada E-Commerce Plattform."
+>
+  <!-- API Documentation Header -->
+  <section class="py-12 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl font-serif font-bold text-boho-dark mb-4">
+          {apiInfo.title}
+        </h1>
+        <p class="text-xl text-boho-dark/70 mb-6">
+          {apiInfo.description}
+        </p>
+        <div class="flex items-center justify-center space-x-6 text-sm text-boho-dark/70">
+          <span>Version {apiInfo.version}</span>
+          <span>•</span>
+          <span>Base URL: {apiInfo.baseUrl}</span>
+          <span>•</span>
+          <a href={`mailto:${apiInfo.contact.email}`} class="text-boho-pink hover:text-boho-brown transition-colors">
+            {apiInfo.contact.email}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- API Documentation Content -->
+  <section class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- Navigation Sidebar -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6 sticky top-4">
+            <h3 class="font-semibold text-boho-dark mb-4">API Endpoints</h3>
+            <nav class="space-y-2">
+              {apiEndpoints.map((category) => (
+                <div>
+                  <h4 class="font-medium text-boho-dark mb-2">{category.category}</h4>
+                  <ul class="space-y-1 ml-4">
+                    {category.endpoints.map((endpoint, index) => (
+                      <li>
+                        <a 
+                          href={`#${endpoint.path.replace(/[^a-zA-Z0-9]/g, '-')}`}
+                          class="text-sm text-boho-pink hover:text-boho-brown transition-colors"
+                        >
+                          {endpoint.method} {endpoint.path}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </nav>
+          </div>
+        </div>
+
+        <!-- API Documentation Content -->
+        <div class="lg:col-span-3">
+          <div class="space-y-8">
+            <!-- Introduction -->
+            <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6">
+              <h2 class="text-2xl font-semibold text-boho-dark mb-4">Einführung</h2>
+              <div class="prose max-w-none text-boho-dark/80">
+                <p>
+                  Die Casa Petrada API ermöglicht es Entwicklern, auf alle Funktionen unserer E-Commerce-Plattform zuzugreifen. 
+                  Die API folgt REST-Prinzipien und verwendet JSON für die Datenübertragung.
+                </p>
+                <h3>Authentifizierung</h3>
+                <p>
+                  Die meisten API-Endpunkte erfordern eine Authentifizierung. Verwenden Sie den JWT-Token, den Sie nach der Anmeldung erhalten:
+                </p>
+                <pre class="bg-boho-beige p-4 rounded-lg text-sm"><code>Authorization: Bearer YOUR_JWT_TOKEN</code></pre>
+                <h3>Rate Limiting</h3>
+                <p>
+                  Die API hat ein Rate Limit von 1000 Anfragen pro Stunde pro API-Schlüssel. 
+                  Überschreitungen werden mit einem HTTP 429 Status Code beantwortet.
+                </p>
+              </div>
+            </div>
+
+            <!-- API Endpoints -->
+            {apiEndpoints.map((category) => (
+              <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6">
+                <h2 class="text-2xl font-semibold text-boho-dark mb-6">{category.category}</h2>
+                
+                <div class="space-y-8">
+                  {category.endpoints.map((endpoint) => (
+                    <div id={endpoint.path.replace(/[^a-zA-Z0-9]/g, '-')} class="border-b border-boho-accent/20 pb-8 last:border-b-0">
+                      <!-- Endpoint Header -->
+                      <div class="flex items-center space-x-4 mb-4">
+                        <span class={`px-3 py-1 text-sm font-medium rounded ${
+                          endpoint.method === 'GET' ? 'bg-green-100 text-green-800' :
+                          endpoint.method === 'POST' ? 'bg-blue-100 text-blue-800' :
+                          endpoint.method === 'PUT' ? 'bg-yellow-100 text-yellow-800' :
+                          endpoint.method === 'DELETE' ? 'bg-red-100 text-red-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {endpoint.method}
+                        </span>
+                        <code class="text-lg font-mono text-boho-dark">{endpoint.path}</code>
+                        {endpoint.auth && (
+                          <span class="px-2 py-1 text-xs font-medium bg-boho-pink text-white rounded">
+                            Auth Required
+                          </span>
+                        )}
+                      </div>
+
+                      <!-- Description -->
+                      <p class="text-boho-dark/80 mb-6">{endpoint.description}</p>
+
+                      <!-- Parameters -->
+                      {endpoint.parameters && endpoint.parameters.length > 0 && (
+                        <div class="mb-6">
+                          <h4 class="font-semibold text-boho-dark mb-3">Parameter</h4>
+                          <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                              <thead class="bg-boho-beige">
+                                <tr>
+                                  <th class="px-4 py-2 text-left font-semibold text-boho-dark">Name</th>
+                                  <th class="px-4 py-2 text-left font-semibold text-boho-dark">Type</th>
+                                  <th class="px-4 py-2 text-left font-semibold text-boho-dark">Required</th>
+                                  <th class="px-4 py-2 text-left font-semibold text-boho-dark">Description</th>
+                                </tr>
+                              </thead>
+                              <tbody class="divide-y divide-boho-accent/20">
+                                {endpoint.parameters.map((param) => (
+                                  <tr>
+                                    <td class="px-4 py-2 font-mono text-boho-dark">{param.name}</td>
+                                    <td class="px-4 py-2 text-boho-dark/80">{param.type}</td>
+                                    <td class="px-4 py-2">
+                                      <span class={`px-2 py-1 text-xs rounded ${
+                                        param.required 
+                                          ? 'bg-red-100 text-red-800' 
+                                          : 'bg-gray-100 text-gray-800'
+                                      }`}>
+                                        {param.required ? 'Required' : 'Optional'}
+                                      </span>
+                                    </td>
+                                    <td class="px-4 py-2 text-boho-dark/80">{param.description}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+
+                      <!-- Response -->
+                      {endpoint.response && (
+                        <div class="mb-6">
+                          <h4 class="font-semibold text-boho-dark mb-3">Response</h4>
+                          <div class="bg-boho-beige rounded-lg p-4">
+                            <pre class="text-sm overflow-x-auto"><code>{JSON.stringify(endpoint.response, null, 2)}</code></pre>
+                          </div>
+                        </div>
+                      )}
+
+                      <!-- Example Request -->
+                      <div class="mb-6">
+                        <h4 class="font-semibold text-boho-dark mb-3">Example Request</h4>
+                        <div class="bg-boho-dark rounded-lg p-4 text-boho-light">
+                          <pre class="text-sm overflow-x-auto"><code>{`curl -X ${endpoint.method} \\
+  "${apiInfo.baseUrl}${endpoint.path}" \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
+  -d '${endpoint.method === 'POST' ? JSON.stringify({example: "data"}) : ""}'`}</code></pre>
+                        </div>
+                      </div>
+
+                      <!-- Try it out button -->
+                      <div class="flex items-center space-x-4">
+                        <button 
+                          class="px-4 py-2 bg-boho-pink text-white rounded-lg hover:bg-boho-brown transition-colors"
+                          onclick={`tryEndpoint('${endpoint.method}', '${endpoint.path}')`}
+                        >
+                          <i class="fas fa-play mr-2"></i>
+                          Try it out
+                        </button>
+                        <button 
+                          class="px-4 py-2 border border-boho-accent text-boho-dark rounded-lg hover:bg-boho-beige transition-colors"
+                          onclick={`copyEndpoint('${endpoint.method}', '${endpoint.path}')`}
+                        >
+                          <i class="fas fa-copy mr-2"></i>
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <!-- Error Codes -->
+            <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6">
+              <h2 class="text-2xl font-semibold text-boho-dark mb-4">Error Codes</h2>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead class="bg-boho-beige">
+                    <tr>
+                      <th class="px-4 py-2 text-left font-semibold text-boho-dark">Status Code</th>
+                      <th class="px-4 py-2 text-left font-semibold text-boho-dark">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-boho-accent/20">
+                    <tr>
+                      <td class="px-4 py-2 font-mono text-boho-dark">200</td>
+                      <td class="px-4 py-2 text-boho-dark/80">Success</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2 font-mono text-boho-dark">201</td>
+                      <td class="px-4 py-2 text-boho-dark/80">Created</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2 font-mono text-boho-dark">400</td>
+                      <td class="px-4 py-2 text-boho-dark/80">Bad Request</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2 font-mono text-boho-dark">401</td>
+                      <td class="px-4 py-2 text-boho-dark/80">Unauthorized</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2 font-mono text-boho-dark">403</td>
+                      <td class="px-4 py-2 text-boho-dark/80">Forbidden</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2 font-mono text-boho-dark">404</td>
+                      <td class="px-4 py-2 text-boho-dark/80">Not Found</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2 font-mono text-boho-dark">429</td>
+                      <td class="px-4 py-2 text-boho-dark/80">Too Many Requests</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2 font-mono text-boho-dark">500</td>
+                      <td class="px-4 py-2 text-boho-dark/80">Internal Server Error</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- SDKs and Libraries -->
+            <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 p-6">
+              <h2 class="text-2xl font-semibold text-boho-dark mb-4">SDKs und Libraries</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border border-boho-accent/20 rounded-lg p-4">
+                  <h3 class="font-semibold text-boho-dark mb-2">JavaScript/TypeScript</h3>
+                  <p class="text-sm text-boho-dark/80 mb-3">Official JavaScript SDK for Casa Petrada API</p>
+                  <code class="text-xs bg-boho-beige px-2 py-1 rounded">npm install @casapetrada/api-client</code>
+                </div>
+                <div class="border border-boho-accent/20 rounded-lg p-4">
+                  <h3 class="font-semibold text-boho-dark mb-2">Python</h3>
+                  <p class="text-sm text-boho-dark/80 mb-3">Python client library</p>
+                  <code class="text-xs bg-boho-beige px-2 py-1 rounded">pip install casapetrada-api</code>
+                </div>
+                <div class="border border-boho-accent/20 rounded-lg p-4">
+                  <h3 class="font-semibold text-boho-dark mb-2">PHP</h3>
+                  <p class="text-sm text-boho-dark/80 mb-3">PHP SDK for Casa Petrada API</p>
+                  <code class="text-xs bg-boho-beige px-2 py-1 rounded">composer require casapetrada/api</code>
+                </div>
+                <div class="border border-boho-accent/20 rounded-lg p-4">
+                  <h3 class="font-semibold text-boho-dark mb-2">Postman Collection</h3>
+                  <p class="text-sm text-boho-dark/80 mb-3">Import our Postman collection</p>
+                  <a href="#" class="text-boho-pink hover:text-boho-brown transition-colors text-sm">
+                    Download Collection
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Code highlighting */
+  pre code {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  }
+
+  /* Table styling */
+  table {
+    border-collapse: collapse;
+  }
+
+  th, td {
+    text-align: left;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .lg\\:col-span-1 {
+      order: 2;
+    }
+    
+    .lg\\:col-span-3 {
+      order: 1;
+    }
+  }
+
+  /* Smooth scrolling for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+</style>
+
+<script>
+  // API Documentation functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Try endpoint function
+    window.tryEndpoint = function(method, path) {
+      const baseUrl = 'https://api.casa-petrada.de';
+      const fullUrl = `${baseUrl}${path}`;
+      
+      // In a real app, this would open a modal with a request builder
+      console.log(`Trying ${method} ${fullUrl}`);
+      
+      // Show notification
+      showNotification(`Testing ${method} ${path}...`, 'info');
+      
+      // Simulate API call
+      setTimeout(() => {
+        showNotification('Request sent! Check browser console for details.', 'success');
+      }, 1000);
+    };
+
+    // Copy endpoint function
+    window.copyEndpoint = function(method, path) {
+      const baseUrl = 'https://api.casa-petrada.de';
+      const fullUrl = `${baseUrl}${path}`;
+      const curlCommand = `curl -X ${method} "${fullUrl}"`;
+      
+      navigator.clipboard.writeText(curlCommand).then(() => {
+        showNotification('Curl command copied to clipboard!', 'success');
+      });
+    };
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ${
+        type === 'success' ? 'bg-green-600' : 
+        type === 'error' ? 'bg-red-600' : 
+        'bg-boho-pink'
+      }`;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Highlight current section in navigation
+    const sections = document.querySelectorAll('[id^="/api/v1/"]');
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+    function updateActiveNav() {
+      let current = '';
+      sections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 100) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('text-boho-pink');
+        link.classList.add('text-boho-dark/70');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.remove('text-boho-dark/70');
+          link.classList.add('text-boho-pink');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveNav);
+    updateActiveNav();
+  });
+</script>

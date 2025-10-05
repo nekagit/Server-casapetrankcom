@@ -1,0 +1,319 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock admin data - in real app this would come from API
+const stats = {
+  totalProducts: 156,
+  totalOrders: 89,
+  totalRevenue: 12450.50,
+  totalCustomers: 234,
+  recentOrders: [
+    {
+      id: 'CP-2024-001',
+      customer: 'Sarah Müller',
+      total: 89.90,
+      status: 'Versendet',
+      date: '2024-01-20'
+    },
+    {
+      id: 'CP-2024-002',
+      customer: 'Anna Schmidt',
+      total: 45.50,
+      status: 'Bezahlt',
+      date: '2024-01-19'
+    },
+    {
+      id: 'CP-2024-003',
+      customer: 'Lisa Weber',
+      total: 124.30,
+      status: 'Verpackt',
+      date: '2024-01-18'
+    }
+  ],
+  recentProducts: [
+    {
+      id: 1,
+      name: 'Tibet Armband',
+      price: 24.90,
+      stock: 15,
+      category: 'Armbänder',
+      status: 'Aktiv'
+    },
+    {
+      id: 2,
+      name: 'Boho Kette',
+      price: 39.90,
+      stock: 8,
+      category: 'Ketten',
+      status: 'Aktiv'
+    },
+    {
+      id: 3,
+      name: 'Wickelarmband',
+      price: 29.90,
+      stock: 0,
+      category: 'Armbänder',
+      status: 'Ausverkauft'
+    }
+  ]
+};
+---
+
+<Layout 
+  title="Admin Dashboard - Casa Petrada"
+  description="Verwaltung der Casa Petrada E-Commerce Website"
+  noindex={true}
+  nofollow={true}
+>
+  <!-- Admin Header -->
+  <section class="py-8 bg-boho-dark text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-serif font-bold">Admin Dashboard</h1>
+          <p class="text-boho-light">Verwaltung der Casa Petrada Website</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="bg-boho-pink text-white px-4 py-2 rounded-lg hover:bg-boho-brown transition-colors">
+            <i class="fas fa-plus mr-2"></i>
+            Neues Produkt
+          </button>
+          <button class="bg-boho-accent text-boho-dark px-4 py-2 rounded-lg hover:bg-boho-light transition-colors">
+            <i class="fas fa-cog mr-2"></i>
+            Einstellungen
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Overview -->
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-serif font-bold text-boho-dark mb-8">Übersicht</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Products -->
+        <div class="card p-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center">
+              <i class="fas fa-box text-boho-pink text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm text-boho-dark/70">Produkte</p>
+              <p class="text-2xl font-bold text-boho-dark">{stats.totalProducts}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Orders -->
+        <div class="card p-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-shopping-cart text-green-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm text-boho-dark/70">Bestellungen</p>
+              <p class="text-2xl font-bold text-boho-dark">{stats.totalOrders}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Revenue -->
+        <div class="card p-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-euro-sign text-blue-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm text-boho-dark/70">Umsatz</p>
+              <p class="text-2xl font-bold text-boho-dark">{stats.totalRevenue.toFixed(2)} €</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Customers -->
+        <div class="card p-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-users text-purple-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm text-boho-dark/70">Kunden</p>
+              <p class="text-2xl font-bold text-boho-dark">{stats.totalCustomers}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Orders -->
+  <section class="py-12 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-serif font-bold text-boho-dark">Letzte Bestellungen</h2>
+        <a href="/admin/orders" class="text-boho-pink hover:text-boho-brown font-medium">
+          Alle anzeigen <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+      
+      <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-boho-accent">
+            <thead class="bg-boho-accent/10">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Bestellung</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Kunde</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Betrag</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Datum</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-boho-accent">
+              {stats.recentOrders.map((order) => (
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-boho-dark">
+                    {order.id}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark/80">
+                    {order.customer}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark/80">
+                    {order.total.toFixed(2)} €
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      order.status === 'Versendet' ? 'bg-green-100 text-green-800' :
+                      order.status === 'Bezahlt' ? 'bg-blue-100 text-blue-800' :
+                      order.status === 'Verpackt' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {order.status}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark/80">
+                    {new Date(order.date).toLocaleDateString('de-DE')}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <a href={`/admin/orders/${order.id}`} class="text-boho-pink hover:text-boho-brown mr-3">
+                      <i class="fas fa-eye"></i>
+                    </a>
+                    <a href={`/admin/orders/${order.id}/edit`} class="text-boho-pink hover:text-boho-brown">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Products -->
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-serif font-bold text-boho-dark">Produktübersicht</h2>
+        <a href="/admin/products" class="text-boho-pink hover:text-boho-brown font-medium">
+          Alle anzeigen <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {stats.recentProducts.map((product) => (
+          <div class="card p-6">
+            <div class="flex items-start justify-between mb-4">
+              <h3 class="text-lg font-semibold text-boho-dark">{product.name}</h3>
+              <span class={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                product.status === 'Aktiv' ? 'bg-green-100 text-green-800' :
+                product.status === 'Ausverkauft' ? 'bg-red-100 text-red-800' :
+                'bg-gray-100 text-gray-800'
+              }`}>
+                {product.status}
+              </span>
+            </div>
+            
+            <div class="space-y-2 mb-4">
+              <div class="flex justify-between">
+                <span class="text-sm text-boho-dark/70">Preis:</span>
+                <span class="text-sm font-medium text-boho-dark">{product.price.toFixed(2)} €</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-boho-dark/70">Lager:</span>
+                <span class="text-sm font-medium text-boho-dark">{product.stock} Stück</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-boho-dark/70">Kategorie:</span>
+                <span class="text-sm font-medium text-boho-dark">{product.category}</span>
+              </div>
+            </div>
+            
+            <div class="flex space-x-2">
+              <a href={`/admin/products/${product.id}`} class="flex-1 bg-boho-pink text-white px-3 py-2 rounded text-sm text-center hover:bg-boho-brown transition-colors">
+                <i class="fas fa-eye mr-1"></i>
+                Ansehen
+              </a>
+              <a href={`/admin/products/${product.id}/edit`} class="flex-1 bg-boho-accent text-boho-dark px-3 py-2 rounded text-sm text-center hover:bg-boho-light transition-colors">
+                <i class="fas fa-edit mr-1"></i>
+                Bearbeiten
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="py-12 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-serif font-bold text-boho-dark mb-8">Schnellaktionen</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <a href="/admin/products/new" class="card p-6 hover:shadow-lg transition-shadow">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-plus text-boho-pink text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-boho-dark mb-2">Neues Produkt</h3>
+            <p class="text-sm text-boho-dark/70">Produkt hinzufügen</p>
+          </div>
+        </a>
+        
+        <a href="/admin/orders" class="card p-6 hover:shadow-lg transition-shadow">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-shopping-cart text-green-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-boho-dark mb-2">Bestellungen</h3>
+            <p class="text-sm text-boho-dark/70">Bestellungen verwalten</p>
+          </div>
+        </a>
+        
+        <a href="/admin/customers" class="card p-6 hover:shadow-lg transition-shadow">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-users text-blue-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-boho-dark mb-2">Kunden</h3>
+            <p class="text-sm text-boho-dark/70">Kunden verwalten</p>
+          </div>
+        </a>
+        
+        <a href="/admin/settings" class="card p-6 hover:shadow-lg transition-shadow">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-cog text-purple-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-boho-dark mb-2">Einstellungen</h3>
+            <p class="text-sm text-boho-dark/70">Website konfigurieren</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

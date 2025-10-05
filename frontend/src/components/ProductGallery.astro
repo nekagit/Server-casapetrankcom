@@ -1,0 +1,698 @@
+---
+import ProductImage from './ProductImage.astro';
+
+export interface Props {
+  images: Array<{
+    id: string;
+    src: string;
+    alt: string;
+    caption?: string;
+    thumbnail?: string;
+    isMain?: boolean;
+  }>;
+  productName: string;
+  showThumbnails?: boolean;
+  showZoom?: boolean;
+  showFullscreen?: boolean;
+  autoplay?: boolean;
+  autoplayDelay?: number;
+  className?: string;
+}
+
+const {
+  images,
+  productName,
+  showThumbnails = true,
+  showZoom = true,
+  showFullscreen = true,
+  autoplay = false,
+  autoplayDelay = 3000,
+  className = ''
+} = Astro.props;
+
+// Find main image or use first image
+const mainImage = images.find(img => img.isMain) || images[0];
+const thumbnailImages = images.filter(img => !img.isMain);
+
+// Generate unique IDs for accessibility
+const galleryId = `gallery-${Math.random().toString(36).substr(2, 9)}`;
+const mainImageId = `${galleryId}-main`;
+const thumbnailId = `${galleryId}-thumbnails`;
+---
+
+<div class={`product-gallery ${className}`} id={galleryId}>
+  <!-- Main Image Display -->
+  <div class="gallery-main" role="img" aria-label={`${productName} Produktbilder`}>
+    <div class="main-image-container">
+      <ProductImage
+        src={mainImage.src}
+        alt={mainImage.alt}
+        width={600}
+        height={600}
+        loading="eager"
+        priority={true}
+        zoom={showZoom}
+        caption={mainImage.caption}
+        className="main-product-image"
+      />
+      
+      <!-- Image Navigation Arrows -->
+      <button 
+        class="gallery-nav gallery-nav-prev" 
+        aria-label="Vorheriges Bild"
+        disabled={images.length <= 1}
+      >
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button 
+        class="gallery-nav gallery-nav-next" 
+        aria-label="Nächstes Bild"
+        disabled={images.length <= 1}
+      >
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      
+      <!-- Fullscreen Button -->
+      {showFullscreen && (
+        <button class="gallery-fullscreen" aria-label="Vollbild">
+          <i class="fas fa-expand"></i>
+        </button>
+      )}
+      
+      <!-- Image Counter -->
+      {images.length > 1 && (
+        <div class="gallery-counter">
+          <span class="current-image">1</span>
+          <span class="separator">/</span>
+          <span class="total-images">{images.length}</span>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- Thumbnail Navigation -->
+  {showThumbnails && images.length > 1 && (
+    <div class="gallery-thumbnails" id={thumbnailId}>
+      <div class="thumbnails-container">
+        {images.map((image, index) => (
+          <button
+            class={`thumbnail-item ${index === 0 ? 'active' : ''}`}
+            data-index={index}
+            aria-label={`Bild ${index + 1} anzeigen: ${image.alt}`}
+            tabindex={index === 0 ? 0 : -1}
+          >
+            <img
+              src={image.thumbnail || image.src}
+              alt={image.alt}
+              width={80}
+              height={80}
+              loading="lazy"
+              class="thumbnail-image"
+            />
+            {image.caption && (
+              <span class="thumbnail-caption">{image.caption}</span>
+            )}
+          </button>
+        ))}
+      </div>
+      
+      <!-- Thumbnail Navigation Arrows -->
+      <button class="thumbnails-nav thumbnails-nav-prev" aria-label="Vorherige Thumbnails">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="thumbnails-nav thumbnails-nav-next" aria-label="Nächste Thumbnails">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  )}
+
+  <!-- Gallery Controls -->
+  <div class="gallery-controls">
+    {autoplay && (
+      <button class="gallery-autoplay" aria-label="Autoplay umschalten">
+        <i class="fas fa-play"></i>
+        <span>Autoplay</span>
+      </button>
+    )}
+    
+    <button class="gallery-share" aria-label="Bilder teilen">
+      <i class="fas fa-share-alt"></i>
+      <span>Teilen</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 100%;
+    position: relative;
+  }
+
+  .gallery-main {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--boho-beige);
+  }
+
+  .main-image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .main-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+  }
+
+  .gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    color: var(--boho-dark);
+    font-size: 1.25rem;
+  }
+
+  .gallery-nav:hover:not(:disabled) {
+    background: var(--boho-pink);
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .gallery-nav:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .gallery-nav-prev {
+    left: 1rem;
+  }
+
+  .gallery-nav-next {
+    right: 1rem;
+  }
+
+  .gallery-fullscreen {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+  }
+
+  .gallery-fullscreen:hover {
+    background: var(--boho-pink);
+    transform: scale(1.1);
+  }
+
+  .gallery-counter {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .gallery-thumbnails {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .thumbnails-container {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 0.5rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .thumbnails-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .thumbnail-item {
+    flex-shrink: 0;
+    position: relative;
+    border: 2px solid transparent;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--boho-beige);
+    padding: 0;
+    width: 80px;
+    height: 80px;
+  }
+
+  .thumbnail-item:hover {
+    border-color: var(--boho-pink);
+    transform: scale(1.05);
+  }
+
+  .thumbnail-item.active {
+    border-color: var(--boho-pink);
+    box-shadow: 0 0 0 2px rgba(196, 164, 132, 0.3);
+  }
+
+  .thumbnail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+  }
+
+  .thumbnail-item:hover .thumbnail-image {
+    transform: scale(1.1);
+  }
+
+  .thumbnail-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    color: white;
+    padding: 0.25rem;
+    font-size: 0.75rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .thumbnail-item:hover .thumbnail-caption {
+    opacity: 1;
+  }
+
+  .thumbnails-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--boho-pink);
+    border: none;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    z-index: 10;
+  }
+
+  .thumbnails-nav:hover {
+    background: var(--boho-brown);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .thumbnails-nav-prev {
+    left: -1rem;
+  }
+
+  .thumbnails-nav-next {
+    right: -1rem;
+  }
+
+  .gallery-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+  }
+
+  .gallery-autoplay,
+  .gallery-share {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--boho-beige);
+    border: 1px solid var(--boho-accent);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--boho-dark);
+    font-size: 0.875rem;
+  }
+
+  .gallery-autoplay:hover,
+  .gallery-share:hover {
+    background: var(--boho-pink);
+    color: white;
+    border-color: var(--boho-pink);
+  }
+
+  .gallery-autoplay.active {
+    background: var(--boho-pink);
+    color: white;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .gallery-nav {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1rem;
+    }
+
+    .gallery-nav-prev {
+      left: 0.5rem;
+    }
+
+    .gallery-nav-next {
+      right: 0.5rem;
+    }
+
+    .gallery-fullscreen {
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    .gallery-counter {
+      bottom: 0.5rem;
+      left: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    .thumbnail-item {
+      width: 60px;
+      height: 60px;
+    }
+
+    .thumbnails-nav {
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 0.75rem;
+    }
+
+    .thumbnails-nav-prev {
+      left: -0.75rem;
+    }
+
+    .thumbnails-nav-next {
+      right: -0.75rem;
+    }
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .gallery-nav,
+    .gallery-fullscreen,
+    .thumbnails-nav {
+      border: 2px solid var(--boho-dark);
+    }
+
+    .thumbnail-item.active {
+      border-width: 3px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .main-product-image,
+    .thumbnail-image,
+    .gallery-nav,
+    .thumbnail-item,
+    .gallery-autoplay,
+    .gallery-share {
+      transition: none;
+    }
+  }
+
+  /* Focus styles for accessibility */
+  .gallery-nav:focus,
+  .gallery-fullscreen:focus,
+  .thumbnail-item:focus,
+  .thumbnails-nav:focus,
+  .gallery-autoplay:focus,
+  .gallery-share:focus {
+    outline: 2px solid var(--boho-pink);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // Product Gallery JavaScript functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const galleries = document.querySelectorAll('.product-gallery');
+    
+    galleries.forEach(gallery => {
+      const mainContainer = gallery.querySelector('.main-image-container');
+      const thumbnails = gallery.querySelectorAll('.thumbnail-item');
+      const navPrev = gallery.querySelector('.gallery-nav-prev') as HTMLButtonElement;
+      const navNext = gallery.querySelector('.gallery-nav-next') as HTMLButtonElement;
+      const thumbnailsPrev = gallery.querySelector('.thumbnails-nav-prev') as HTMLButtonElement;
+      const thumbnailsNext = gallery.querySelector('.thumbnails-nav-next') as HTMLButtonElement;
+      const autoplayBtn = gallery.querySelector('.gallery-autoplay') as HTMLButtonElement;
+      const shareBtn = gallery.querySelector('.gallery-share') as HTMLButtonElement;
+      const counter = gallery.querySelector('.gallery-counter');
+      
+      let currentIndex = 0;
+      let autoplayInterval: NodeJS.Timeout | null = null;
+      let isAutoplayActive = false;
+      const autoplayDelay = 3000;
+      const productName = 'Produkt';
+      
+      // Get all images from the gallery
+      const images = Array.from(gallery.querySelectorAll('.thumbnail-item')).map((thumb, index) => ({
+        index,
+        element: thumb,
+        src: thumb.querySelector('img')?.src || '',
+        alt: thumb.querySelector('img')?.alt || ''
+      }));
+      
+      // Update main image
+      function updateMainImage(index: number) {
+        const thumbnail = thumbnails[index];
+        if (!thumbnail) return;
+        
+        const img = thumbnail.querySelector('img');
+        if (!img) return;
+        
+        // Update main image
+        const mainImg = mainContainer?.querySelector('.product-image') as HTMLImageElement;
+        if (mainImg) {
+          mainImg.src = img.src;
+          mainImg.alt = img.alt;
+        }
+        
+        // Update active thumbnail
+        thumbnails.forEach((thumb, i) => {
+          thumb.classList.toggle('active', i === index);
+          thumb.setAttribute('tabindex', i === index ? '0' : '-1');
+        });
+        
+        // Update counter
+        if (counter) {
+          const currentSpan = counter.querySelector('.current-image');
+          if (currentSpan) {
+            currentSpan.textContent = (index + 1).toString();
+          }
+        }
+        
+        // Update navigation buttons
+        if (navPrev) navPrev.disabled = index === 0;
+        if (navNext) navNext.disabled = index === images.length - 1;
+        
+        currentIndex = index;
+      }
+      
+      // Navigation functions
+      function goToPrevious() {
+        if (currentIndex > 0) {
+          updateMainImage(currentIndex - 1);
+        }
+      }
+      
+      function goToNext() {
+        if (currentIndex < images.length - 1) {
+          updateMainImage(currentIndex + 1);
+        }
+      }
+      
+      // Thumbnail navigation
+      function scrollThumbnails(direction: 'prev' | 'next') {
+        const container = gallery.querySelector('.thumbnails-container');
+        if (!container) return;
+        
+        const scrollAmount = 100;
+        const currentScroll = container.scrollLeft;
+        
+        if (direction === 'prev') {
+          container.scrollLeft = Math.max(0, currentScroll - scrollAmount);
+        } else {
+          container.scrollLeft = currentScroll + scrollAmount;
+        }
+      }
+      
+      // Autoplay functionality
+      function startAutoplay() {
+        if (autoplayInterval) clearInterval(autoplayInterval);
+        
+        autoplayInterval = setInterval(() => {
+          if (currentIndex < images.length - 1) {
+            updateMainImage(currentIndex + 1);
+          } else {
+            updateMainImage(0);
+          }
+        }, autoplayDelay);
+        
+        isAutoplayActive = true;
+        if (autoplayBtn) {
+          autoplayBtn.classList.add('active');
+          autoplayBtn.innerHTML = '<i class="fas fa-pause"></i><span>Autoplay</span>';
+        }
+      }
+      
+      function stopAutoplay() {
+        if (autoplayInterval) {
+          clearInterval(autoplayInterval);
+          autoplayInterval = null;
+        }
+        isAutoplayActive = false;
+        if (autoplayBtn) {
+          autoplayBtn.classList.remove('active');
+          autoplayBtn.innerHTML = '<i class="fas fa-play"></i><span>Autoplay</span>';
+        }
+      }
+      
+      // Event listeners
+      if (navPrev) navPrev.addEventListener('click', goToPrevious);
+      if (navNext) navNext.addEventListener('click', goToNext);
+      
+      if (thumbnailsPrev) thumbnailsPrev.addEventListener('click', () => scrollThumbnails('prev'));
+      if (thumbnailsNext) thumbnailsNext.addEventListener('click', () => scrollThumbnails('next'));
+      
+      // Thumbnail clicks
+      thumbnails.forEach((thumb, index) => {
+        thumb.addEventListener('click', () => updateMainImage(index));
+      });
+      
+      // Autoplay toggle
+      if (autoplayBtn) {
+        autoplayBtn.addEventListener('click', () => {
+          if (isAutoplayActive) {
+            stopAutoplay();
+          } else {
+            startAutoplay();
+          }
+        });
+      }
+      
+      // Share functionality
+      if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+          if (navigator.share) {
+            navigator.share({
+              title: productName,
+              text: `Schau dir ${productName} an`,
+              url: window.location.href
+            });
+          } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(window.location.href).then(() => {
+              alert('Link wurde in die Zwischenablage kopiert!');
+            });
+          }
+        });
+      }
+      
+      // Keyboard navigation
+      gallery.addEventListener('keydown', (e) => {
+        const keyboardEvent = e as KeyboardEvent;
+        switch (keyboardEvent.key) {
+          case 'ArrowLeft':
+            keyboardEvent.preventDefault();
+            goToPrevious();
+            break;
+          case 'ArrowRight':
+            keyboardEvent.preventDefault();
+            goToNext();
+            break;
+          case ' ':
+            keyboardEvent.preventDefault();
+            if (autoplayBtn) autoplayBtn.click();
+            break;
+        }
+      });
+      
+      // Touch/swipe support
+      let touchStartX = 0;
+      let touchEndX = 0;
+      
+      mainContainer?.addEventListener('touchstart', (e) => {
+        const touchEvent = e as TouchEvent;
+        touchStartX = touchEvent.changedTouches[0].screenX;
+      });
+      
+      mainContainer?.addEventListener('touchend', (e) => {
+        const touchEvent = e as TouchEvent;
+        touchEndX = touchEvent.changedTouches[0].screenX;
+        handleSwipe();
+      });
+      
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            goToNext();
+          } else {
+            goToPrevious();
+          }
+        }
+      }
+      
+      // Initialize
+      updateMainImage(0);
+      
+      // Start autoplay if enabled
+      if (autoplayBtn && autoplayBtn.classList.contains('active')) {
+        startAutoplay();
+      }
+      
+      // Pause autoplay on hover
+      mainContainer?.addEventListener('mouseenter', stopAutoplay);
+      mainContainer?.addEventListener('mouseleave', () => {
+        if (autoplayBtn?.classList.contains('active')) {
+          startAutoplay();
+        }
+      });
+    });
+  });
+</script>

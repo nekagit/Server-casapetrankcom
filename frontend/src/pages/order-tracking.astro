@@ -1,0 +1,351 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock order data - in real app this would come from API
+const orderNumber = Astro.url.searchParams.get('order') || '';
+const order = orderNumber ? {
+  id: orderNumber,
+  status: 'Versandt',
+  statusDate: '2024-01-20',
+  estimatedDelivery: '2024-01-25',
+  trackingNumber: 'DHL123456789',
+  carrier: 'DHL',
+  items: [
+    {
+      id: 1,
+      name: "Tibet Armband",
+      price: 24.90,
+      quantity: 2,
+      image: "/images/products/tibet-armband.jpg"
+    },
+    {
+      id: 2,
+      name: "Boho Wickelarmband",
+      price: 19.90,
+      quantity: 1,
+      image: "/images/products/product_1.jpg"
+    }
+  ],
+  shippingAddress: {
+    name: "Max Mustermann",
+    street: "Musterstraße 123",
+    city: "12345 Musterstadt",
+    country: "Deutschland"
+  },
+  billingAddress: {
+    name: "Max Mustermann",
+    street: "Musterstraße 123",
+    city: "12345 Musterstadt",
+    country: "Deutschland"
+  },
+  paymentMethod: "PayPal",
+  total: 69.70,
+  shipping: 4.90,
+  subtotal: 64.80,
+  timeline: [
+    {
+      status: "Bestellt",
+      date: "2024-01-15",
+      time: "14:30",
+      description: "Deine Bestellung wurde aufgegeben",
+      completed: true
+    },
+    {
+      status: "Bezahlt",
+      date: "2024-01-15",
+      time: "14:32",
+      description: "Zahlung wurde erfolgreich verarbeitet",
+      completed: true
+    },
+    {
+      status: "Verarbeitung",
+      date: "2024-01-16",
+      time: "09:15",
+      description: "Deine Bestellung wird vorbereitet",
+      completed: true
+    },
+    {
+      status: "Versandt",
+      date: "2024-01-20",
+      time: "11:30",
+      description: "Deine Bestellung wurde versandt",
+      completed: true
+    },
+    {
+      status: "Unterwegs",
+      date: "2024-01-22",
+      time: "08:45",
+      description: "Deine Bestellung ist unterwegs",
+      completed: false
+    },
+    {
+      status: "Geliefert",
+      date: "2024-01-25",
+      time: "14:00",
+      description: "Deine Bestellung wurde geliefert",
+      completed: false
+    }
+  ]
+} : null;
+---
+
+<Layout 
+  title={`Bestellverfolgung${orderNumber ? ` - Bestellung ${orderNumber}` : ''} - Casa Petrada`}
+  description="Verfolge deine Bestellung bei Casa Petrada. Sieh den aktuellen Status und erwartete Lieferzeit."
+>
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/" class="text-boho-pink hover:text-boho-brown">Home</a>
+        <i class="fas fa-chevron-right text-boho-dark/50"></i>
+        <a href="/account" class="text-boho-pink hover:text-boho-brown">Mein Konto</a>
+        <i class="fas fa-chevron-right text-boho-dark/50"></i>
+        <span class="text-boho-dark">Bestellverfolgung</span>
+      </nav>
+    </div>
+  </section>
+
+  {order ? (
+    <>
+      <!-- Order Header -->
+      <section class="py-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-4">
+              Bestellverfolgung
+            </h1>
+            <p class="text-boho-dark/70">
+              Bestellung #{order.id} • {order.status}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Order Status -->
+      <section class="py-8 bg-boho-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="card p-8">
+            <div class="text-center mb-8">
+              <div class="w-20 h-20 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-truck text-3xl text-boho-pink"></i>
+              </div>
+              <h2 class="text-2xl font-serif font-bold text-boho-dark mb-2">
+                {order.status}
+              </h2>
+              <p class="text-boho-dark/70">
+                {order.status === 'Versandt' ? 
+                  `Geschätzte Lieferung: ${order.estimatedDelivery}` :
+                  `Status vom: ${order.statusDate}`
+                }
+              </p>
+            </div>
+
+            <!-- Tracking Info -->
+            {order.trackingNumber && (
+              <div class="bg-boho-accent/20 rounded-lg p-6 mb-8">
+                <h3 class="text-lg font-semibold text-boho-dark mb-4">Sendungsverfolgung</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-sm text-boho-dark/70">Tracking-Nummer:</p>
+                    <p class="font-mono text-boho-dark font-semibold">{order.trackingNumber}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-boho-dark/70">Versanddienstleister:</p>
+                    <p class="text-boho-dark font-semibold">{order.carrier}</p>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <a 
+                    href={`https://www.dhl.de/de/privatkunden/pakete-verfolgen.html?lang=de&idc=${order.trackingNumber}`}
+                    target="_blank"
+                    class="btn-primary inline-flex items-center"
+                  >
+                    <i class="fas fa-external-link-alt mr-2"></i>
+                    Bei {order.carrier} verfolgen
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <!-- Order Timeline -->
+      <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-2xl font-serif font-bold text-boho-dark mb-8 text-center">
+            Bestellverlauf
+          </h2>
+          
+          <div class="max-w-2xl mx-auto">
+            <div class="space-y-6">
+              {order.timeline.map((step, index) => (
+                <div class="flex items-start space-x-4">
+                  <div class={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    step.completed 
+                      ? 'bg-boho-pink text-white' 
+                      : 'bg-boho-accent text-boho-dark/50'
+                  }`}>
+                    {step.completed ? (
+                      <i class="fas fa-check text-sm"></i>
+                    ) : (
+                      <span class="text-sm font-semibold">{index + 1}</span>
+                    )}
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                      <h3 class={`font-semibold ${
+                        step.completed ? 'text-boho-dark' : 'text-boho-dark/50'
+                      }`}>
+                        {step.status}
+                      </h3>
+                      <span class={`text-sm ${
+                        step.completed ? 'text-boho-dark/70' : 'text-boho-dark/50'
+                      }`}>
+                        {step.date} • {step.time}
+                      </span>
+                    </div>
+                    <p class={`text-sm ${
+                      step.completed ? 'text-boho-dark/70' : 'text-boho-dark/50'
+                    }`}>
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Order Details -->
+      <section class="py-12 bg-boho-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Order Items -->
+            <div class="card p-6">
+              <h3 class="text-xl font-semibold text-boho-dark mb-6">Bestellte Artikel</h3>
+              <div class="space-y-4">
+                {order.items.map((item) => (
+                  <div class="flex items-center space-x-4">
+                    <img 
+                      src={item.image} 
+                      alt={item.name}
+                      class="w-16 h-16 object-cover rounded"
+                    />
+                    <div class="flex-1">
+                      <h4 class="font-semibold text-boho-dark">{item.name}</h4>
+                      <p class="text-sm text-boho-dark/70">Menge: {item.quantity}</p>
+                    </div>
+                    <div class="text-right">
+                      <p class="font-semibold text-boho-dark">{(item.price * item.quantity).toFixed(2)} €</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="card p-6">
+              <h3 class="text-xl font-semibold text-boho-dark mb-6">Bestellübersicht</h3>
+              <div class="space-y-4">
+                <div class="flex justify-between">
+                  <span class="text-boho-dark/70">Zwischensumme:</span>
+                  <span class="text-boho-dark">{order.subtotal.toFixed(2)} €</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-boho-dark/70">Versand:</span>
+                  <span class="text-boho-dark">{order.shipping.toFixed(2)} €</span>
+                </div>
+                <div class="flex justify-between text-lg font-semibold border-t border-boho-accent pt-4">
+                  <span class="text-boho-dark">Gesamt:</span>
+                  <span class="text-boho-dark">{order.total.toFixed(2)} €</span>
+                </div>
+                <div class="pt-4">
+                  <p class="text-sm text-boho-dark/70 mb-2">Zahlungsart:</p>
+                  <p class="text-boho-dark font-semibold">{order.paymentMethod}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shipping Address -->
+          <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card p-6">
+              <h3 class="text-xl font-semibold text-boho-dark mb-4">Lieferadresse</h3>
+              <div class="text-boho-dark/80">
+                <p class="font-semibold">{order.shippingAddress.name}</p>
+                <p>{order.shippingAddress.street}</p>
+                <p>{order.shippingAddress.city}</p>
+                <p>{order.shippingAddress.country}</p>
+              </div>
+            </div>
+
+            <div class="card p-6">
+              <h3 class="text-xl font-semibold text-boho-dark mb-4">Rechnungsadresse</h3>
+              <div class="text-boho-dark/80">
+                <p class="font-semibold">{order.billingAddress.name}</p>
+                <p>{order.billingAddress.street}</p>
+                <p>{order.billingAddress.city}</p>
+                <p>{order.billingAddress.country}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  ) : (
+    <!-- Order Lookup Form -->
+    <section class="py-20 bg-white">
+      <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="card p-8">
+          <div class="text-center mb-8">
+            <h1 class="text-3xl font-serif font-bold text-boho-dark mb-4">
+              Bestellverfolgung
+            </h1>
+            <p class="text-boho-dark/70">
+              Gib deine Bestellnummer ein, um den Status zu verfolgen
+            </p>
+          </div>
+
+          <form class="space-y-6" method="GET" action="/order-tracking">
+            <div>
+              <label for="order" class="block text-sm font-medium text-boho-dark mb-2">
+                Bestellnummer *
+              </label>
+              <input 
+                type="text" 
+                id="order" 
+                name="order"
+                required
+                class="input"
+                placeholder="z.B. CP-2024-123456"
+              />
+              <p class="text-xs text-boho-dark/60 mt-1">
+                Du findest deine Bestellnummer in der Bestellbestätigung per E-Mail
+              </p>
+            </div>
+
+            <button 
+              type="submit"
+              class="btn-primary w-full"
+            >
+              <i class="fas fa-search mr-2"></i>
+              Bestellung verfolgen
+            </button>
+          </form>
+
+          <div class="mt-8 text-center">
+            <p class="text-boho-dark/70">
+              Keine Bestellnummer? 
+              <a href="/account" class="text-boho-pink hover:text-boho-brown font-medium">
+                In dein Konto einloggen
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>

@@ -6,23 +6,36 @@ A complete e-commerce website recreation of Casa Petrada (https://casa-petrada.d
 
 ```
 casapetrankcom/
-├── frontend/          # Vite + TypeScript frontend
+├── frontend/              # Astro + TypeScript + Tailwind CSS frontend
 │   ├── src/
-│   │   ├── main.ts    # Main application logic
-│   │   └── style.css  # Complete CSS styling
+│   │   ├── components/    # Astro components
+│   │   ├── layouts/       # Astro layouts
+│   │   ├── pages/         # Astro pages (file-based routing)
+│   │   ├── services/      # API services
+│   │   ├── types/         # TypeScript type definitions
+│   │   ├── utils/         # Utility functions
+│   │   └── styles/        # Global styles and Tailwind config
 │   ├── public/
-│   │   └── images/    # Product and category images
-│   └── index.html     # Main HTML template
-├── backend/           # FastAPI Python backend
+│   │   └── images/        # Product and category images
+│   ├── astro.config.mjs   # Astro configuration
+│   ├── tailwind.config.mjs # Tailwind CSS configuration
+│   └── package.json       # Frontend dependencies
+├── backend/               # FastAPI Python backend
 │   ├── app/
-│   │   ├── api/       # API endpoints
-│   │   ├── core/      # Configuration and database
-│   │   ├── models/    # Database models
-│   │   └── schemas/   # Pydantic schemas
-│   ├── static/        # Static files and uploads
-│   ├── main.py        # FastAPI application
-│   └── requirements.txt
-└── .cursorfiles       # Comprehensive development rules
+│   │   ├── api/           # API endpoints
+│   │   ├── core/          # Configuration and database
+│   │   ├── models/        # Database models
+│   │   └── schemas/       # Pydantic schemas
+│   ├── main.py            # FastAPI application entry point
+│   ├── run.py             # Development server script
+│   └── requirements.txt   # Python dependencies
+├── scripts/               # Development and deployment scripts
+│   ├── start-astro-dev.sh # Start both frontend and backend
+│   └── deploy.sh          # Deployment script
+├── .cursorrules           # Development rules and guidelines
+├── .gitignore            # Git ignore patterns
+├── package.json          # Root project scripts and metadata
+└── README.md             # Project documentation
 ```
 
 ## Features Implemented
@@ -46,25 +59,77 @@ casapetrankcom/
 
 ## Getting Started
 
-### Frontend Development
+### Quick Start
 
 ```bash
-cd frontend
-npm install
+# Install all dependencies
+npm run install:all
+
+# Start both frontend and backend
 npm run dev
+# or
+./dev.sh
 ```
 
-The frontend will be available at http://localhost:5173
+### Individual Development
 
-### Backend Development
+#### Frontend Development
 
 ```bash
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload
+npm run frontend
+# or
+cd frontend && npm run dev
+```
+
+The frontend will be available at http://localhost:4321
+
+#### Backend Development
+
+```bash
+npm run backend
+# or
+cd backend && python run.py
 ```
 
 The backend API will be available at http://localhost:8000
+
+## Available Scripts
+
+### Root Level Scripts
+
+```bash
+# Development
+npm run dev              # Start both frontend and backend
+npm run frontend         # Start only frontend
+npm run backend          # Start only backend
+npm run build            # Build frontend for production
+npm run preview          # Preview built frontend
+
+# Installation
+npm run install:all      # Install all dependencies (frontend + backend)
+
+# Maintenance
+npm run clean            # Clean Python cache files
+npm run deploy           # Deploy to production
+```
+
+### Frontend Scripts
+
+```bash
+cd frontend
+npm run dev              # Start Astro dev server
+npm run build            # Build for production
+npm run preview          # Preview production build
+npm run astro            # Run Astro CLI commands
+```
+
+### Backend Scripts
+
+```bash
+cd backend
+python run.py            # Start FastAPI dev server
+uvicorn main:app --reload # Alternative start method
+```
 
 ## Product Categories
 
@@ -85,9 +150,9 @@ The backend API will be available at http://localhost:8000
 
 ## Technical Stack
 
-- **Frontend**: Vite, TypeScript, CSS3, Font Awesome
+- **Frontend**: Astro, TypeScript, Tailwind CSS, Vite
 - **Backend**: FastAPI, SQLAlchemy, PostgreSQL
-- **Styling**: CSS Variables, Flexbox, Grid
+- **Styling**: Tailwind CSS with custom design tokens
 - **Icons**: Font Awesome 6
 - **Fonts**: Inter (body), Playfair Display (headings)
 

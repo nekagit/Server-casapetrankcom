@@ -1,0 +1,89 @@
+---
+// Category Grid Component
+const categories = [
+  {
+    name: "Armbänder",
+    image: "/images/categories/boho-armbaender.jpg",
+    href: "/armbaender",
+    description: "Einfacharmbänder & Wickelarmbänder"
+  },
+  {
+    name: "Ketten",
+    image: "/images/categories/boho-ketten.jpg",
+    href: "/ketten",
+    description: "Kurze Ketten, Wechselketten & Anhänger"
+  },
+  {
+    name: "Fashion",
+    image: "/images/categories/boho-kleider.jpg",
+    href: "/fashion",
+    description: "Kleider, Oberteile & Accessories"
+  },
+  {
+    name: "Fußkettchen",
+    image: "/images/categories/boho-anhaenger.jpg",
+    href: "/fussketchen",
+    description: "Zarte Fußkettchen"
+  },
+  {
+    name: "Modeschmuck",
+    image: "/images/categories/real_category_1.jpg",
+    href: "/modeschmuck",
+    description: "Trendiger Modeschmuck"
+  },
+  {
+    name: "Taschen",
+    image: "/images/categories/real_category_2.jpg",
+    href: "/taschen",
+    description: "Stylische Taschen & Beutel"
+  }
+];
+---
+
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-4">
+        Unsere Kategorien
+      </h2>
+      <p class="text-lg text-boho-dark/70 max-w-2xl mx-auto">
+        Entdecke unsere vielfältige Auswahl an handgefertigten Schmuckstücken und stilvoller Mode
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {categories.map((category) => (
+        <a 
+          href={category.href}
+          class="group card hover:scale-105 transition-all duration-300"
+        >
+          <div class="relative overflow-hidden">
+            <img 
+              src={category.image} 
+              alt={category.name}
+              class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+            />
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="text-center text-white">
+                <h3 class="text-2xl font-serif font-bold mb-2">{category.name}</h3>
+                <p class="text-sm opacity-90">{category.description}</p>
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+    
+    <!-- Sale Category -->
+    <div class="mt-12 text-center">
+      <a 
+        href="/sale"
+        class="inline-flex items-center justify-center bg-boho-pink text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-boho-brown transition-colors duration-300 shadow-lg hover:shadow-xl"
+      >
+        <i class="fas fa-tags mr-2"></i>
+        SALE - Bis zu 50% Rabatt
+      </a>
+    </div>
+  </div>
+</section>

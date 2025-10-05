@@ -1,0 +1,185 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock product data - in real app this would come from API
+const products = [
+  {
+    id: 1,
+    name: "Tibet Armband",
+    price: 19.90,
+    originalPrice: 29.90,
+    discount: 33,
+    image: "/images/products/tibet-armband.jpg",
+    category: "Armbänder",
+    description: "Handgefertigtes Armband aus natürlichen Materialien"
+  },
+  {
+    id: 2,
+    name: "Boho Wickelarmband",
+    price: 14.90,
+    originalPrice: 24.90,
+    discount: 40,
+    image: "/images/products/product_1.jpg",
+    category: "Armbänder",
+    description: "Stylisches Wickelarmband im Boho-Stil"
+  },
+  {
+    id: 3,
+    name: "Korsika Kette",
+    price: 24.90,
+    originalPrice: 39.90,
+    discount: 38,
+    image: "/images/products/korsika-kette.jpg",
+    category: "Ketten",
+    description: "Elegante kurze Kette mit natürlichen Elementen"
+  },
+  {
+    id: 4,
+    name: "Sicilia Kleid",
+    price: 59.90,
+    originalPrice: 89.90,
+    discount: 33,
+    image: "/images/products/sicilia-dress.jpg",
+    category: "Fashion",
+    description: "Stylisches Boho-Kleid aus nachhaltigen Materialien"
+  }
+];
+---
+
+<Layout 
+  title="SALE - Casa Petrada"
+  description="Entdecke unsere SALE-Angebote. Bis zu 50% Rabatt auf ausgewählte handgefertigte Schmuckstücke und Fashion."
+>
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-boho-pink to-boho-brown py-20 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6">
+          SALE
+        </h1>
+        <p class="text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-8">
+          Bis zu 50% Rabatt auf ausgewählte handgefertigte Schmuckstücke und Fashion
+        </p>
+        <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-semibold">
+          <i class="fas fa-fire mr-2"></i>
+          Nur solange der Vorrat reicht!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Section -->
+  <section class="py-8 bg-white border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap gap-4 justify-center">
+        <button class="px-6 py-2 bg-boho-pink text-white rounded-lg font-medium">
+          Alle Sale-Artikel
+        </button>
+        <button class="px-6 py-2 bg-boho-accent text-boho-dark rounded-lg font-medium hover:bg-boho-pink hover:text-white transition-colors">
+          Armbänder
+        </button>
+        <button class="px-6 py-2 bg-boho-accent text-boho-dark rounded-lg font-medium hover:bg-boho-pink hover:text-white transition-colors">
+          Ketten
+        </button>
+        <button class="px-6 py-2 bg-boho-accent text-boho-dark rounded-lg font-medium hover:bg-boho-pink hover:text-white transition-colors">
+          Fashion
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Grid -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {products.map((product) => (
+          <div class="card group">
+            <div class="relative overflow-hidden">
+              <img 
+                src={product.image} 
+                alt={product.name}
+                class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                -{product.discount}%
+              </div>
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <button class="opacity-0 group-hover:opacity-100 bg-white text-boho-pink px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-boho-pink hover:text-white">
+                  <i class="fas fa-eye mr-2"></i>
+                  Schnellansicht
+                </button>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="mb-2">
+                <span class="text-sm text-boho-pink font-medium">{product.category}</span>
+              </div>
+              <h3 class="text-xl font-semibold text-boho-dark mb-2">{product.name}</h3>
+              <p class="text-boho-dark/70 text-sm mb-4">{product.description}</p>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-2xl font-bold text-boho-dark">{product.price.toFixed(2)} €</span>
+                  <span class="text-lg text-boho-dark/50 line-through">{product.originalPrice.toFixed(2)} €</span>
+                </div>
+                <button class="bg-boho-pink text-white px-4 py-2 rounded-lg font-medium hover:bg-boho-brown transition-colors duration-300">
+                  <i class="fas fa-shopping-bag mr-1"></i>
+                  In den Warenkorb
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <!-- Load More Button -->
+      <div class="text-center mt-12">
+        <button class="btn-secondary">
+          <i class="fas fa-plus mr-2"></i>
+          Mehr Sale-Artikel laden
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sale Info -->
+  <section class="py-20 bg-boho-light">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-serif font-bold text-boho-dark mb-6">
+        SALE-Informationen
+      </h2>
+      <p class="text-lg text-boho-dark/70 mb-8">
+        Alle SALE-Artikel sind handgefertigt und in limitierter Auflage verfügbar. 
+        Sichere dir jetzt deine Lieblingsstücke zu reduzierten Preisen!
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-tags text-2xl text-boho-pink"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-boho-dark mb-3">Bis zu 50% Rabatt</h3>
+          <p class="text-boho-dark/70">
+            Große Ersparnisse auf ausgewählte Artikel aus unserer Kollektion.
+          </p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-clock text-2xl text-boho-pink"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-boho-dark mb-3">Begrenzte Zeit</h3>
+          <p class="text-boho-dark/70">
+            Die SALE-Aktion läuft nur für kurze Zeit. Jetzt zuschlagen!
+          </p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-shipping-fast text-2xl text-boho-pink"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-boho-dark mb-3">Kostenloser Versand</h3>
+          <p class="text-boho-dark/70">
+            Auch bei SALE-Artikeln: Versandkostenfrei ab 39,90 €.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

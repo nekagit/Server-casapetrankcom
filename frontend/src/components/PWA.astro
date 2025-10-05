@@ -1,0 +1,268 @@
+---
+// Progressive Web App (PWA) Component
+export interface Props {
+  enableNotifications?: boolean;
+  enableOfflineMode?: boolean;
+  enableInstallPrompt?: boolean;
+  enableBackgroundSync?: boolean;
+  enablePushNotifications?: boolean;
+}
+
+const {
+  enableNotifications = true,
+  enableOfflineMode = true,
+  enableInstallPrompt = true,
+  enableBackgroundSync = true,
+  enablePushNotifications = true
+} = Astro.props;
+---
+
+<!-- PWA Meta Tags -->
+<meta name="application-name" content="Casa Petrada">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Casa Petrada">
+<meta name="description" content="Handmade Boho Schmuck & Mode - Casa Petrada">
+<meta name="format-detection" content="telephone=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="msapplication-TileColor" content="#c4a484">
+<meta name="msapplication-tap-highlight" content="no">
+<meta name="theme-color" content="#c4a484">
+
+<!-- Apple Touch Icons -->
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png">
+<link rel="apple-touch-icon" sizes="167x167" href="/icons/apple-touch-icon-167x167.png">
+
+<!-- Android Icons -->
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+
+<!-- Splash Screens -->
+<link rel="apple-touch-startup-image" href="/icons/apple-splash-2048-2732.jpg" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="/icons/apple-splash-1668-2224.jpg" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="/icons/apple-splash-1536-2048.jpg" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="/icons/apple-splash-1125-2436.jpg" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="/icons/apple-splash-1242-2208.jpg" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="/icons/apple-splash-750-1334.jpg" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="/icons/apple-splash-640-1136.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+
+<!-- PWA Install Prompt -->
+{enableInstallPrompt && (
+  <div id="pwa-install-prompt" class="fixed bottom-4 left-4 right-4 bg-boho-pink text-white p-4 rounded-lg shadow-lg z-50 hidden">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+          <i class="fas fa-mobile-alt text-2xl"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold">Casa Petrada App</h3>
+          <p class="text-sm opacity-90">Installiere die App für eine bessere Erfahrung</p>
+        </div>
+      </div>
+      <div class="flex space-x-2">
+        <button id="pwa-install-dismiss" class="px-3 py-1 bg-white/20 rounded text-sm hover:bg-white/30 transition-colors">
+          Später
+        </button>
+        <button id="pwa-install-accept" class="px-4 py-1 bg-white text-boho-pink rounded text-sm font-semibold hover:bg-white/90 transition-colors">
+          Installieren
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+<!-- Offline Indicator -->
+{enableOfflineMode && (
+  <div id="offline-indicator" class="fixed top-4 left-4 right-4 bg-red-500 text-white p-3 rounded-lg shadow-lg z-50 hidden">
+    <div class="flex items-center space-x-2">
+      <i class="fas fa-wifi text-lg"></i>
+      <span class="font-semibold">Offline Modus</span>
+      <span class="text-sm opacity-90">Einige Funktionen sind möglicherweise eingeschränkt</span>
+    </div>
+  </div>
+)}
+
+<!-- Update Available Notification -->
+<div id="update-available" class="fixed top-4 left-4 right-4 bg-blue-500 text-white p-3 rounded-lg shadow-lg z-50 hidden">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <i class="fas fa-sync-alt text-lg"></i>
+      <span class="font-semibold">Update verfügbar</span>
+    </div>
+    <div class="flex space-x-2">
+      <button id="update-dismiss" class="px-3 py-1 bg-white/20 rounded text-sm hover:bg-white/30 transition-colors">
+        Später
+      </button>
+      <button id="update-reload" class="px-4 py-1 bg-white text-blue-500 rounded text-sm font-semibold hover:bg-white/90 transition-colors">
+        Aktualisieren
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // PWA Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        console.log('Service Worker registered successfully:', registration);
+        
+        // Handle updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // Show update notification
+                document.getElementById('update-available')?.classList.remove('hidden');
+              }
+            });
+          }
+        });
+      } catch (error) {
+        console.error('Service Worker registration failed:', error);
+      }
+    });
+  }
+
+  // PWA Install Prompt
+  let deferredPrompt: any;
+  const installPrompt = document.getElementById('pwa-install-prompt');
+  const installAccept = document.getElementById('pwa-install-accept');
+  const installDismiss = document.getElementById('pwa-install-dismiss');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Show install prompt after a delay
+    setTimeout(() => {
+      if (installPrompt) {
+        installPrompt.classList.remove('hidden');
+      }
+    }, 5000);
+  });
+
+  installAccept?.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log('PWA install outcome:', outcome);
+      deferredPrompt = null;
+    }
+    installPrompt?.classList.add('hidden');
+  });
+
+  installDismiss?.addEventListener('click', () => {
+    installPrompt?.classList.add('hidden');
+    // Don't show again for this session
+    sessionStorage.setItem('pwa-install-dismissed', 'true');
+  });
+
+  // Check if already dismissed
+  if (sessionStorage.getItem('pwa-install-dismissed')) {
+    installPrompt?.classList.add('hidden');
+  }
+
+  // Offline Detection
+  const offlineIndicator = document.getElementById('offline-indicator');
+  
+  window.addEventListener('online', () => {
+    offlineIndicator?.classList.add('hidden');
+  });
+
+  window.addEventListener('offline', () => {
+    offlineIndicator?.classList.remove('hidden');
+  });
+
+  // Update Available
+  const updateAvailable = document.getElementById('update-available');
+  const updateReload = document.getElementById('update-reload');
+  const updateDismiss = document.getElementById('update-dismiss');
+
+  updateReload?.addEventListener('click', () => {
+    window.location.reload();
+  });
+
+  updateDismiss?.addEventListener('click', () => {
+    updateAvailable?.classList.add('hidden');
+  });
+
+  // Background Sync (if supported)
+  if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+    // Register background sync for cart and wishlist
+    navigator.serviceWorker.ready.then((registration) => {
+      // Sync cart when online
+      registration.sync.register('cart-sync');
+      registration.sync.register('wishlist-sync');
+    });
+  }
+
+  // Push Notifications
+  if ('Notification' in window && 'serviceWorker' in navigator) {
+    // Request notification permission
+    if (Notification.permission === 'default') {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted');
+        }
+      });
+    }
+  }
+
+  // PWA Analytics
+  const trackPWAEvent = (event: string, data?: any) => {
+    // Track PWA-specific events
+    console.log('PWA Event:', event, data);
+    
+    // Send to analytics
+    if (typeof gtag !== 'undefined') {
+      gtag('event', event, {
+        event_category: 'PWA',
+        event_label: data?.label || '',
+        value: data?.value || 0
+      });
+    }
+  };
+
+  // Track PWA usage
+  trackPWAEvent('pwa_loaded', {
+    label: 'PWA loaded',
+    value: 1
+  });
+
+  // Track install prompt interactions
+  installAccept?.addEventListener('click', () => {
+    trackPWAEvent('pwa_install_accepted', {
+      label: 'Install prompt accepted',
+      value: 1
+    });
+  });
+
+  installDismiss?.addEventListener('click', () => {
+    trackPWAEvent('pwa_install_dismissed', {
+      label: 'Install prompt dismissed',
+      value: 1
+    });
+  });
+
+  // Track offline usage
+  window.addEventListener('offline', () => {
+    trackPWAEvent('pwa_offline', {
+      label: 'Went offline',
+      value: 1
+    });
+  });
+
+  window.addEventListener('online', () => {
+    trackPWAEvent('pwa_online', {
+      label: 'Came back online',
+      value: 1
+    });
+  });
+</script>

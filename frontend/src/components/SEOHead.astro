@@ -1,0 +1,155 @@
+---
+// SEO Head Component
+export interface Props {
+  title: string;
+  description?: string;
+  keywords?: string[];
+  image?: string;
+  url?: string;
+  type?: 'website' | 'article' | 'product';
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  section?: string;
+  tags?: string[];
+  price?: number;
+  currency?: string;
+  availability?: 'in stock' | 'out of stock' | 'preorder';
+  brand?: string;
+  sku?: string;
+  canonical?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
+}
+
+const {
+  title,
+  description = "Handmade Boho Schmuck von Casa Petrada - Einzigartige handgefertigte Schmuckstücke und Mode",
+  keywords = ["handmade", "boho", "schmuck", "ketten", "armbänder", "mode", "handgefertigt", "casa petrada"],
+  image = "/images/logo.jpg",
+  url,
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  author = "Casa Petrada",
+  section,
+  tags,
+  price,
+  currency = "EUR",
+  availability,
+  brand = "Casa Petrada",
+  sku,
+  canonical,
+  noindex = false,
+  nofollow = false
+} = Astro.props;
+
+const fullTitle = title.includes('Casa Petrada') ? title : `${title} | Casa Petrada`;
+const fullUrl = url || Astro.url.href;
+const fullImage = image.startsWith('http') ? image : `${Astro.site}${image}`;
+---
+
+<!-- Primary Meta Tags -->
+<title>{fullTitle}</title>
+<meta name="title" content={fullTitle} />
+<meta name="description" content={description} />
+{keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
+{author && <meta name="author" content={author} />}
+{canonical && <link rel="canonical" href={canonical} />}
+
+<!-- Robots -->
+<meta name="robots" content={`${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}`} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={fullUrl} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={fullImage} />
+<meta property="og:site_name" content="Casa Petrada" />
+<meta property="og:locale" content="de_DE" />
+
+{type === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{type === 'article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+{type === 'article' && author && <meta property="article:author" content={author} />}
+{type === 'article' && section && <meta property="article:section" content={section} />}
+{type === 'article' && tags && tags.map(tag => <meta property="article:tag" content={tag} />)}
+
+{type === 'product' && price && <meta property="product:price:amount" content={price.toString()} />}
+{type === 'product' && currency && <meta property="product:price:currency" content={currency} />}
+{type === 'product' && availability && <meta property="product:availability" content={availability} />}
+{type === 'product' && brand && <meta property="product:brand" content={brand} />}
+{type === 'product' && sku && <meta property="product:retailer_item_id" content={sku} />}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={fullUrl} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={fullImage} />
+<meta name="twitter:site" content="@casapetrada" />
+<meta name="twitter:creator" content="@casapetrada" />
+
+<!-- Additional Meta Tags -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#d4af8c" />
+<meta name="msapplication-TileColor" content="#d4af8c" />
+
+<!-- Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": type === 'product' ? 'Product' : type === 'article' ? 'Article' : 'WebSite',
+  "name": fullTitle,
+  "description": description,
+  "url": fullUrl,
+  "image": fullImage,
+  "author": type === 'article' ? {
+    "@type": "Person",
+    "name": author
+  } : undefined,
+  "publisher": {
+    "@type": "Organization",
+    "name": "Casa Petrada",
+    "url": "https://casa-petrada.de",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://casa-petrada.de/images/logo.jpg"
+    }
+  },
+  "datePublished": type === 'article' ? publishedTime : undefined,
+  "dateModified": type === 'article' ? modifiedTime : undefined,
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": fullUrl
+  },
+  ...(type === 'product' && {
+    "offers": {
+      "@type": "Offer",
+      "price": price,
+      "priceCurrency": currency,
+      "availability": availability === 'in stock' ? 'https://schema.org/InStock' : 
+                     availability === 'out of stock' ? 'https://schema.org/OutOfStock' : 
+                     'https://schema.org/PreOrder',
+      "seller": {
+        "@type": "Organization",
+        "name": "Casa Petrada"
+      }
+    },
+    "brand": {
+      "@type": "Brand",
+      "name": brand
+    },
+    "sku": sku
+  })
+})} />
+
+<!-- Additional SEO Meta Tags -->
+<meta name="geo.region" content="DE" />
+<meta name="geo.placename" content="Deutschland" />
+<meta name="language" content="de" />
+<meta name="revisit-after" content="7 days" />
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" />

@@ -1,0 +1,287 @@
+---
+import SEOHead from '../components/SEOHead.astro';
+import Analytics from '../components/Analytics.astro';
+import Accessibility from '../components/Accessibility.astro';
+import PerformanceMonitor from '../components/PerformanceMonitor.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  keywords?: string[];
+  type?: 'website' | 'article' | 'product';
+  price?: number;
+  availability?: 'in stock' | 'out of stock' | 'preorder';
+  sku?: string;
+  canonical?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
+}
+
+const { 
+  title, 
+  description = "Handmade Boho Schmuck von Casa Petrada - Einzigartige handgefertigte Schmuckstücke und Mode", 
+  image = "/images/logo.jpg",
+  keywords,
+  type = "website",
+  price,
+  availability,
+  sku,
+  canonical,
+  noindex = false,
+  nofollow = false
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- SEO Head Component -->
+    <SEOHead 
+      title={title}
+      description={description}
+      image={image}
+      keywords={keywords}
+      type={type}
+      price={price}
+      availability={availability}
+      sku={sku}
+      canonical={canonical}
+      noindex={noindex}
+      nofollow={nofollow}
+    />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Import global styles -->
+    <link rel="stylesheet" href="/src/styles/global.css" />
+    
+    <!-- Analytics -->
+    <Analytics 
+      googleAnalyticsId="G-XXXXXXXXXX"
+      googleTagManagerId="GTM-XXXXXXX"
+      facebookPixelId="XXXXXXXXXXXXXXX"
+      hotjarId="XXXXXXXX"
+      enableAnalytics={true}
+    />
+    
+    <!-- Accessibility -->
+    <Accessibility 
+      enableSkipLinks={true}
+      enableFocusManagement={true}
+      enableKeyboardNavigation={true}
+      enableScreenReaderSupport={true}
+      enableHighContrast={true}
+      enableReducedMotion={true}
+    />
+    
+    <!-- Performance Monitoring -->
+    <PerformanceMonitor 
+      enableCoreWebVitals={true}
+      enableResourceTiming={true}
+      enableUserTiming={true}
+      enableNavigationTiming={true}
+      enableLCP={true}
+      enableFID={true}
+      enableCLS={true}
+      enableFCP={true}
+      enableTTFB={true}
+      apiEndpoint="/api/performance"
+    />
+  </head>
+  <body class="bg-boho-light text-boho-dark">
+    <!-- Navigation -->
+    <nav id="navigation" class="bg-white shadow-sm border-b border-boho-accent sticky top-0 z-50" role="navigation" aria-label="Hauptnavigation">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <a href="/" class="flex items-center space-x-2">
+              <span class="text-2xl font-serif font-bold text-boho-dark">CASA-PETRADA</span>
+            </a>
+            <p class="text-xs text-boho-pink font-medium">Handmade Boho Schmuck</p>
+          </div>
+          
+          <!-- Desktop Navigation -->
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-8" role="menubar">
+              <a href="/" class="text-boho-dark hover:text-boho-pink px-3 py-2 text-sm font-medium transition-colors focus-indicator" role="menuitem">Home</a>
+              <a href="/armbaender" class="text-boho-dark hover:text-boho-pink px-3 py-2 text-sm font-medium transition-colors focus-indicator" role="menuitem">Armbänder</a>
+              <a href="/ketten" class="text-boho-dark hover:text-boho-pink px-3 py-2 text-sm font-medium transition-colors focus-indicator" role="menuitem">Ketten</a>
+              <a href="/fashion" class="text-boho-dark hover:text-boho-pink px-3 py-2 text-sm font-medium transition-colors focus-indicator" role="menuitem">Fashion</a>
+              <a href="/sale" class="text-boho-dark hover:text-boho-pink px-3 py-2 text-sm font-medium transition-colors focus-indicator" role="menuitem">Sale</a>
+              <a href="/blog" class="text-boho-dark hover:text-boho-pink px-3 py-2 text-sm font-medium transition-colors focus-indicator" role="menuitem">Blog</a>
+              <a href="/about" class="text-boho-dark hover:text-boho-pink px-3 py-2 text-sm font-medium transition-colors focus-indicator" role="menuitem">Über uns</a>
+              <a href="/contact" class="text-boho-dark hover:text-boho-pink px-3 py-2 text-sm font-medium transition-colors focus-indicator" role="menuitem">Kontakt</a>
+            </div>
+          </div>
+          
+          <!-- Search, Wishlist, Cart, Account -->
+          <div class="hidden md:flex items-center space-x-4">
+            <a href="/search" class="text-boho-dark hover:text-boho-pink transition-colors">
+              <i class="fas fa-search text-xl"></i>
+            </a>
+            <a href="/wishlist" class="text-boho-dark hover:text-boho-pink transition-colors relative">
+              <i class="fas fa-heart text-xl"></i>
+              <span class="absolute -top-2 -right-2 bg-boho-pink text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+            </a>
+            <a href="/cart" class="text-boho-dark hover:text-boho-pink transition-colors relative">
+              <i class="fas fa-shopping-bag text-xl"></i>
+              <span class="absolute -top-2 -right-2 bg-boho-pink text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+            </a>
+            <a href="/account" class="text-boho-dark hover:text-boho-pink transition-colors">
+              <i class="fas fa-user text-xl"></i>
+            </a>
+          </div>
+          
+          <!-- Mobile menu button -->
+          <div class="md:hidden">
+            <button type="button" class="text-boho-dark hover:text-boho-pink focus:outline-none focus:text-boho-pink" id="mobile-menu-button">
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mobile Navigation -->
+      <div class="md:hidden hidden" id="mobile-menu">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-boho-accent">
+          <!-- Mobile Search -->
+          <div class="px-3 py-2">
+            <form method="GET" action="/search" class="flex">
+              <input 
+                type="text" 
+                name="q" 
+                placeholder="Suchen..."
+                class="flex-1 px-3 py-2 border border-boho-accent rounded-l-lg focus:border-boho-pink focus:ring-2 focus:ring-boho-pink/20"
+              />
+              <button 
+                type="submit"
+                class="px-3 py-2 bg-boho-pink text-white rounded-r-lg hover:bg-boho-brown transition-colors"
+              >
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </div>
+          
+          <!-- Mobile Navigation Links -->
+          <a href="/" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium">Home</a>
+          <a href="/armbaender" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium">Armbänder</a>
+          <a href="/ketten" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium">Ketten</a>
+          <a href="/fashion" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium">Fashion</a>
+          <a href="/sale" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium">Sale</a>
+          <a href="/blog" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium">Blog</a>
+          <a href="/about" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium">Über uns</a>
+          <a href="/contact" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium">Kontakt</a>
+          
+          <!-- Mobile Account Actions -->
+          <div class="border-t border-boho-accent pt-2 mt-2 space-y-1">
+            <a href="/account" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium flex items-center">
+              <i class="fas fa-user mr-2"></i>
+              Mein Konto
+            </a>
+            <a href="/wishlist" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium flex items-center">
+              <i class="fas fa-heart mr-2"></i>
+              Merkliste (0)
+            </a>
+            <a href="/cart" class="text-boho-dark hover:text-boho-pink block px-3 py-2 text-base font-medium flex items-center">
+              <i class="fas fa-shopping-bag mr-2"></i>
+              Warenkorb (0)
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main" aria-label="Hauptinhalt">
+      <slot />
+    </main>
+    
+    <!-- Footer -->
+    <footer id="footer" class="bg-boho-dark text-boho-text-light mt-20" role="contentinfo" aria-label="Footer">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <!-- Company Info -->
+          <div class="col-span-1 md:col-span-2">
+            <h3 class="text-2xl font-serif font-bold mb-4 text-boho-text-light">CASA-PETRADA</h3>
+            <p class="text-boho-pink mb-4 font-medium">Handmade Boho Schmuck</p>
+            <p class="text-sm text-boho-text-muted mb-4 leading-relaxed">
+              Einzigartige handgefertigte Schmuckstücke und Mode. Jedes Stück wird mit Liebe und Sorgfalt von Hand gefertigt.
+            </p>
+            <div class="flex space-x-4">
+              <a href="#" class="text-boho-pink hover:text-boho-text-light transition-colors duration-300">
+                <i class="fab fa-instagram text-xl"></i>
+              </a>
+              <a href="#" class="text-boho-pink hover:text-boho-text-light transition-colors duration-300">
+                <i class="fab fa-facebook text-xl"></i>
+              </a>
+              <a href="#" class="text-boho-pink hover:text-boho-text-light transition-colors duration-300">
+                <i class="fab fa-pinterest text-xl"></i>
+              </a>
+            </div>
+          </div>
+          
+          <!-- Quick Links -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4 text-boho-text-light">Schnellzugriff</h4>
+            <ul class="space-y-2">
+              <li><a href="/" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Home</a></li>
+              <li><a href="/armbaender" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Armbänder</a></li>
+              <li><a href="/ketten" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Ketten</a></li>
+              <li><a href="/fashion" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Fashion</a></li>
+              <li><a href="/sale" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Sale</a></li>
+              <li><a href="/blog" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Blog</a></li>
+            </ul>
+          </div>
+          
+          <!-- Customer Service -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4 text-boho-text-light">Kundenservice</h4>
+            <ul class="space-y-2">
+              <li><a href="/about" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Über uns</a></li>
+              <li><a href="/contact" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Kontakt</a></li>
+              <li><a href="/shipping" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Versand</a></li>
+              <li><a href="/returns" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Rückgabe</a></li>
+            </ul>
+          </div>
+          
+          <!-- Legal -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4 text-boho-text-light">Rechtliches</h4>
+            <ul class="space-y-2">
+              <li><a href="/agb" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">AGB</a></li>
+              <li><a href="/datenschutz" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Datenschutz</a></li>
+              <li><a href="/impressum" class="text-boho-text-muted hover:text-boho-text-light transition-colors duration-300">Impressum</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="border-t border-boho-accent/30 mt-8 pt-8 text-center">
+          <p class="text-sm text-boho-text-muted">
+            © 2024 Casa Petrada. Alle Rechte vorbehalten.
+          </p>
+        </div>
+      </div>
+    </footer>
+    
+    <!-- Mobile Menu Script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (mobileMenuButton && mobileMenu) {
+          mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

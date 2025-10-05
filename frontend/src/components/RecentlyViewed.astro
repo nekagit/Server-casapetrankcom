@@ -1,0 +1,456 @@
+---
+// Recently Viewed Products Component
+export interface Props {
+  maxProducts?: number;
+  showTitle?: boolean;
+  title?: string;
+  className?: string;
+}
+
+const { 
+  maxProducts = 6, 
+  showTitle = true, 
+  title = "Zuletzt angesehen",
+  className = ""
+} = Astro.props;
+
+// Mock recently viewed data - in real app this would come from localStorage/API
+const recentlyViewedProducts = [
+  {
+    id: 1,
+    name: "Tibet Armband",
+    slug: "tibet-armband",
+    price: 24.90,
+    originalPrice: 29.90,
+    discount: 17,
+    image: "/images/products/tibet-armband.jpg",
+    category: "Armbänder",
+    rating: 4.8,
+    reviewCount: 127,
+    inStock: true,
+    viewedAt: "2024-03-10T14:30:00Z"
+  },
+  {
+    id: 2,
+    name: "Boho Kette mit Anhänger",
+    slug: "boho-kette-anhaenger",
+    price: 39.90,
+    image: "/images/products/product_1.jpg",
+    category: "Ketten",
+    rating: 4.6,
+    reviewCount: 89,
+    inStock: true,
+    viewedAt: "2024-03-10T13:45:00Z"
+  },
+  {
+    id: 3,
+    name: "Mondstein Ohrringe",
+    slug: "mondstein-ohrringe",
+    price: 49.90,
+    image: "/images/products/product_3.jpg",
+    category: "Ohrringe",
+    rating: 4.4,
+    reviewCount: 56,
+    inStock: true,
+    viewedAt: "2024-03-10T12:20:00Z"
+  },
+  {
+    id: 4,
+    name: "Feder Fußkettchen",
+    slug: "feder-fusskettchen",
+    price: 19.90,
+    image: "/images/products/product_4.jpg",
+    category: "Fußkettchen",
+    rating: 4.2,
+    reviewCount: 34,
+    inStock: false,
+    viewedAt: "2024-03-10T11:15:00Z"
+  },
+  {
+    id: 5,
+    name: "Leder Wickelarmband",
+    slug: "leder-wickelarmband",
+    price: 34.90,
+    image: "/images/products/product_5.jpg",
+    category: "Armbänder",
+    rating: 4.7,
+    reviewCount: 78,
+    inStock: true,
+    viewedAt: "2024-03-10T10:30:00Z"
+  },
+  {
+    id: 6,
+    name: "Muschel Kette",
+    slug: "muschel-kette",
+    price: 32.50,
+    image: "/images/products/product_6.jpg",
+    category: "Ketten",
+    rating: 4.1,
+    reviewCount: 45,
+    inStock: true,
+    viewedAt: "2024-03-10T09:45:00Z"
+  }
+];
+
+const displayProducts = recentlyViewedProducts.slice(0, maxProducts);
+---
+
+<div class={`recently-viewed ${className}`}>
+  {showTitle && (
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-serif font-bold text-boho-dark">{title}</h2>
+      <button 
+        id="clear-recently-viewed"
+        class="text-sm text-boho-pink hover:text-boho-brown transition-colors"
+      >
+        Alle löschen
+      </button>
+    </div>
+  )}
+
+  {displayProducts.length > 0 ? (
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      {displayProducts.map((product) => (
+        <div class="recently-viewed-product bg-white rounded-lg shadow-sm border border-boho-accent/20 overflow-hidden hover:shadow-md transition-shadow">
+          <a href={`/products/${product.slug}`} class="block">
+            <div class="relative">
+              <img 
+                src={product.image} 
+                alt={product.name}
+                class="w-full h-32 object-cover"
+              />
+              
+              <!-- Remove Button -->
+              <button 
+                class="remove-from-recently-viewed absolute top-2 right-2 w-6 h-6 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center hover:bg-opacity-75 transition-colors"
+                data-product-id={product.id}
+                title="Aus Verlauf entfernen"
+              >
+                <i class="fas fa-times text-xs"></i>
+              </button>
+              
+              <!-- Stock Status -->
+              {!product.inStock && (
+                <div class="absolute top-2 left-2 bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded">
+                  Ausverkauft
+                </div>
+              )}
+              
+              <!-- Discount Badge -->
+              {product.discount && (
+                <div class="absolute bottom-2 left-2 bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded">
+                  -{product.discount}%
+                </div>
+              )}
+            </div>
+            
+            <div class="p-3">
+              <div class="mb-1">
+                <span class="text-xs text-boho-dark/60">{product.category}</span>
+              </div>
+              
+              <h3 class="font-semibold text-boho-dark text-sm mb-2 line-clamp-2">
+                {product.name}
+              </h3>
+              
+              <div class="flex items-center space-x-1 mb-2">
+                <div class="flex items-center">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <i class={`fas fa-star text-xs ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}></i>
+                  ))}
+                </div>
+                <span class="text-xs text-boho-dark/60">({product.reviewCount})</span>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-1">
+                  <span class="text-sm font-bold text-boho-dark">
+                    {product.price.toFixed(2)} €
+                  </span>
+                  {product.originalPrice && (
+                    <span class="text-xs text-boho-dark/60 line-through">
+                      {product.originalPrice.toFixed(2)} €
+                    </span>
+                  )}
+                </div>
+                
+                <span class="text-xs text-boho-dark/60">
+                  {new Date(product.viewedAt).toLocaleDateString('de-DE', { 
+                    day: '2-digit', 
+                    month: '2-digit' 
+                  })}
+                </span>
+              </div>
+            </div>
+          </a>
+          
+          <!-- Quick Actions -->
+          <div class="px-3 pb-3">
+            <div class="flex items-center justify-between">
+              <button 
+                class="quick-action-btn text-xs px-2 py-1 text-boho-pink hover:text-boho-brown transition-colors"
+                data-product-id={product.id}
+                data-action="wishlist"
+                title="Zur Wunschliste hinzufügen"
+              >
+                <i class="fas fa-heart mr-1"></i>
+                Merken
+              </button>
+              
+              <button 
+                class="quick-action-btn text-xs px-2 py-1 text-boho-pink hover:text-boho-brown transition-colors"
+                data-product-id={product.id}
+                data-action="compare"
+                title="Zum Vergleich hinzufügen"
+              >
+                <i class="fas fa-balance-scale mr-1"></i>
+                Vergleichen
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <!-- Empty State -->
+    <div class="text-center py-12">
+      <div class="mx-auto w-24 h-24 bg-boho-beige rounded-full flex items-center justify-center mb-4">
+        <i class="fas fa-history text-3xl text-boho-pink"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-boho-dark mb-2">Noch keine Produkte angesehen</h3>
+      <p class="text-boho-dark/70 mb-6">
+        Entdecke unsere handgefertigten Schmuckstücke und sie werden hier angezeigt.
+      </p>
+      <a 
+        href="/" 
+        class="inline-flex items-center px-6 py-3 bg-boho-pink text-white rounded-lg hover:bg-boho-brown transition-colors"
+      >
+        <i class="fas fa-arrow-left mr-2"></i>
+        Produkte entdecken
+      </a>
+    </div>
+  )}
+
+  <!-- View All Button -->
+  {displayProducts.length > 0 && (
+    <div class="text-center mt-6">
+      <a 
+        href="/recently-viewed" 
+        class="inline-flex items-center px-6 py-3 border border-boho-accent text-boho-dark rounded-lg hover:bg-boho-beige transition-colors"
+      >
+        Alle ansehen
+        <i class="fas fa-arrow-right ml-2"></i>
+      </a>
+    </div>
+  )}
+</div>
+
+<style>
+  .recently-viewed-product {
+    transition: all 0.3s ease;
+  }
+
+  .recently-viewed-product:hover {
+    transform: translateY(-2px);
+  }
+
+  .quick-action-btn {
+    transition: all 0.2s ease;
+  }
+
+  .quick-action-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .grid-cols-1 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .grid-cols-1 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Loading states */
+  .loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--boho-pink);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+<script>
+  // Recently viewed products functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const clearAllBtn = document.getElementById('clear-recently-viewed');
+    const removeBtns = document.querySelectorAll('.remove-from-recently-viewed');
+    const quickActionBtns = document.querySelectorAll('.quick-action-btn');
+
+    // Clear all recently viewed
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener('click', function() {
+        if (confirm('Möchtest du den gesamten Verlauf löschen?')) {
+          clearAllRecentlyViewed();
+        }
+      });
+    }
+
+    // Remove individual products
+    removeBtns.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const productId = this.getAttribute('data-product-id');
+        removeFromRecentlyViewed(productId);
+      });
+    });
+
+    // Quick actions
+    quickActionBtns.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const productId = this.getAttribute('data-product-id');
+        const action = this.getAttribute('data-action');
+        
+        handleQuickAction(productId, action);
+      });
+    });
+
+    function clearAllRecentlyViewed() {
+      // In a real app, this would clear from localStorage/API
+      localStorage.removeItem('recentlyViewed');
+      location.reload();
+    }
+
+    function removeFromRecentlyViewed(productId) {
+      // In a real app, this would remove from localStorage/API
+      const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      const updated = recentlyViewed.filter(id => id !== productId);
+      localStorage.setItem('recentlyViewed', JSON.stringify(updated));
+      
+      // Remove from DOM
+      const productCard = document.querySelector(`[data-product-id="${productId}"]`).closest('.recently-viewed-product');
+      if (productCard) {
+        productCard.remove();
+      }
+      
+      showNotification('Produkt aus Verlauf entfernt', 'success');
+    }
+
+    function handleQuickAction(productId, action) {
+      switch (action) {
+        case 'wishlist':
+          addToWishlist(productId);
+          break;
+        case 'compare':
+          addToComparison(productId);
+          break;
+      }
+    }
+
+    function addToWishlist(productId) {
+      // In a real app, this would add to wishlist via API
+      console.log('Adding to wishlist:', productId);
+      showNotification('Produkt zur Wunschliste hinzugefügt!', 'success');
+    }
+
+    function addToComparison(productId) {
+      // In a real app, this would add to comparison via API
+      const comparison = JSON.parse(localStorage.getItem('productComparison') || '[]');
+      if (!comparison.includes(productId)) {
+        comparison.push(productId);
+        localStorage.setItem('productComparison', JSON.stringify(comparison));
+        showNotification('Produkt zum Vergleich hinzugefügt!', 'success');
+      } else {
+        showNotification('Produkt bereits im Vergleich', 'info');
+      }
+    }
+
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ${
+        type === 'success' ? 'bg-green-600' : 
+        type === 'error' ? 'bg-red-600' : 
+        'bg-boho-pink'
+      }`;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Track product views
+    function trackProductView(productId, productName) {
+      const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      
+      // Remove if already exists
+      const filtered = recentlyViewed.filter(item => item.id !== productId);
+      
+      // Add to beginning
+      filtered.unshift({
+        id: productId,
+        name: productName,
+        viewedAt: new Date().toISOString()
+      });
+      
+      // Keep only last 20 items
+      const limited = filtered.slice(0, 20);
+      
+      localStorage.setItem('recentlyViewed', JSON.stringify(limited));
+    }
+
+    // Initialize tracking for product pages
+    if (window.location.pathname.includes('/products/')) {
+      const productId = window.location.pathname.split('/').pop();
+      const productName = document.querySelector('h1')?.textContent || 'Product';
+      trackProductView(productId, productName);
+    }
+
+    // Load recently viewed from localStorage
+    function loadRecentlyViewed() {
+      const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      if (recentlyViewed.length > 0) {
+        // In a real app, this would fetch product data from API
+        console.log('Loading recently viewed:', recentlyViewed);
+      }
+    }
+
+    // Initialize
+    loadRecentlyViewed();
+  });
+</script>

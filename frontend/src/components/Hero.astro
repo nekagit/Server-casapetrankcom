@@ -1,0 +1,45 @@
+---
+// Hero Section Component
+---
+
+<section class="relative bg-gradient-to-br from-boho-beige to-boho-accent py-20 lg:py-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Hero Content -->
+      <div class="text-center lg:text-left">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-boho-dark mb-6">
+          Handgemachter<br />
+          <span class="text-boho-pink">Boho Schmuck</span>
+        </h1>
+        <p class="text-lg md:text-xl text-boho-dark/80 mb-8 max-w-2xl">
+          Entdecke unsere einzigartigen handgefertigten Schmuckstücke und stilvolle Mode. 
+          Jedes Stück wird mit Liebe und Sorgfalt von Hand gefertigt.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <a href="/products" class="btn-primary inline-flex items-center justify-center">
+            <i class="fas fa-shopping-bag mr-2"></i>
+            Jetzt entdecken
+          </a>
+          <a href="/about" class="btn-secondary inline-flex items-center justify-center">
+            <i class="fas fa-heart mr-2"></i>
+            Unsere Geschichte
+          </a>
+        </div>
+      </div>
+      
+      <!-- Hero Image -->
+      <div class="relative">
+        <div class="relative z-10">
+          <img 
+            src="/images/products/korsika-kette.jpg" 
+            alt="Handgemachter Boho Schmuck von Casa Petrada"
+            class="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-2xl"
+          />
+        </div>
+        <!-- Decorative elements -->
+        <div class="absolute -top-4 -right-4 w-24 h-24 bg-boho-pink/20 rounded-full -z-10"></div>
+        <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-boho-brown/20 rounded-full -z-10"></div>
+      </div>
+    </div>
+  </div>
+</section>

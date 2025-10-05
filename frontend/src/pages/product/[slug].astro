@@ -1,0 +1,302 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductReviews from '../../components/ProductReviews.astro';
+
+// Mock product data - in real app this would come from API
+const product = {
+  id: 1,
+  name: "Tibet Armband",
+  slug: "tibet-armband",
+  price: 24.90,
+  originalPrice: 29.90,
+  description: "Handgefertigtes Armband aus natürlichen Materialien mit tibetischen Einflüssen. Perfekt für den täglichen Gebrauch und alle Anlässe.",
+  shortDescription: "Handgefertigtes Armband aus natürlichen Materialien",
+  material: "Holz, Naturstein, Metall",
+  careInstructions: "Trocken aufbewahren und vor Feuchtigkeit schützen. Mit einem weichen Tuch abwischen.",
+  weight: 25,
+  category: "Einfacharmbänder",
+  isHandmade: true,
+  isFeatured: true,
+  images: [
+    {
+      id: 1,
+      url: "/images/products/tibet-armband.jpg",
+      alt: "Tibet Armband Hauptansicht",
+      isPrimary: true
+    },
+    {
+      id: 2,
+      url: "/images/products/tibet-armband-2.jpg",
+      alt: "Tibet Armband Detailansicht",
+      isPrimary: false
+    },
+    {
+      id: 3,
+      url: "/images/products/tibet-armband-3.jpg",
+      alt: "Tibet Armband getragen",
+      isPrimary: false
+    }
+  ],
+  relatedProducts: [
+    {
+      id: 2,
+      name: "Boho Wickelarmband",
+      price: 19.90,
+      image: "/images/products/product_1.jpg",
+      slug: "boho-wickelarmband"
+    },
+    {
+      id: 3,
+      name: "Naturstein Armband",
+      price: 32.90,
+      image: "/images/products/real_product_1.jpg",
+      slug: "naturstein-armband"
+    }
+  ]
+};
+
+const { slug } = Astro.params;
+---
+
+<Layout 
+  title={`${product.name} - Casa Petrada`}
+  description={product.shortDescription}
+  image={product.images[0].url}
+>
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/" class="text-boho-pink hover:text-boho-brown">Home</a>
+        <i class="fas fa-chevron-right text-boho-dark/50"></i>
+        <a href="/armbaender" class="text-boho-pink hover:text-boho-brown">Armbänder</a>
+        <i class="fas fa-chevron-right text-boho-dark/50"></i>
+        <span class="text-boho-dark">{product.name}</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Product Details -->
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Product Images -->
+        <div class="space-y-4">
+          <!-- Main Image -->
+          <div class="relative">
+            <img 
+              src={product.images[0].url} 
+              alt={product.images[0].alt}
+              class="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-lg"
+              id="main-image"
+            />
+            {product.originalPrice && (
+              <div class="absolute top-4 left-4 bg-boho-pink text-white px-3 py-1 rounded-lg text-sm font-semibold">
+                Sale
+              </div>
+            )}
+          </div>
+          
+          <!-- Thumbnail Images -->
+          <div class="grid grid-cols-3 gap-4">
+            {product.images.map((image) => (
+              <button 
+                class="relative overflow-hidden rounded-lg border-2 border-boho-accent hover:border-boho-pink transition-colors"
+                onclick={`document.getElementById('main-image').src = '${image.url}'`}
+              >
+                <img 
+                  src={image.url} 
+                  alt={image.alt}
+                  class="w-full h-24 object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="space-y-6">
+          <div>
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="text-sm text-boho-pink font-medium">{product.category}</span>
+              {product.isHandmade && (
+                <span class="bg-boho-pink/10 text-boho-pink px-2 py-1 rounded text-xs font-medium">
+                  Handgefertigt
+                </span>
+              )}
+            </div>
+            <h1 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-4">
+              {product.name}
+            </h1>
+            <p class="text-lg text-boho-dark/80 mb-6">{product.description}</p>
+          </div>
+
+          <!-- Price -->
+          <div class="flex items-center space-x-4">
+            <span class="text-3xl font-bold text-boho-dark">{product.price.toFixed(2)} €</span>
+            {product.originalPrice && (
+              <span class="text-xl text-boho-dark/50 line-through">{product.originalPrice.toFixed(2)} €</span>
+            )}
+          </div>
+
+          <!-- Product Options -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-boho-dark mb-2">Material</label>
+              <p class="text-boho-dark/80">{product.material}</p>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-boho-dark mb-2">Gewicht</label>
+              <p class="text-boho-dark/80">{product.weight} g</p>
+            </div>
+          </div>
+
+          <!-- Add to Cart -->
+          <div class="space-y-4">
+            <div class="flex items-center space-x-4">
+              <label class="text-sm font-medium text-boho-dark">Anzahl:</label>
+              <div class="flex items-center border border-boho-accent rounded-lg">
+                <button class="px-3 py-2 text-boho-dark hover:bg-boho-accent" onclick="decreaseQuantity()">-</button>
+                <input type="number" value="1" min="1" max="10" class="w-16 text-center border-0 focus:ring-0" id="quantity">
+                <button class="px-3 py-2 text-boho-dark hover:bg-boho-accent" onclick="increaseQuantity()">+</button>
+              </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4">
+              <button class="flex-1 bg-boho-pink text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-boho-brown transition-colors duration-300">
+                <i class="fas fa-shopping-bag mr-2"></i>
+                In den Warenkorb
+              </button>
+              <button class="bg-boho-accent text-boho-dark px-6 py-4 rounded-lg font-semibold hover:bg-boho-pink hover:text-white transition-colors duration-300">
+                <i class="fas fa-heart mr-2"></i>
+                Merken
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Details -->
+          <div class="border-t border-boho-accent pt-6">
+            <h3 class="text-lg font-semibold text-boho-dark mb-3">Pflegehinweise</h3>
+            <p class="text-boho-dark/80 text-sm">{product.careInstructions}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Description -->
+  <section class="py-20 bg-boho-light">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div>
+          <h2 class="text-2xl font-serif font-bold text-boho-dark mb-4">Produktdetails</h2>
+          <div class="space-y-3 text-boho-dark/80">
+            <div class="flex justify-between">
+              <span>Material:</span>
+              <span>{product.material}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Gewicht:</span>
+              <span>{product.weight} g</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Kategorie:</span>
+              <span>{product.category}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Handgefertigt:</span>
+              <span>Ja</span>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h2 class="text-2xl font-serif font-bold text-boho-dark mb-4">Versand & Rückgabe</h2>
+          <div class="space-y-3 text-boho-dark/80">
+            <div class="flex items-center">
+              <i class="fas fa-shipping-fast text-boho-pink mr-3"></i>
+              <span>Kostenloser Versand ab 39,90 €</span>
+            </div>
+            <div class="flex items-center">
+              <i class="fas fa-undo text-boho-pink mr-3"></i>
+              <span>30 Tage Rückgaberecht</span>
+            </div>
+            <div class="flex items-center">
+              <i class="fas fa-shield-alt text-boho-pink mr-3"></i>
+              <span>Sichere Zahlung</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Reviews -->
+  <section class="py-20 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ProductReviews />
+    </div>
+  </section>
+
+  <!-- Related Products -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-serif font-bold text-boho-dark text-center mb-12">
+        Ähnliche Produkte
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {product.relatedProducts.map((relatedProduct) => (
+          <a href={`/product/${relatedProduct.slug}`} class="card group">
+            <div class="relative overflow-hidden">
+              <img 
+                src={relatedProduct.image} 
+                alt={relatedProduct.name}
+                class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <button class="opacity-0 group-hover:opacity-100 bg-white text-boho-pink px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-boho-pink hover:text-white">
+                  <i class="fas fa-eye mr-2"></i>
+                  Ansehen
+                </button>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-semibold text-boho-dark mb-2">{relatedProduct.name}</h3>
+              <div class="flex items-center justify-between">
+                <span class="text-2xl font-bold text-boho-dark">{relatedProduct.price.toFixed(2)} €</span>
+                <button class="bg-boho-pink text-white px-4 py-2 rounded-lg font-medium hover:bg-boho-brown transition-colors duration-300">
+                  <i class="fas fa-shopping-bag mr-1"></i>
+                  In den Warenkorb
+                </button>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  function increaseQuantity() {
+    const quantityInput = document.getElementById('quantity') as HTMLInputElement;
+    if (quantityInput) {
+      const currentValue = parseInt(quantityInput.value);
+      if (currentValue < 10) {
+        quantityInput.value = (currentValue + 1).toString();
+      }
+    }
+  }
+
+  function decreaseQuantity() {
+    const quantityInput = document.getElementById('quantity') as HTMLInputElement;
+    if (quantityInput) {
+      const currentValue = parseInt(quantityInput.value);
+      if (currentValue > 1) {
+        quantityInput.value = (currentValue - 1).toString();
+      }
+    }
+  }
+</script>

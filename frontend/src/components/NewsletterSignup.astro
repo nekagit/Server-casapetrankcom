@@ -1,0 +1,143 @@
+---
+// Newsletter Signup Component
+export interface Props {
+  title?: string;
+  description?: string;
+  showPreferences?: boolean;
+  source?: string;
+  className?: string;
+}
+
+const { 
+  title = "Bleib auf dem Laufenden",
+  description = "Erhalte exklusive Angebote und Neuigkeiten über unsere neuesten handgefertigten Stücke",
+  showPreferences = false,
+  source = "general",
+  className = ""
+} = Astro.props;
+---
+
+<div class={`newsletter-signup ${className}`}>
+  <div class="text-center mb-8">
+    <h2 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-4">
+      {title}
+    </h2>
+    <p class="text-lg text-boho-dark/80 max-w-2xl mx-auto">
+      {description}
+    </p>
+  </div>
+  
+  <form class="max-w-md mx-auto" id="newsletter-form">
+    <div class="flex gap-4">
+      <input 
+        type="email" 
+        name="email"
+        placeholder="Deine E-Mail-Adresse"
+        class="flex-1 px-4 py-3 rounded-lg border border-boho-accent focus:border-boho-pink focus:ring-2 focus:ring-boho-pink/20 transition-all duration-300"
+        required
+      />
+      <button 
+        type="submit"
+        class="bg-boho-pink text-white px-6 py-3 rounded-lg font-semibold hover:bg-boho-brown transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        id="newsletter-submit"
+      >
+        <span class="newsletter-text">Anmelden</span>
+        <span class="newsletter-loading hidden">
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+          Wird angemeldet...
+        </span>
+      </button>
+    </div>
+    
+    {showPreferences && (
+      <div class="mt-6 p-4 bg-boho-light rounded-lg">
+        <h3 class="text-sm font-semibold text-boho-dark mb-3">Newsletter-Einstellungen</h3>
+        <div class="space-y-2">
+          <label class="flex items-center">
+            <input type="checkbox" name="productUpdates" checked class="mr-2">
+            <span class="text-sm text-boho-dark/80">Produkt-Updates</span>
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" name="blogPosts" checked class="mr-2">
+            <span class="text-sm text-boho-dark/80">Blog-Posts</span>
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" name="sales" checked class="mr-2">
+            <span class="text-sm text-boho-dark/80">Sale-Angebote</span>
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" name="newArrivals" checked class="mr-2">
+            <span class="text-sm text-boho-dark/80">Neue Artikel</span>
+          </label>
+        </div>
+      </div>
+    )}
+    
+    <div class="mt-4 text-center">
+      <p class="text-xs text-boho-dark/60">
+        Mit der Anmeldung stimmst du unseren 
+        <a href="/datenschutz" class="text-boho-pink hover:text-boho-brown">Datenschutzbestimmungen</a> zu.
+      </p>
+    </div>
+  </form>
+</div>
+
+<script>
+  import { newsletterService } from '../services/newsletter';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('newsletter-form') as HTMLFormElement;
+    const submitButton = document.getElementById('newsletter-submit') as HTMLButtonElement;
+    const textSpan = submitButton.querySelector('.newsletter-text') as HTMLElement;
+    const loadingSpan = submitButton.querySelector('.newsletter-loading') as HTMLElement;
+
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const email = formData.get('email') as string;
+        const preferences = {
+          productUpdates: formData.get('productUpdates') === 'on',
+          blogPosts: formData.get('blogPosts') === 'on',
+          sales: formData.get('sales') === 'on',
+          newArrivals: formData.get('newArrivals') === 'on'
+        };
+
+        // Validate email
+        if (!newsletterService.validateEmail(email)) {
+          newsletterService.showMessage('Bitte gib eine gültige E-Mail-Adresse ein.', false);
+          return;
+        }
+
+        // Show loading state
+        submitButton.disabled = true;
+        textSpan.classList.add('hidden');
+        loadingSpan.classList.remove('hidden');
+
+        try {
+          const result = await newsletterService.subscribe({
+            email,
+            preferences,
+            source: 'newsletter-component'
+          });
+
+          if (result.success) {
+            newsletterService.showMessage(result.message, true);
+            form.reset();
+          } else {
+            newsletterService.showMessage(result.message, false);
+          }
+        } catch (error) {
+          console.error('Newsletter subscription error:', error);
+          newsletterService.showMessage('Ein Fehler ist aufgetreten. Bitte versuche es erneut.', false);
+        } finally {
+          // Hide loading state
+          submitButton.disabled = false;
+          textSpan.classList.remove('hidden');
+          loadingSpan.classList.add('hidden');
+        }
+      });
+    }
+  });
+</script>

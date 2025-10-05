@@ -1,0 +1,189 @@
+---
+// Payment Methods Component
+export interface Props {
+  orderData?: {
+    total: number;
+    currency: string;
+    orderId: string;
+    customerEmail: string;
+    customerName: string;
+    billingAddress: {
+      name: string;
+      street: string;
+      city: string;
+      postalCode: string;
+      country: string;
+    };
+    items: Array<{
+      name: string;
+      quantity: number;
+      price: number;
+    }>;
+  };
+  selectedMethod?: string;
+  onMethodChange?: (method: string) => void;
+}
+
+const { 
+  orderData,
+  selectedMethod = 'paypal',
+  onMethodChange
+} = Astro.props;
+
+// Mock payment methods - in real app this would come from API
+const paymentMethods = [
+  {
+    id: 'paypal',
+    name: 'PayPal',
+    type: 'paypal',
+    enabled: true,
+    icon: 'fab fa-paypal',
+    description: 'Sicher bezahlen mit PayPal',
+    color: 'text-blue-600'
+  },
+  {
+    id: 'stripe',
+    name: 'Kreditkarte',
+    type: 'stripe',
+    enabled: true,
+    icon: 'fas fa-credit-card',
+    description: 'Visa, Mastercard, American Express',
+    color: 'text-boho-pink'
+  },
+  {
+    id: 'klarna',
+    name: 'Klarna',
+    type: 'klarna',
+    enabled: true,
+    icon: 'fas fa-shopping-cart',
+    description: 'Kauf auf Rechnung, Ratenzahlung',
+    color: 'text-pink-600'
+  },
+  {
+    id: 'bank_transfer',
+    name: 'Vorkasse',
+    type: 'bank_transfer',
+    enabled: true,
+    icon: 'fas fa-university',
+    description: 'Überweisung vor Lieferung',
+    color: 'text-green-600'
+  }
+];
+---
+
+<div class="payment-methods">
+  <h2 class="text-2xl font-serif font-bold text-boho-dark mb-6">Zahlungsart wählen</h2>
+  
+  <div class="space-y-4">
+    {paymentMethods.map((method) => (
+      <div class={`payment-method ${selectedMethod === method.id ? 'selected' : ''}`}>
+        <label class="flex items-center p-4 border border-boho-accent rounded-lg cursor-pointer hover:border-boho-pink transition-colors">
+          <input 
+            type="radio" 
+            name="paymentMethod" 
+            value={method.id}
+            checked={selectedMethod === method.id}
+            class="mr-4 text-boho-pink focus:ring-boho-pink"
+          />
+          <div class="flex items-center space-x-4 flex-1">
+            <div class={`w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center`}>
+              <i class={`${method.icon} text-xl ${method.color}`}></i>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-boho-dark">{method.name}</h3>
+              <p class="text-sm text-boho-dark/70">{method.description}</p>
+            </div>
+            {method.id === 'paypal' && (
+              <div class="text-xs text-boho-dark/60">
+                <i class="fas fa-shield-alt mr-1"></i>
+                SSL-verschlüsselt
+              </div>
+            )}
+          </div>
+        </label>
+      </div>
+    ))}
+  </div>
+
+  <!-- Payment Security Info -->
+  <div class="mt-6 p-4 bg-boho-light rounded-lg">
+    <div class="flex items-start space-x-3">
+      <i class="fas fa-shield-alt text-boho-pink text-lg mt-1"></i>
+      <div>
+        <h3 class="text-sm font-semibold text-boho-dark mb-1">Sichere Zahlung</h3>
+        <p class="text-xs text-boho-dark/70">
+          Alle Zahlungen werden SSL-verschlüsselt übertragen. Wir speichern keine Kreditkartendaten.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bank Transfer Info (shown when selected) -->
+  {selectedMethod === 'bank_transfer' && (
+    <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+      <h3 class="text-sm font-semibold text-blue-800 mb-2">Vorkasse-Zahlung</h3>
+      <p class="text-xs text-blue-700 mb-3">
+        Nach der Bestellung erhältst du unsere Bankverbindung per E-Mail. 
+        Die Lieferung erfolgt nach Zahlungseingang.
+      </p>
+      <div class="text-xs text-blue-600">
+        <p><strong>Bank:</strong> Musterbank AG</p>
+        <p><strong>IBAN:</strong> DE89 3704 0044 0532 0130 00</p>
+        <p><strong>BIC:</strong> COBADEFFXXX</p>
+        <p><strong>Verwendungszweck:</strong> {orderData?.orderId || 'Bestellnummer'}</p>
+      </div>
+    </div>
+  )}
+
+  <!-- Klarna Info (shown when selected) -->
+  {selectedMethod === 'klarna' && (
+    <div class="mt-6 p-4 bg-pink-50 border border-pink-200 rounded-lg">
+      <h3 class="text-sm font-semibold text-pink-800 mb-2">Klarna Zahlungsoptionen</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-pink-700">
+        <div>
+          <i class="fas fa-credit-card mr-1"></i>
+          <span>Kauf auf Rechnung</span>
+        </div>
+        <div>
+          <i class="fas fa-calendar mr-1"></i>
+          <span>Ratenzahlung</span>
+        </div>
+        <div>
+          <i class="fas fa-mobile-alt mr-1"></i>
+          <span>Klarna App</span>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .payment-method.selected label {
+    border-color: var(--boho-pink);
+    background-color: var(--boho-pink)/5;
+  }
+</style>
+
+<script>
+  import { paymentService } from '../services/payment';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+    
+    paymentMethods.forEach(method => {
+      method.addEventListener('change', function(this: HTMLInputElement) {
+        // Update visual state
+        document.querySelectorAll('.payment-method').forEach(pm => {
+          pm.classList.remove('selected');
+        });
+        this.closest('.payment-method')?.classList.add('selected');
+        
+        // Trigger custom event for parent components
+        const event = new CustomEvent('paymentMethodChanged', {
+          detail: { method: this.value }
+        });
+        document.dispatchEvent(event);
+      });
+    });
+  });
+</script>

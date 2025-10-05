@@ -1,0 +1,44 @@
+{
+  "name": "casa-petrada",
+  "version": "1.0.0",
+  "description": "Casa Petrada - Handmade Boho Jewelry & Fashion E-commerce Website",
+  "private": true,
+  "scripts": {
+    "dev": "./dev.sh",
+    "start": "./scripts/start-astro-dev.sh",
+    "build": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview",
+    "backend": "cd backend && source venv/bin/activate && uvicorn main:app --reload",
+    "frontend": "cd frontend && npm run dev",
+    "install:all": "cd frontend && npm install && cd ../backend && pip install -r requirements.txt",
+    "clean": "find . -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true && find . -name '*.pyc' -delete 2>/dev/null || true",
+    "deploy": "./scripts/deploy.sh"
+  },
+  "keywords": [
+    "e-commerce",
+    "boho",
+    "jewelry",
+    "fashion",
+    "handmade",
+    "astro",
+    "typescript",
+    "tailwind",
+    "fastapi",
+    "python"
+  ],
+  "author": "Casa Petrada",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "python": ">=3.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/casa-petrada.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/casa-petrada/issues"
+  },
+  "homepage": "https://casa-petrada.de"
+}
+

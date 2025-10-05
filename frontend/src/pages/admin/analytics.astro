@@ -1,0 +1,427 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// Mock analytics data - in real app this would come from API
+const analyticsData = {
+  overview: {
+    totalRevenue: 12500.50,
+    totalOrders: 156,
+    totalCustomers: 89,
+    averageOrderValue: 80.13,
+    conversionRate: 3.2,
+    revenueGrowth: 12.5,
+    ordersGrowth: 8.3,
+    customersGrowth: 15.2,
+    conversionGrowth: -0.5
+  },
+  sales: {
+    today: 450.00,
+    yesterday: 380.50,
+    thisWeek: 2850.75,
+    lastWeek: 2650.25,
+    thisMonth: 12500.50,
+    lastMonth: 11100.75,
+    thisYear: 12500.50,
+    lastYear: 9800.25
+  },
+  topProducts: [
+    {
+      id: 1,
+      name: "Tibet Armband",
+      sales: 45,
+      revenue: 1120.50,
+      growth: 15.2
+    },
+    {
+      id: 2,
+      name: "Boho Wickelarmband",
+      sales: 32,
+      revenue: 636.80,
+      growth: 8.5
+    },
+    {
+      id: 3,
+      name: "Naturstein Kette",
+      sales: 28,
+      revenue: 921.20,
+      growth: 22.1
+    }
+  ],
+  recentOrders: [
+    {
+      id: "CP-2024-001",
+      customer: "Max Mustermann",
+      amount: 69.70,
+      status: "Versandt",
+      date: "2024-01-20T10:30:00Z"
+    },
+    {
+      id: "CP-2024-002",
+      customer: "Anna Schmidt",
+      amount: 45.90,
+      status: "Bezahlt",
+      date: "2024-01-20T09:15:00Z"
+    },
+    {
+      id: "CP-2024-003",
+      customer: "Lisa Weber",
+      amount: 89.70,
+      status: "Bestellt",
+      date: "2024-01-19T16:45:00Z"
+    }
+  ],
+  traffic: {
+    visitors: 1250,
+    pageViews: 3450,
+    bounceRate: 42.5,
+    avgSessionDuration: "2:35",
+    newVisitors: 68.5,
+    returningVisitors: 31.5
+  },
+  devices: {
+    desktop: 45.2,
+    mobile: 48.8,
+    tablet: 6.0
+  },
+  sources: {
+    direct: 35.5,
+    google: 28.2,
+    facebook: 15.8,
+    instagram: 12.3,
+    other: 8.2
+  }
+};
+---
+
+<Layout 
+  title="Analytics Dashboard - Casa Petrada Admin"
+  description="Umfassende Analytics und Berichte für Casa Petrada"
+  noindex={true}
+  nofollow={true}
+>
+  <!-- Admin Header -->
+  <section class="py-8 bg-boho-dark text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-serif font-bold mb-2">Analytics Dashboard</h1>
+          <p class="text-boho-accent">Umfassende Einblicke in deine Verkaufsdaten</p>
+        </div>
+        <div class="flex space-x-4">
+          <a href="/admin" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Zurück zum Dashboard
+          </a>
+          <button class="btn-primary" onclick="exportAnalytics()">
+            <i class="fas fa-download mr-2"></i>
+            Bericht exportieren
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview Cards -->
+  <section class="py-8 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Revenue Card -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-boho-dark/70 mb-1">Gesamtumsatz</p>
+              <p class="text-2xl font-bold text-boho-dark">{analyticsData.overview.totalRevenue.toFixed(2)} €</p>
+              <p class={`text-sm ${analyticsData.overview.revenueGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <i class={`fas fa-arrow-${analyticsData.overview.revenueGrowth >= 0 ? 'up' : 'down'} mr-1`}></i>
+                {analyticsData.overview.revenueGrowth}%
+              </p>
+            </div>
+            <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center">
+              <i class="fas fa-euro-sign text-xl text-boho-pink"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders Card -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-boho-dark/70 mb-1">Bestellungen</p>
+              <p class="text-2xl font-bold text-boho-dark">{analyticsData.overview.totalOrders}</p>
+              <p class={`text-sm ${analyticsData.overview.ordersGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <i class={`fas fa-arrow-${analyticsData.overview.ordersGrowth >= 0 ? 'up' : 'down'} mr-1`}></i>
+                {analyticsData.overview.ordersGrowth}%
+              </p>
+            </div>
+            <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center">
+              <i class="fas fa-shopping-bag text-xl text-boho-pink"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customers Card -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-boho-dark/70 mb-1">Kunden</p>
+              <p class="text-2xl font-bold text-boho-dark">{analyticsData.overview.totalCustomers}</p>
+              <p class={`text-sm ${analyticsData.overview.customersGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <i class={`fas fa-arrow-${analyticsData.overview.customersGrowth >= 0 ? 'up' : 'down'} mr-1`}></i>
+                {analyticsData.overview.customersGrowth}%
+              </p>
+            </div>
+            <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center">
+              <i class="fas fa-users text-xl text-boho-pink"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conversion Card -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-boho-dark/70 mb-1">Conversion Rate</p>
+              <p class="text-2xl font-bold text-boho-dark">{analyticsData.overview.conversionRate}%</p>
+              <p class={`text-sm ${analyticsData.overview.conversionGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <i class={`fas fa-arrow-${analyticsData.overview.conversionGrowth >= 0 ? 'up' : 'down'} mr-1`}></i>
+                {analyticsData.overview.conversionGrowth}%
+              </p>
+            </div>
+            <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center">
+              <i class="fas fa-chart-line text-xl text-boho-pink"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sales Performance -->
+  <section class="py-8 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Sales Chart -->
+        <div class="card p-6">
+          <h3 class="text-xl font-semibold text-boho-dark mb-6">Umsatzentwicklung</h3>
+          <div class="h-64 flex items-center justify-center bg-boho-accent/20 rounded-lg">
+            <div class="text-center">
+              <i class="fas fa-chart-area text-4xl text-boho-pink mb-4"></i>
+              <p class="text-boho-dark/70">Umsatzdiagramm wird geladen...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Products -->
+        <div class="card p-6">
+          <h3 class="text-xl font-semibold text-boho-dark mb-6">Top Produkte</h3>
+          <div class="space-y-4">
+            {analyticsData.topProducts.map((product, index) => (
+              <div class="flex items-center justify-between p-4 bg-boho-accent/10 rounded-lg">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-boho-pink text-white rounded-full flex items-center justify-center text-sm font-bold">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <p class="font-semibold text-boho-dark">{product.name}</p>
+                    <p class="text-sm text-boho-dark/70">{product.sales} Verkäufe</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="font-bold text-boho-dark">{product.revenue.toFixed(2)} €</p>
+                  <p class={`text-sm ${product.growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <i class={`fas fa-arrow-${product.growth >= 0 ? 'up' : 'down'} mr-1`}></i>
+                    {product.growth}%
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Traffic & Sources -->
+  <section class="py-8 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Traffic Overview -->
+        <div class="card p-6">
+          <h3 class="text-xl font-semibold text-boho-dark mb-6">Website Traffic</h3>
+          <div class="space-y-4">
+            <div class="flex justify-between">
+              <span class="text-boho-dark/70">Besucher</span>
+              <span class="font-semibold text-boho-dark">{analyticsData.traffic.visitors.toLocaleString()}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-boho-dark/70">Seitenaufrufe</span>
+              <span class="font-semibold text-boho-dark">{analyticsData.traffic.pageViews.toLocaleString()}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-boho-dark/70">Absprungrate</span>
+              <span class="font-semibold text-boho-dark">{analyticsData.traffic.bounceRate}%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-boho-dark/70">Ø Sitzungsdauer</span>
+              <span class="font-semibold text-boho-dark">{analyticsData.traffic.avgSessionDuration}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Device Types -->
+        <div class="card p-6">
+          <h3 class="text-xl font-semibold text-boho-dark mb-6">Gerätetypen</h3>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-desktop text-boho-pink"></i>
+                <span class="text-boho-dark/70">Desktop</span>
+              </div>
+              <span class="font-semibold text-boho-dark">{analyticsData.devices.desktop}%</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-mobile-alt text-boho-pink"></i>
+                <span class="text-boho-dark/70">Mobile</span>
+              </div>
+              <span class="font-semibold text-boho-dark">{analyticsData.devices.mobile}%</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-tablet-alt text-boho-pink"></i>
+                <span class="text-boho-dark/70">Tablet</span>
+              </div>
+              <span class="font-semibold text-boho-dark">{analyticsData.devices.tablet}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Traffic Sources -->
+        <div class="card p-6">
+          <h3 class="text-xl font-semibold text-boho-dark mb-6">Traffic Quellen</h3>
+          <div class="space-y-4">
+            <div class="flex justify-between">
+              <span class="text-boho-dark/70">Direkt</span>
+              <span class="font-semibold text-boho-dark">{analyticsData.sources.direct}%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-boho-dark/70">Google</span>
+              <span class="font-semibold text-boho-dark">{analyticsData.sources.google}%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-boho-dark/70">Facebook</span>
+              <span class="font-semibold text-boho-dark">{analyticsData.sources.facebook}%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-boho-dark/70">Instagram</span>
+              <span class="font-semibold text-boho-dark">{analyticsData.sources.instagram}%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-boho-dark/70">Sonstige</span>
+              <span class="font-semibold text-boho-dark">{analyticsData.sources.other}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Orders -->
+  <section class="py-8 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-semibold text-boho-dark">Neueste Bestellungen</h3>
+          <a href="/admin/orders" class="text-boho-pink hover:text-boho-brown transition-colors">
+            Alle anzeigen <i class="fas fa-arrow-right ml-1"></i>
+          </a>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-boho-accent">
+            <thead class="bg-boho-accent/10">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Bestellung</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Kunde</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Betrag</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-boho-dark/70 uppercase tracking-wider">Datum</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-boho-accent">
+              {analyticsData.recentOrders.map((order) => (
+                <tr class="hover:bg-boho-light/5">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-boho-dark">
+                    {order.id}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark/80">
+                    {order.customer}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark/80">
+                    {order.amount.toFixed(2)} €
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      order.status === 'Versandt' ? 'bg-green-100 text-green-800' :
+                      order.status === 'Bezahlt' ? 'bg-blue-100 text-blue-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {order.status}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-boho-dark/80">
+                    {new Date(order.date).toLocaleDateString('de-DE')}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="py-8 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h3 class="text-xl font-semibold text-boho-dark mb-6">Schnellaktionen</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <a href="/admin/orders" class="card p-6 text-center hover:bg-boho-light transition-colors">
+            <i class="fas fa-shopping-bag text-3xl text-boho-pink mb-4"></i>
+            <h4 class="font-semibold text-boho-dark mb-2">Bestellungen</h4>
+            <p class="text-sm text-boho-dark/70">Verwalte Bestellungen</p>
+          </a>
+          <a href="/admin/products" class="card p-6 text-center hover:bg-boho-light transition-colors">
+            <i class="fas fa-box text-3xl text-boho-pink mb-4"></i>
+            <h4 class="font-semibold text-boho-dark mb-2">Produkte</h4>
+            <p class="text-sm text-boho-dark/70">Produktverwaltung</p>
+          </a>
+          <a href="/admin/customers" class="card p-6 text-center hover:bg-boho-light transition-colors">
+            <i class="fas fa-users text-3xl text-boho-pink mb-4"></i>
+            <h4 class="font-semibold text-boho-dark mb-2">Kunden</h4>
+            <p class="text-sm text-boho-dark/70">Kundenverwaltung</p>
+          </a>
+          <a href="/admin/inventory" class="card p-6 text-center hover:bg-boho-light transition-colors">
+            <i class="fas fa-warehouse text-3xl text-boho-pink mb-4"></i>
+            <h4 class="font-semibold text-boho-dark mb-2">Lager</h4>
+            <p class="text-sm text-boho-dark/70">Lagerverwaltung</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Export analytics function
+  function exportAnalytics() {
+    // In a real app, this would generate and download analytics report
+    alert('Analytics-Bericht wird exportiert...');
+  }
+
+  // Auto-refresh data every 5 minutes
+  setInterval(() => {
+    // In a real app, this would refresh analytics data
+    console.log('Refreshing analytics data...');
+  }, 5 * 60 * 1000);
+</script>

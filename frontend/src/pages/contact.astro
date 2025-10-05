@@ -1,0 +1,343 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout 
+  title="Kontakt - Casa Petrada"
+  description="Kontaktiere uns für Fragen zu unseren Produkten oder für eine persönliche Beratung. Wir freuen uns auf deine Nachricht."
+>
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-boho-beige to-boho-accent py-20 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-boho-dark mb-6">
+          Kontakt
+        </h1>
+        <p class="text-lg md:text-xl text-boho-dark/80 max-w-3xl mx-auto">
+          Wir freuen uns auf deine Nachricht und helfen gerne bei allen Fragen
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Contact Form -->
+        <div>
+          <h2 class="text-3xl font-serif font-bold text-boho-dark mb-6">
+            Schreib uns eine Nachricht
+          </h2>
+          <form class="space-y-6" id="contact-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="firstName" class="block text-sm font-medium text-boho-dark mb-2">
+                  Vorname *
+                </label>
+                <input 
+                  type="text" 
+                  id="firstName" 
+                  name="firstName"
+                  class="input"
+                  required
+                />
+              </div>
+              <div>
+                <label for="lastName" class="block text-sm font-medium text-boho-dark mb-2">
+                  Nachname *
+                </label>
+                <input 
+                  type="text" 
+                  id="lastName" 
+                  name="lastName"
+                  class="input"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label for="email" class="block text-sm font-medium text-boho-dark mb-2">
+                E-Mail-Adresse *
+              </label>
+              <input 
+                type="email" 
+                id="email" 
+                name="email"
+                class="input"
+                required
+              />
+            </div>
+            
+            <div>
+              <label for="phone" class="block text-sm font-medium text-boho-dark mb-2">
+                Telefon (optional)
+              </label>
+              <input 
+                type="tel" 
+                id="phone" 
+                name="phone"
+                class="input"
+                placeholder="+49 123 456789"
+              />
+            </div>
+            
+            <div>
+              <label for="category" class="block text-sm font-medium text-boho-dark mb-2">
+                Kategorie *
+              </label>
+              <select id="category" name="category" class="input" required>
+                <option value="">Bitte wählen</option>
+                <option value="general">Allgemeine Frage</option>
+                <option value="order">Bestellung</option>
+                <option value="product">Produkt</option>
+                <option value="complaint">Beschwerde</option>
+                <option value="other">Sonstiges</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="subject" class="block text-sm font-medium text-boho-dark mb-2">
+                Betreff *
+              </label>
+              <input 
+                type="text" 
+                id="subject" 
+                name="subject"
+                class="input"
+                required
+              />
+            </div>
+            
+            <div>
+              <label for="message" class="block text-sm font-medium text-boho-dark mb-2">
+                Nachricht *
+              </label>
+              <textarea 
+                id="message" 
+                name="message"
+                rows="6"
+                class="input resize-none"
+                required
+                placeholder="Beschreibe dein Anliegen..."
+              ></textarea>
+            </div>
+            
+            <div>
+              <label for="preferredContact" class="block text-sm font-medium text-boho-dark mb-2">
+                Bevorzugte Kontaktaufnahme
+              </label>
+              <div class="space-y-2">
+                <label class="flex items-center">
+                  <input type="radio" name="preferredContact" value="email" checked class="mr-2">
+                  <span class="text-sm text-boho-dark/80">E-Mail</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="radio" name="preferredContact" value="phone" class="mr-2">
+                  <span class="text-sm text-boho-dark/80">Telefon</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <input 
+                type="checkbox" 
+                id="consent" 
+                name="consent"
+                required
+                class="h-4 w-4 text-boho-pink focus:ring-boho-pink border-boho-accent rounded mt-1"
+              />
+              <label for="consent" class="ml-2 block text-sm text-boho-dark/80">
+                Ich habe die <a href="/datenschutz" class="text-boho-pink hover:text-boho-brown">Datenschutzbestimmungen</a> 
+                gelesen und stimme der Verarbeitung meiner Daten zu. *
+              </label>
+            </div>
+            
+            <button 
+              type="submit"
+              class="btn-primary w-full"
+              id="contact-submit"
+            >
+              <span class="contact-text">
+                <i class="fas fa-paper-plane mr-2"></i>
+                Nachricht senden
+              </span>
+              <span class="contact-loading hidden">
+                <i class="fas fa-spinner fa-spin mr-2"></i>
+                Wird gesendet...
+              </span>
+            </button>
+          </form>
+        </div>
+        
+        <!-- Contact Info -->
+        <div>
+          <h2 class="text-3xl font-serif font-bold text-boho-dark mb-6">
+            Kontaktinformationen
+          </h2>
+          
+          <div class="space-y-8">
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-envelope text-boho-pink text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-boho-dark mb-1">E-Mail</h3>
+                <p class="text-boho-dark/70">petra@casa-petrada.de</p>
+                <p class="text-sm text-boho-dark/60">Antwort innerhalb von 24 Stunden</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-phone text-boho-pink text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-boho-dark mb-1">Telefon</h3>
+                <p class="text-boho-dark/70">+49 (0) 123 456 789</p>
+                <p class="text-sm text-boho-dark/60">Mo-Fr: 9:00-18:00 Uhr</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-boho-pink/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-map-marker-alt text-boho-pink text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-boho-dark mb-1">Adresse</h3>
+                <p class="text-boho-dark/70">
+                  Casa Petrada<br />
+                  Musterstraße 123<br />
+                  12345 Musterstadt
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Social Media -->
+          <div class="mt-12">
+            <h3 class="text-lg font-semibold text-boho-dark mb-4">Folge uns</h3>
+            <div class="flex space-x-4">
+              <a href="#" class="w-10 h-10 bg-boho-pink/10 rounded-full flex items-center justify-center hover:bg-boho-pink/20 transition-colors">
+                <i class="fab fa-instagram text-boho-pink"></i>
+              </a>
+              <a href="#" class="w-10 h-10 bg-boho-pink/10 rounded-full flex items-center justify-center hover:bg-boho-pink/20 transition-colors">
+                <i class="fab fa-facebook text-boho-pink"></i>
+              </a>
+              <a href="#" class="w-10 h-10 bg-boho-pink/10 rounded-full flex items-center justify-center hover:bg-boho-pink/20 transition-colors">
+                <i class="fab fa-pinterest text-boho-pink"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 bg-boho-light">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-4">
+          Häufig gestellte Fragen
+        </h2>
+        <p class="text-lg text-boho-dark/70">
+          Hier findest du Antworten auf die häufigsten Fragen
+        </p>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold text-boho-dark mb-2">
+            Wie lange dauert die Lieferung?
+          </h3>
+          <p class="text-boho-dark/70">
+            Die Lieferzeit beträgt 2-5 Werktage innerhalb Deutschlands. 
+            Versandkostenfrei ab einem Bestellwert von 39,90 €.
+          </p>
+        </div>
+        
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold text-boho-dark mb-2">
+            Kann ich meine Bestellung zurückgeben?
+          </h3>
+          <p class="text-boho-dark/70">
+            Ja, du hast 30 Tage Zeit, um deine Bestellung kostenlos zurückzugeben. 
+            Die Rücksendung ist für dich kostenfrei.
+          </p>
+        </div>
+        
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold text-boho-dark mb-2">
+            Sind alle Produkte handgefertigt?
+          </h3>
+          <p class="text-boho-dark/70">
+            Ja, alle unsere Schmuckstücke werden von Hand gefertigt. 
+            Jedes Stück ist ein Unikat und wird mit Liebe und Sorgfalt hergestellt.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { contactService } from '../services/contact';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contact-form') as HTMLFormElement;
+    const submitButton = document.getElementById('contact-submit') as HTMLButtonElement;
+    const textSpan = submitButton.querySelector('.contact-text') as HTMLElement;
+    const loadingSpan = submitButton.querySelector('.contact-loading') as HTMLElement;
+
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const message = {
+          name: `${formData.get('firstName')} ${formData.get('lastName')}`,
+          email: formData.get('email') as string,
+          phone: formData.get('phone') as string,
+          subject: formData.get('subject') as string,
+          message: formData.get('message') as string,
+          category: formData.get('category') as 'general' | 'order' | 'product' | 'complaint' | 'other',
+          preferredContact: formData.get('preferredContact') as 'email' | 'phone',
+          consent: formData.get('consent') === 'on'
+        };
+
+        // Validate message
+        const validation = contactService.validateMessage(message);
+        if (!validation.isValid) {
+          contactService.showValidationErrors(validation.errors);
+          return;
+        }
+
+        // Show loading state
+        submitButton.disabled = true;
+        textSpan.classList.add('hidden');
+        loadingSpan.classList.remove('hidden');
+
+        try {
+          const result = await contactService.sendMessage(message);
+
+          if (result.success) {
+            contactService.showMessage(result.message, true);
+            form.reset();
+          } else {
+            contactService.showMessage(result.message, false);
+          }
+        } catch (error) {
+          console.error('Contact form error:', error);
+          contactService.showMessage('Ein Fehler ist aufgetreten. Bitte versuche es erneut.', false);
+        } finally {
+          // Hide loading state
+          submitButton.disabled = false;
+          textSpan.classList.remove('hidden');
+          loadingSpan.classList.add('hidden');
+        }
+      });
+    }
+  });
+</script>

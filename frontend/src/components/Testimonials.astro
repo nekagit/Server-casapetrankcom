@@ -1,0 +1,53 @@
+---
+// Testimonials Section Component
+const testimonials = [
+  {
+    name: "Sarah M.",
+    location: "München",
+    text: "Die Armbänder sind wunderschön und sehr hochwertig verarbeitet. Ich trage sie jeden Tag!",
+    rating: 5
+  },
+  {
+    name: "Lisa K.",
+    location: "Berlin",
+    text: "Tolle Qualität und schnelle Lieferung. Die Kette ist genau wie beschrieben und sehr schön.",
+    rating: 5
+  },
+  {
+    name: "Anna W.",
+    location: "Hamburg",
+    text: "Ich bin begeistert von der Auswahl und der Qualität. Definitiv eine Empfehlung wert!",
+    rating: 5
+  }
+];
+---
+
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-4">
+        Was unsere Kunden sagen
+      </h2>
+      <p class="text-lg text-boho-dark/70 max-w-2xl mx-auto">
+        Über 1000 zufriedene Kunden vertrauen auf unsere Qualität
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {testimonials.map((testimonial) => (
+        <div class="card p-6 text-center">
+          <div class="flex justify-center mb-4">
+            {Array.from({ length: testimonial.rating }).map(() => (
+              <i class="fas fa-star text-boho-pink text-lg"></i>
+            ))}
+          </div>
+          <p class="text-boho-dark/80 mb-4 italic">"{testimonial.text}"</p>
+          <div class="border-t border-boho-accent pt-4">
+            <p class="font-semibold text-boho-dark">{testimonial.name}</p>
+            <p class="text-sm text-boho-dark/60">{testimonial.location}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,397 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock wishlist data - in real app this would come from API
+const wishlistItems = [
+  {
+    id: 1,
+    name: "Tibet Armband",
+    price: 24.90,
+    originalPrice: 29.90,
+    image: "/images/products/tibet-armband.jpg",
+    slug: "tibet-armband",
+    category: "Armbänder",
+    description: "Handgefertigtes Armband aus natürlichen Materialien",
+    addedAt: "2024-01-15T10:30:00Z"
+  },
+  {
+    id: 2,
+    name: "Boho Wickelarmband",
+    price: 19.90,
+    image: "/images/products/product_1.jpg",
+    slug: "boho-wickelarmband",
+    category: "Armbänder",
+    description: "Stylisches Wickelarmband im Boho-Stil",
+    addedAt: "2024-01-14T15:45:00Z"
+  },
+  {
+    id: 3,
+    name: "Naturstein Kette",
+    price: 32.90,
+    image: "/images/products/real_product_1.jpg",
+    slug: "naturstein-kette",
+    category: "Ketten",
+    description: "Elegante Kette mit echten Natursteinen",
+    addedAt: "2024-01-13T09:20:00Z"
+  }
+];
+---
+
+<Layout 
+  title="Wunschliste - Casa Petrada"
+  description="Deine Wunschliste mit handgefertigten Boho Schmuck und Mode."
+>
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/" class="text-boho-pink hover:text-boho-brown">Home</a>
+        <i class="fas fa-chevron-right text-boho-dark/50"></i>
+        <span class="text-boho-dark">Wunschliste</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Wishlist Header -->
+  <section class="py-8 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-4">
+          Deine Wunschliste
+        </h1>
+        <p class="text-boho-dark/70 max-w-2xl mx-auto">
+          Hier findest du alle Produkte, die du dir für später gemerkt hast. 
+          Füge sie zum Warenkorb hinzu oder entferne sie aus deiner Wunschliste.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wishlist Items -->
+  <section class="py-12 bg-boho-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {wishlistItems.length > 0 ? (
+        <>
+          <!-- Wishlist Count -->
+          <div class="mb-8 flex justify-between items-center">
+            <p class="text-boho-dark/70">
+              {wishlistItems.length} {wishlistItems.length === 1 ? 'Artikel' : 'Artikel'} in deiner Wunschliste
+            </p>
+            <button 
+              id="clear-wishlist"
+              class="text-sm text-boho-pink hover:text-boho-brown transition-colors"
+            >
+              <i class="fas fa-trash mr-1"></i>
+              Wunschliste leeren
+            </button>
+          </div>
+
+          <!-- Wishlist Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {wishlistItems.map((item) => (
+              <div class="card group" data-product-id={item.id}>
+                <div class="relative overflow-hidden">
+                  <img 
+                    src={item.image} 
+                    alt={item.name}
+                    class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {item.originalPrice && (
+                    <div class="absolute top-4 left-4 bg-boho-pink text-white px-2 py-1 rounded text-sm font-semibold">
+                      Sale
+                    </div>
+                  )}
+                  <button 
+                    class="wishlist-remove absolute top-4 right-4 bg-white/90 hover:bg-red-500 text-boho-dark hover:text-white p-2 rounded-full transition-all duration-300"
+                    data-product-id={item.id}
+                    title="Aus Wunschliste entfernen"
+                  >
+                    <i class="fas fa-heart-broken"></i>
+                  </button>
+                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                    <button class="opacity-0 group-hover:opacity-100 bg-white text-boho-pink px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-boho-pink hover:text-white">
+                      <i class="fas fa-eye mr-2"></i>
+                      Ansehen
+                    </button>
+                  </div>
+                </div>
+                <div class="p-6">
+                  <div class="mb-2">
+                    <span class="text-sm text-boho-pink font-medium">{item.category}</span>
+                  </div>
+                  <h3 class="text-xl font-semibold text-boho-dark mb-2">{item.name}</h3>
+                  <p class="text-boho-dark/70 text-sm mb-4">{item.description}</p>
+                  <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-2">
+                      <span class="text-2xl font-bold text-boho-dark">{item.price.toFixed(2)} €</span>
+                      {item.originalPrice && (
+                        <span class="text-lg text-boho-dark/50 line-through">{item.originalPrice.toFixed(2)} €</span>
+                      )}
+                    </div>
+                  </div>
+                  <div class="flex space-x-2">
+                    <button 
+                      class="add-to-cart flex-1 bg-boho-pink text-white px-4 py-2 rounded-lg font-medium hover:bg-boho-brown transition-colors duration-300"
+                      data-product-id={item.id}
+                    >
+                      <i class="fas fa-shopping-bag mr-1"></i>
+                      In den Warenkorb
+                    </button>
+                    <button 
+                      class="view-product bg-boho-accent text-boho-dark px-4 py-2 rounded-lg font-medium hover:bg-boho-pink hover:text-white transition-colors duration-300"
+                      data-product-slug={item.slug}
+                    >
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-12 text-center">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <a 
+                href="/"
+                class="btn-secondary"
+              >
+                <i class="fas fa-arrow-left mr-2"></i>
+                Weiter einkaufen
+              </a>
+              <button 
+                id="add-all-to-cart"
+                class="btn-primary"
+              >
+                <i class="fas fa-shopping-bag mr-2"></i>
+                Alle in den Warenkorb
+              </button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <!-- Empty Wishlist -->
+        <div class="text-center py-20">
+          <div class="w-24 h-24 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fas fa-heart text-3xl text-boho-pink"></i>
+          </div>
+          <h2 class="text-2xl font-serif font-bold text-boho-dark mb-4">
+            Deine Wunschliste ist leer
+          </h2>
+          <p class="text-boho-dark/70 mb-8 max-w-md mx-auto">
+            Füge Produkte zu deiner Wunschliste hinzu, indem du auf das Herz-Symbol klickst.
+          </p>
+          <a 
+            href="/"
+            class="btn-primary"
+          >
+            <i class="fas fa-shopping-bag mr-2"></i>
+            Jetzt einkaufen
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Recommendations -->
+  {wishlistItems.length > 0 && (
+    <section class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-boho-dark mb-4">
+            Das könnte dir auch gefallen
+          </h2>
+          <p class="text-boho-dark/70">
+            Basierend auf deiner Wunschliste empfehlen wir dir diese Produkte
+          </p>
+        </div>
+
+        <!-- Recommended Products Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Mock recommendations -->
+          <div class="card group">
+            <div class="relative overflow-hidden">
+              <img 
+                src="/images/products/placeholder.svg" 
+                alt="Empfohlenes Produkt"
+                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <button class="opacity-0 group-hover:opacity-100 bg-white text-boho-pink px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-boho-pink hover:text-white">
+                  <i class="fas fa-eye mr-1"></i>
+                  Ansehen
+                </button>
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="font-semibold text-boho-dark mb-2">Ähnliches Produkt</h3>
+              <p class="text-2xl font-bold text-boho-dark">29,90 €</p>
+            </div>
+          </div>
+
+          <div class="card group">
+            <div class="relative overflow-hidden">
+              <img 
+                src="/images/products/placeholder.svg" 
+                alt="Empfohlenes Produkt"
+                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <button class="opacity-0 group-hover:opacity-100 bg-white text-boho-pink px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-boho-pink hover:text-white">
+                  <i class="fas fa-eye mr-1"></i>
+                  Ansehen
+                </button>
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="font-semibold text-boho-dark mb-2">Passendes Accessoire</h3>
+              <p class="text-2xl font-bold text-boho-dark">19,90 €</p>
+            </div>
+          </div>
+
+          <div class="card group">
+            <div class="relative overflow-hidden">
+              <img 
+                src="/images/products/placeholder.svg" 
+                alt="Empfohlenes Produkt"
+                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <button class="opacity-0 group-hover:opacity-100 bg-white text-boho-pink px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-boho-pink hover:text-white">
+                  <i class="fas fa-eye mr-1"></i>
+                  Ansehen
+                </button>
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="font-semibold text-boho-dark mb-2">Komplettierendes Stück</h3>
+              <p class="text-2xl font-bold text-boho-dark">34,90 €</p>
+            </div>
+          </div>
+
+          <div class="card group">
+            <div class="relative overflow-hidden">
+              <img 
+                src="/images/products/placeholder.svg" 
+                alt="Empfohlenes Produkt"
+                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                <button class="opacity-0 group-hover:opacity-100 bg-white text-boho-pink px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-boho-pink hover:text-white">
+                  <i class="fas fa-eye mr-1"></i>
+                  Ansehen
+                </button>
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="font-semibold text-boho-dark mb-2">Trending Item</h3>
+              <p class="text-2xl font-bold text-boho-dark">24,90 €</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<script>
+  import { wishlistService } from '../services/wishlist';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Remove from wishlist
+    document.querySelectorAll('.wishlist-remove').forEach(button => {
+      button.addEventListener('click', async function(this: HTMLElement) {
+        const productId = parseInt(this.getAttribute('data-product-id') || '0');
+        
+        if (confirm('Möchtest du dieses Produkt aus deiner Wunschliste entfernen?')) {
+          const result = await wishlistService.removeFromWishlist(productId);
+          
+          if (result.success) {
+            wishlistService.showNotification(result.message);
+            // Remove the item from DOM
+            this.closest('[data-product-id]')?.remove();
+            
+            // Update wishlist count in header
+            updateWishlistCount();
+            
+            // Check if wishlist is empty
+            const remainingItems = document.querySelectorAll('[data-product-id]');
+            if (remainingItems.length === 0) {
+              location.reload(); // Reload to show empty state
+            }
+          } else {
+            wishlistService.showNotification(result.message, 'error');
+          }
+        }
+      });
+    });
+
+    // Add to cart
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', function(this: HTMLElement) {
+        const productId = parseInt(this.getAttribute('data-product-id') || '0');
+        
+        // In a real app, this would add to cart
+        wishlistService.showNotification('Produkt zum Warenkorb hinzugefügt');
+        
+        // Update cart count in header
+        updateCartCount();
+      });
+    });
+
+    // View product
+    document.querySelectorAll('.view-product').forEach(button => {
+      button.addEventListener('click', function(this: HTMLElement) {
+        const slug = this.getAttribute('data-product-slug');
+        if (slug) {
+          window.location.href = `/product/${slug}`;
+        }
+      });
+    });
+
+    // Add all to cart
+    document.getElementById('add-all-to-cart')?.addEventListener('click', function() {
+      const items = document.querySelectorAll('.add-to-cart');
+      items.forEach(button => {
+        (button as HTMLButtonElement).click();
+      });
+      wishlistService.showNotification('Alle Produkte zum Warenkorb hinzugefügt');
+    });
+
+    // Clear wishlist
+    document.getElementById('clear-wishlist')?.addEventListener('click', function() {
+      if (confirm('Möchtest du deine gesamte Wunschliste leeren?')) {
+        wishlistService.clearWishlist().then(result => {
+          if (result.success) {
+            wishlistService.showNotification(result.message);
+            location.reload();
+          }
+        });
+      }
+    });
+
+    // Update wishlist count in header
+    function updateWishlistCount() {
+      const count = document.querySelectorAll('[data-product-id]').length;
+      const wishlistIcon = document.querySelector('[href="/wishlist"] .fa-heart')?.parentElement;
+      if (wishlistIcon) {
+        const badge = wishlistIcon.querySelector('.absolute');
+        if (badge) {
+          badge.textContent = count.toString();
+        }
+      }
+    }
+
+    // Update cart count in header
+    function updateCartCount() {
+      const cartIcon = document.querySelector('[href="/cart"] .fa-shopping-bag')?.parentElement;
+      if (cartIcon) {
+        const badge = cartIcon.querySelector('.absolute');
+        if (badge) {
+          const currentCount = parseInt(badge.textContent || '0');
+          badge.textContent = (currentCount + 1).toString();
+        }
+      }
+    }
+  });
+</script>

@@ -1,0 +1,248 @@
+---
+import Layout from './Layout.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  currentPage?: string;
+}
+
+const { title, description, currentPage } = Astro.props;
+
+const navigation = [
+  { name: 'Dashboard', href: '/admin', icon: 'fas fa-tachometer-alt', current: currentPage === 'dashboard' },
+  { name: 'Produkte', href: '/admin/products', icon: 'fas fa-box', current: currentPage === 'products' },
+  { name: 'Bestellungen', href: '/admin/orders', icon: 'fas fa-shopping-cart', current: currentPage === 'orders' },
+  { name: 'Kunden', href: '/admin/users', icon: 'fas fa-users', current: currentPage === 'users' },
+  { name: 'Lagerbestand', href: '/admin/inventory', icon: 'fas fa-warehouse', current: currentPage === 'inventory' },
+  { name: 'Bewertungen', href: '/admin/reviews', icon: 'fas fa-star', current: currentPage === 'reviews' },
+  { name: 'Analysen', href: '/admin/analytics', icon: 'fas fa-chart-bar', current: currentPage === 'analytics' },
+  { name: 'Inhalte', href: '/admin/content', icon: 'fas fa-edit', current: currentPage === 'content' },
+  { name: 'Einstellungen', href: '/admin/settings', icon: 'fas fa-cog', current: currentPage === 'settings' }
+];
+
+const stats = [
+  { name: 'Heute', value: '€2,450', change: '+12%', changeType: 'positive' },
+  { name: 'Diese Woche', value: '€18,750', change: '+8%', changeType: 'positive' },
+  { name: 'Diesen Monat', value: '€67,200', change: '+15%', changeType: 'positive' },
+  { name: 'Konversionsrate', value: '2.5%', change: '+0.3%', changeType: 'positive' }
+];
+---
+
+<Layout title={title} description={description}>
+  <div class="min-h-screen bg-boho-beige">
+    <!-- Admin Header -->
+    <div class="bg-boho-dark text-boho-text-light">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+          <div class="flex items-center">
+            <h1 class="text-2xl font-serif font-bold">Casa Petrada Admin</h1>
+            <span class="ml-4 text-boho-text-muted">|</span>
+            <span class="ml-4 text-boho-text-muted">Verwaltung</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <button class="text-boho-text-light hover:text-boho-pink transition-colors duration-300">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+              </button>
+            </div>
+            <div class="flex items-center space-x-2">
+              <img src="/images/admin-avatar.jpg" alt="Admin" class="h-8 w-8 rounded-full">
+              <span class="text-boho-text-light">Admin</span>
+            </div>
+            <button class="bg-boho-pink hover:bg-boho-brown text-white px-4 py-2 rounded-lg transition-colors duration-300">
+              Abmelden
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex">
+      <!-- Sidebar -->
+      <div class="hidden md:flex md:w-64 md:flex-col">
+        <div class="flex flex-col flex-grow pt-5 bg-white border-r border-boho-accent overflow-y-auto">
+          <div class="flex items-center flex-shrink-0 px-4">
+            <h2 class="text-lg font-semibold text-boho-dark">Navigation</h2>
+          </div>
+          <div class="mt-5 flex-grow flex flex-col">
+            <nav class="flex-1 px-2 space-y-1">
+              {navigation.map((item) => (
+                <a
+                  href={item.href}
+                  class={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors duration-300 ${
+                    item.current
+                      ? 'bg-boho-pink text-white'
+                      : 'text-boho-text-muted hover:bg-boho-beige hover:text-boho-dark'
+                  }`}
+                >
+                  <i class={`${item.icon} mr-3 flex-shrink-0 ${
+                    item.current ? 'text-white' : 'text-boho-text-muted group-hover:text-boho-dark'
+                  }`}></i>
+                  {item.name}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col">
+        <!-- Stats Bar -->
+        <div class="bg-white border-b border-boho-accent">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="py-4">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {stats.map((stat) => (
+                  <div class="text-center">
+                    <p class="text-sm font-medium text-boho-text-muted">{stat.name}</p>
+                    <p class="text-lg font-semibold text-boho-dark">{stat.value}</p>
+                    <p class={`text-sm ${
+                      stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {stat.change}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page Content -->
+        <main class="flex-1">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <slot />
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Mobile Sidebar -->
+    <div id="mobile-sidebar" class="md:hidden fixed inset-0 z-50 hidden">
+      <div class="fixed inset-0 bg-gray-600 bg-opacity-75" onclick="toggleMobileSidebar()"></div>
+      <div class="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+        <div class="absolute top-0 right-0 -mr-12 pt-2">
+          <button onclick="toggleMobileSidebar()" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+            <i class="fas fa-times text-white"></i>
+          </button>
+        </div>
+        <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+          <div class="flex-shrink-0 flex items-center px-4">
+            <h2 class="text-lg font-semibold text-boho-dark">Navigation</h2>
+          </div>
+          <nav class="mt-5 px-2 space-y-1">
+            {navigation.map((item) => (
+              <a
+                href={item.href}
+                class={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${
+                  item.current
+                    ? 'bg-boho-pink text-white'
+                    : 'text-boho-text-muted hover:bg-boho-beige hover:text-boho-dark'
+                }`}
+              >
+                <i class={`${item.icon} mr-4 flex-shrink-0 ${
+                  item.current ? 'text-white' : 'text-boho-text-muted group-hover:text-boho-dark'
+                }`}></i>
+                {item.name}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <div class="md:hidden fixed bottom-4 right-4">
+      <button onclick="toggleMobileSidebar()" class="bg-boho-pink hover:bg-boho-brown text-white p-3 rounded-full shadow-lg">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById('mobile-sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('hidden');
+    }
+  }
+
+  // Auto-refresh stats every 30 seconds
+  setInterval(() => {
+    // In a real app, this would fetch fresh stats from the API
+    console.log('Refreshing admin stats...');
+  }, 30000);
+
+  // Real-time notifications
+  if ('Notification' in window) {
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+    
+    if (Notification.permission === 'granted') {
+      // Set up real-time notifications for admin events
+      console.log('Admin notifications enabled');
+    }
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      switch (e.key) {
+        case '1':
+          e.preventDefault();
+          window.location.href = '/admin';
+          break;
+        case '2':
+          e.preventDefault();
+          window.location.href = '/admin/products';
+          break;
+        case '3':
+          e.preventDefault();
+          window.location.href = '/admin/orders';
+          break;
+        case '4':
+          e.preventDefault();
+          window.location.href = '/admin/users';
+          break;
+      }
+    }
+  });
+</script>
+
+<style>
+  /* Custom scrollbar for sidebar */
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: var(--boho-pink);
+    border-radius: 3px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: var(--boho-brown);
+  }
+
+  /* Mobile sidebar animations */
+  #mobile-sidebar {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  #mobile-sidebar:not(.hidden) {
+    transform: translateX(0);
+  }
+  
+  #mobile-sidebar.hidden {
+    transform: translateX(-100%);
+  }
+</style>

@@ -1,0 +1,171 @@
+---
+// Product Reviews Component
+const reviews = [
+  {
+    id: 1,
+    user: "Sarah M.",
+    rating: 5,
+    date: "2024-01-15",
+    title: "Wunderschönes Armband!",
+    comment: "Das Armband ist genau wie beschrieben und sehr hochwertig verarbeitet. Ich trage es jeden Tag und bekomme viele Komplimente. Die Lieferung war schnell und die Verpackung sehr schön.",
+    verified: true,
+    helpful: 12
+  },
+  {
+    id: 2,
+    user: "Lisa K.",
+    rating: 5,
+    date: "2024-01-10",
+    title: "Perfekt für den Boho-Look",
+    comment: "Tolle Qualität und schnelle Lieferung. Die Kette ist genau wie beschrieben und sehr schön. Passt perfekt zu meinem Boho-Style. Kann ich nur empfehlen!",
+    verified: true,
+    helpful: 8
+  },
+  {
+    id: 3,
+    user: "Anna W.",
+    rating: 4,
+    date: "2024-01-08",
+    title: "Sehr schön, kleine Erwartung",
+    comment: "Das Armband ist sehr schön und gut verarbeitet. Es ist etwas kleiner als erwartet, aber das liegt wahrscheinlich an meinen Erwartungen. Trotzdem sehr zufrieden!",
+    verified: false,
+    helpful: 5
+  }
+];
+
+const averageRating = 4.7;
+const totalReviews = reviews.length;
+const ratingDistribution = {
+  5: 8,
+  4: 2,
+  3: 1,
+  2: 0,
+  1: 0
+};
+---
+
+<div class="space-y-8">
+  <!-- Reviews Summary -->
+  <div class="card p-6">
+    <h2 class="text-2xl font-serif font-bold text-boho-dark mb-6">Kundenbewertungen</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Rating Overview -->
+      <div>
+        <div class="flex items-center mb-4">
+          <div class="flex items-center">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <i class={`fas fa-star text-2xl ${
+                i < Math.floor(averageRating) ? 'text-boho-pink' : 'text-gray-300'
+              }`}></i>
+            ))}
+          </div>
+          <span class="ml-3 text-3xl font-bold text-boho-dark">{averageRating}</span>
+          <span class="ml-2 text-boho-dark/70">({totalReviews} Bewertungen)</span>
+        </div>
+        
+        <!-- Rating Distribution -->
+        <div class="space-y-2">
+          {[5, 4, 3, 2, 1].map((rating) => (
+            <div class="flex items-center">
+              <span class="w-8 text-sm text-boho-dark/70">{rating}</span>
+              <i class="fas fa-star text-boho-pink ml-2"></i>
+              <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                <div 
+                  class="bg-boho-pink h-2 rounded-full" 
+                  style={`width: ${(ratingDistribution[rating] / totalReviews) * 100}%`}
+                ></div>
+              </div>
+              <span class="w-8 text-sm text-boho-dark/70">{ratingDistribution[rating]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <!-- Write Review Button -->
+      <div class="flex flex-col justify-center">
+        <button class="btn-primary mb-4">
+          <i class="fas fa-pen mr-2"></i>
+          Bewertung schreiben
+        </button>
+        <p class="text-sm text-boho-dark/70">
+          Hast du dieses Produkt gekauft? Teile deine Erfahrung mit anderen Kunden.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews List -->
+  <div class="space-y-6">
+    {reviews.map((review) => (
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-boho-pink/10 rounded-full flex items-center justify-center">
+              <span class="text-boho-pink font-semibold">{review.user.charAt(0)}</span>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <h3 class="font-semibold text-boho-dark">{review.user}</h3>
+                {review.verified && (
+                  <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                    <i class="fas fa-check mr-1"></i>
+                    Verifiziert
+                  </span>
+                )}
+              </div>
+              <div class="flex items-center space-x-2 text-sm text-boho-dark/70">
+                <div class="flex items-center">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <i class={`fas fa-star text-sm ${
+                      i < review.rating ? 'text-boho-pink' : 'text-gray-300'
+                    }`}></i>
+                  ))}
+                </div>
+                <span>•</span>
+                <span>{new Date(review.date).toLocaleDateString('de-DE')}</span>
+              </div>
+            </div>
+          </div>
+          
+          <button class="text-boho-dark/50 hover:text-boho-pink">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+        </div>
+        
+        <h4 class="font-semibold text-boho-dark mb-2">{review.title}</h4>
+        <p class="text-boho-dark/80 mb-4">{review.comment}</p>
+        
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <button class="flex items-center text-boho-dark/70 hover:text-boho-pink transition-colors">
+              <i class="fas fa-thumbs-up mr-1"></i>
+              <span>Hilfreich ({review.helpful})</span>
+            </button>
+            <button class="text-boho-dark/70 hover:text-boho-pink transition-colors">
+              <i class="fas fa-flag mr-1"></i>
+              Melden
+            </button>
+          </div>
+          
+          <div class="flex items-center space-x-2">
+            <button class="text-boho-dark/50 hover:text-boho-pink">
+              <i class="fas fa-reply"></i>
+            </button>
+            <button class="text-boho-dark/50 hover:text-boho-pink">
+              <i class="fas fa-share"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Load More Reviews -->
+  <div class="text-center">
+    <button class="btn-secondary">
+      <i class="fas fa-plus mr-2"></i>
+      Weitere Bewertungen laden
+    </button>
+  </div>
+</div>

@@ -1,0 +1,451 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const categories = [
+  'Armbänder',
+  'Ketten', 
+  'Fashion',
+  'Sale'
+];
+
+const materials = [
+  'Silber',
+  'Gold',
+  'Perlen',
+  'Steine',
+  'Leder',
+  'Stoff',
+  'Metall',
+  'Holz'
+];
+---
+
+<Layout 
+  title="Neues Produkt - Casa Petrada Admin"
+  description="Neues Produkt zur Casa Petrada Website hinzufügen"
+  noindex={true}
+  nofollow={true}
+>
+  <!-- Admin Header -->
+  <section class="py-8 bg-boho-dark text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-serif font-bold">Neues Produkt</h1>
+          <p class="text-boho-light">Füge ein neues Produkt zu deinem Shop hinzu</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/admin/products" class="bg-boho-accent text-boho-dark px-4 py-2 rounded-lg hover:bg-boho-light transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Zurück zu Produkten
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Form -->
+  <section class="py-12 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <form class="space-y-8" id="product-form">
+        <!-- Basic Information -->
+        <div class="card p-6">
+          <h2 class="text-xl font-serif font-bold text-boho-dark mb-6">Grundinformationen</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="name" class="block text-sm font-medium text-boho-dark mb-2">
+                Produktname *
+              </label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name"
+                class="input"
+                required
+                placeholder="z.B. Tibet Armband"
+              />
+            </div>
+            
+            <div>
+              <label for="sku" class="block text-sm font-medium text-boho-dark mb-2">
+                SKU *
+              </label>
+              <input 
+                type="text" 
+                id="sku" 
+                name="sku"
+                class="input"
+                required
+                placeholder="z.B. CP-ARM-001"
+              />
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <label for="description" class="block text-sm font-medium text-boho-dark mb-2">
+              Beschreibung *
+            </label>
+            <textarea 
+              id="description" 
+              name="description"
+              rows="4"
+              class="input resize-none"
+              required
+              placeholder="Beschreibe dein Produkt..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Pricing and Inventory -->
+        <div class="card p-6">
+          <h2 class="text-xl font-serif font-bold text-boho-dark mb-6">Preis & Lager</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label for="price" class="block text-sm font-medium text-boho-dark mb-2">
+                Preis (€) *
+              </label>
+              <input 
+                type="number" 
+                id="price" 
+                name="price"
+                step="0.01"
+                min="0"
+                class="input"
+                required
+                placeholder="24.90"
+              />
+            </div>
+            
+            <div>
+              <label for="stock" class="block text-sm font-medium text-boho-dark mb-2">
+                Lagerbestand *
+              </label>
+              <input 
+                type="number" 
+                id="stock" 
+                name="stock"
+                min="0"
+                class="input"
+                required
+                placeholder="15"
+              />
+            </div>
+            
+            <div>
+              <label for="category" class="block text-sm font-medium text-boho-dark mb-2">
+                Kategorie *
+              </label>
+              <select id="category" name="category" class="input" required>
+                <option value="">Bitte wählen</option>
+                {categories.map(category => (
+                  <option value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="card p-6">
+          <h2 class="text-xl font-serif font-bold text-boho-dark mb-6">Produktdetails</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="weight" class="block text-sm font-medium text-boho-dark mb-2">
+                Gewicht (kg)
+              </label>
+              <input 
+                type="number" 
+                id="weight" 
+                name="weight"
+                step="0.01"
+                min="0"
+                class="input"
+                placeholder="0.1"
+              />
+            </div>
+            
+            <div>
+              <label for="dimensions" class="block text-sm font-medium text-boho-dark mb-2">
+                Abmessungen
+              </label>
+              <input 
+                type="text" 
+                id="dimensions" 
+                name="dimensions"
+                class="input"
+                placeholder="18cm x 2cm"
+              />
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <label for="materials" class="block text-sm font-medium text-boho-dark mb-2">
+              Materialien
+            </label>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {materials.map(material => (
+                <label class="flex items-center">
+                  <input type="checkbox" name="materials" value={material} class="mr-2">
+                  <span class="text-sm text-boho-dark/80">{material}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- Images -->
+        <div class="card p-6">
+          <h2 class="text-xl font-serif font-bold text-boho-dark mb-6">Produktbilder</h2>
+          
+          <div class="space-y-4">
+            <div>
+              <label for="main-image" class="block text-sm font-medium text-boho-dark mb-2">
+                Hauptbild *
+              </label>
+              <input 
+                type="file" 
+                id="main-image" 
+                name="mainImage"
+                accept="image/*"
+                class="input"
+                required
+              />
+            </div>
+            
+            <div>
+              <label for="gallery-images" class="block text-sm font-medium text-boho-dark mb-2">
+                Galerie-Bilder
+              </label>
+              <input 
+                type="file" 
+                id="gallery-images" 
+                name="galleryImages"
+                accept="image/*"
+                multiple
+                class="input"
+              />
+              <p class="text-sm text-boho-dark/70 mt-1">
+                Du kannst mehrere Bilder gleichzeitig auswählen
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEO -->
+        <div class="card p-6">
+          <h2 class="text-xl font-serif font-bold text-boho-dark mb-6">SEO-Einstellungen</h2>
+          
+          <div class="space-y-4">
+            <div>
+              <label for="meta-title" class="block text-sm font-medium text-boho-dark mb-2">
+                Meta-Titel
+              </label>
+              <input 
+                type="text" 
+                id="meta-title" 
+                name="metaTitle"
+                class="input"
+                placeholder="Wird automatisch generiert"
+              />
+            </div>
+            
+            <div>
+              <label for="meta-description" class="block text-sm font-medium text-boho-dark mb-2">
+                Meta-Beschreibung
+              </label>
+              <textarea 
+                id="meta-description" 
+                name="metaDescription"
+                rows="3"
+                class="input resize-none"
+                placeholder="Wird automatisch generiert"
+              ></textarea>
+            </div>
+            
+            <div>
+              <label for="keywords" class="block text-sm font-medium text-boho-dark mb-2">
+                Keywords
+              </label>
+              <input 
+                type="text" 
+                id="keywords" 
+                name="keywords"
+                class="input"
+                placeholder="handmade, boho, schmuck, armband"
+              />
+              <p class="text-sm text-boho-dark/70 mt-1">
+                Trenne Keywords mit Kommas
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="card p-6">
+          <h2 class="text-xl font-serif font-bold text-boho-dark mb-6">Status</h2>
+          
+          <div class="space-y-4">
+            <div>
+              <label for="status" class="block text-sm font-medium text-boho-dark mb-2">
+                Produktstatus
+              </label>
+              <select id="status" name="status" class="input">
+                <option value="active">Aktiv</option>
+                <option value="inactive">Inaktiv</option>
+                <option value="draft">Entwurf</option>
+              </select>
+            </div>
+            
+            <div class="flex items-center">
+              <input 
+                type="checkbox" 
+                id="featured" 
+                name="featured"
+                class="mr-2"
+              />
+              <label for="featured" class="text-sm text-boho-dark/80">
+                Als Featured-Produkt markieren
+              </label>
+            </div>
+            
+            <div class="flex items-center">
+              <input 
+                type="checkbox" 
+                id="sale" 
+                name="sale"
+                class="mr-2"
+              />
+              <label for="sale" class="text-sm text-boho-dark/80">
+                Im Sale anzeigen
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex items-center justify-end space-x-4">
+          <button 
+            type="button" 
+            class="btn-secondary"
+            onclick="window.history.back()"
+          >
+            Abbrechen
+          </button>
+          <button 
+            type="submit" 
+            class="btn-primary"
+            id="save-product"
+          >
+            <span class="save-text">
+              <i class="fas fa-save mr-2"></i>
+              Produkt speichern
+            </span>
+            <span class="save-loading hidden">
+              <i class="fas fa-spinner fa-spin mr-2"></i>
+              Wird gespeichert...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('product-form') as HTMLFormElement;
+    const saveButton = document.getElementById('save-product') as HTMLButtonElement;
+    const saveText = saveButton.querySelector('.save-text') as HTMLElement;
+    const saveLoading = saveButton.querySelector('.save-loading') as HTMLElement;
+
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Show loading state
+        saveButton.disabled = true;
+        saveText.classList.add('hidden');
+        saveLoading.classList.remove('hidden');
+
+        try {
+          // Collect form data
+          const formData = new FormData(form);
+          const productData = {
+            name: formData.get('name'),
+            sku: formData.get('sku'),
+            description: formData.get('description'),
+            price: parseFloat(formData.get('price') as string),
+            stock: parseInt(formData.get('stock') as string),
+            category: formData.get('category'),
+            weight: parseFloat(formData.get('weight') as string) || 0,
+            dimensions: formData.get('dimensions'),
+            materials: formData.getAll('materials'),
+            status: formData.get('status'),
+            featured: formData.get('featured') === 'on',
+            sale: formData.get('sale') === 'on',
+            metaTitle: formData.get('metaTitle'),
+            metaDescription: formData.get('metaDescription'),
+            keywords: formData.get('keywords')
+          };
+
+          // In real app, this would make an API call
+          console.log('Saving product:', productData);
+          
+          // Simulate API call
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          // Show success message
+          alert('Produkt wurde erfolgreich gespeichert!');
+          
+          // Redirect to products list
+          window.location.href = '/admin/products';
+          
+        } catch (error) {
+          console.error('Error saving product:', error);
+          alert('Fehler beim Speichern des Produkts. Bitte versuche es erneut.');
+        } finally {
+          // Hide loading state
+          saveButton.disabled = false;
+          saveText.classList.remove('hidden');
+          saveLoading.classList.add('hidden');
+        }
+      });
+    }
+
+    // Auto-generate SKU from name
+    const nameInput = document.getElementById('name') as HTMLInputElement;
+    const skuInput = document.getElementById('sku') as HTMLInputElement;
+    
+    if (nameInput && skuInput) {
+      nameInput.addEventListener('input', function() {
+        if (!skuInput.value) {
+          const sku = this.value
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+          skuInput.value = `CP-${sku}`.substring(0, 20);
+        }
+      });
+    }
+
+    // Auto-generate meta title and description
+    const descriptionInput = document.getElementById('description') as HTMLTextAreaElement;
+    const metaTitleInput = document.getElementById('meta-title') as HTMLInputElement;
+    const metaDescriptionInput = document.getElementById('meta-description') as HTMLTextAreaElement;
+    
+    if (descriptionInput && metaTitleInput && metaDescriptionInput) {
+      descriptionInput.addEventListener('input', function() {
+        if (!metaTitleInput.value) {
+          metaTitleInput.value = `${nameInput.value} | Casa Petrada`;
+        }
+        if (!metaDescriptionInput.value) {
+          metaDescriptionInput.value = this.value.substring(0, 160);
+        }
+      });
+    }
+  });
+</script>

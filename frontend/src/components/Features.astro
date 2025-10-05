@@ -1,0 +1,50 @@
+---
+// Features Section Component
+const features = [
+  {
+    icon: "fas fa-hand-holding-heart",
+    title: "Handgefertigt",
+    description: "Jedes Stück wird mit Liebe und Sorgfalt von Hand gefertigt"
+  },
+  {
+    icon: "fas fa-shipping-fast",
+    title: "Kostenloser Versand",
+    description: "Versandkostenfrei ab einem Bestellwert von 39,90 €"
+  },
+  {
+    icon: "fas fa-undo",
+    title: "30 Tage Rückgaberecht",
+    description: "Kostenlose Rücksendung innerhalb von 30 Tagen"
+  },
+  {
+    icon: "fas fa-heart",
+    title: "Nachhaltig",
+    description: "Umweltfreundliche Materialien und Verpackung"
+  }
+];
+---
+
+<section class="py-20 bg-boho-light">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-boho-dark mb-4">
+        Warum Casa Petrada?
+      </h2>
+      <p class="text-lg text-boho-dark/70 max-w-2xl mx-auto">
+        Wir stehen für Qualität, Nachhaltigkeit und persönlichen Service
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {features.map((feature) => (
+        <div class="text-center group">
+          <div class="w-16 h-16 bg-boho-pink/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-boho-pink/20 transition-colors duration-300">
+            <i class={`${feature.icon} text-2xl text-boho-pink`}></i>
+          </div>
+          <h3 class="text-xl font-semibold text-boho-dark mb-2">{feature.title}</h3>
+          <p class="text-boho-dark/70">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

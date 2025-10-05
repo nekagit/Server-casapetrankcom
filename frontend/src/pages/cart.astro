@@ -1,0 +1,543 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Mock cart data - in real app this would come from API
+const cartItems = [
+  {
+    id: 1,
+    product: {
+      id: 1,
+      name: "Tibet Armband",
+      slug: "tibet-armband",
+      price: 24.90,
+      image: "/images/products/tibet-armband.jpg",
+      inStock: true,
+      stock: 15
+    },
+    quantity: 2,
+    size: "M",
+    color: "Braun"
+  },
+  {
+    id: 2,
+    product: {
+      id: 2,
+      name: "Boho Kette mit Anhänger",
+      slug: "boho-kette-anhaenger",
+      price: 39.90,
+      image: "/images/products/product_1.jpg",
+      inStock: true,
+      stock: 8
+    },
+    quantity: 1,
+    size: "One Size",
+    color: "Gold"
+  },
+  {
+    id: 3,
+    product: {
+      id: 3,
+      name: "Mondstein Ohrringe",
+      slug: "mondstein-ohrringe",
+      price: 49.90,
+      image: "/images/products/product_3.jpg",
+      inStock: false,
+      stock: 0
+    },
+    quantity: 1,
+    size: "One Size",
+    color: "Silber"
+  }
+];
+
+const subtotal = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+const shipping = subtotal >= 39.90 ? 0 : 4.90;
+const total = subtotal + shipping;
+const freeShippingThreshold = 39.90;
+const freeShippingRemaining = Math.max(0, freeShippingThreshold - subtotal);
+---
+
+<Layout 
+  title="Warenkorb - Casa Petrada"
+  description="Dein Warenkorb bei Casa Petrada. Handgefertigter Boho Schmuck und stilvolle Mode."
+>
+  <!-- Breadcrumb -->
+  <section class="py-4 bg-boho-light border-b border-boho-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/" class="text-boho-dark hover:text-boho-pink transition-colors">Home</a>
+        <span class="text-boho-dark/60">/</span>
+        <span class="text-boho-dark/60">Warenkorb</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Cart Content -->
+  <section class="py-8 lg:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Cart Items -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20">
+            <div class="px-6 py-4 border-b border-boho-accent/20">
+              <h1 class="text-2xl font-serif font-bold text-boho-dark">Dein Warenkorb</h1>
+              <p class="text-boho-dark/70 mt-1">{cartItems.length} Artikel</p>
+            </div>
+
+            {cartItems.length === 0 ? (
+              <!-- Empty Cart -->
+              <div class="px-6 py-12 text-center">
+                <div class="mx-auto w-24 h-24 bg-boho-beige rounded-full flex items-center justify-center mb-4">
+                  <i class="fas fa-shopping-cart text-3xl text-boho-pink"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-boho-dark mb-2">Dein Warenkorb ist leer</h3>
+                <p class="text-boho-dark/70 mb-6">Entdecke unsere handgefertigten Schmuckstücke und füge sie zu deinem Warenkorb hinzu.</p>
+                <a href="/" class="inline-flex items-center px-6 py-3 bg-boho-pink text-white font-medium rounded-lg hover:bg-boho-brown transition-colors">
+                  <i class="fas fa-arrow-left mr-2"></i>
+                  Weiter einkaufen
+                </a>
+              </div>
+            ) : (
+              <!-- Cart Items List -->
+              <div class="divide-y divide-boho-accent/20">
+                {cartItems.map((item) => (
+                  <div class="p-6 cart-item" data-item-id={item.id}>
+                    <div class="flex items-start space-x-4">
+                      <!-- Product Image -->
+                      <div class="flex-shrink-0">
+                        <img 
+                          src={item.product.image} 
+                          alt={item.product.name}
+                          class="w-20 h-20 object-cover rounded-lg border border-boho-accent/20"
+                        />
+                      </div>
+
+                      <!-- Product Details -->
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between">
+                          <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-boho-dark">
+                              <a href={`/products/${item.product.slug}`} class="hover:text-boho-pink transition-colors">
+                                {item.product.name}
+                              </a>
+                            </h3>
+                            
+                            <div class="mt-2 flex items-center space-x-4 text-sm text-boho-dark/70">
+                              <span>Größe: {item.size}</span>
+                              <span>Farbe: {item.color}</span>
+                            </div>
+
+                            <div class="mt-2 flex items-center space-x-2">
+                              <span class="text-lg font-semibold text-boho-dark">
+                                {(item.product.price * item.quantity).toFixed(2)} €
+                              </span>
+                              <span class="text-sm text-boho-dark/70">
+                                {item.product.price.toFixed(2)} € × {item.quantity}
+                              </span>
+                            </div>
+
+                            {!item.product.inStock && (
+                              <div class="mt-2 flex items-center text-sm text-red-600">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Nicht auf Lager
+                              </div>
+                            )}
+
+                            {item.product.stock <= 5 && item.product.inStock && (
+                              <div class="mt-2 flex items-center text-sm text-orange-600">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                Nur noch {item.product.stock} auf Lager
+                              </div>
+                            )}
+                          </div>
+
+                          <!-- Quantity Controls -->
+                          <div class="flex items-center space-x-2 ml-4">
+                            <button 
+                              class="quantity-btn quantity-decrease w-8 h-8 flex items-center justify-center border border-boho-accent rounded hover:bg-boho-beige transition-colors"
+                              data-item-id={item.id}
+                              data-action="decrease"
+                            >
+                              <i class="fas fa-minus text-sm"></i>
+                            </button>
+                            
+                            <input 
+                              type="number" 
+                              value={item.quantity} 
+                              min="1" 
+                              max="10"
+                              class="quantity-input w-16 text-center border border-boho-accent rounded focus:ring-2 focus:ring-boho-pink focus:border-boho-pink"
+                              data-item-id={item.id}
+                            />
+                            
+                            <button 
+                              class="quantity-btn quantity-increase w-8 h-8 flex items-center justify-center border border-boho-accent rounded hover:bg-boho-beige transition-colors"
+                              data-item-id={item.id}
+                              data-action="increase"
+                            >
+                              <i class="fas fa-plus text-sm"></i>
+                            </button>
+                          </div>
+
+                          <!-- Remove Button -->
+                          <button 
+                            class="remove-item ml-4 p-2 text-boho-dark/60 hover:text-red-600 transition-colors"
+                            data-item-id={item.id}
+                            title="Artikel entfernen"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <!-- Continue Shopping -->
+          {cartItems.length > 0 && (
+            <div class="mt-6">
+              <a href="/" class="inline-flex items-center text-boho-pink hover:text-boho-brown transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Weiter einkaufen
+              </a>
+            </div>
+          )}
+        </div>
+
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-lg shadow-sm border border-boho-accent/20 sticky top-4">
+            <div class="px-6 py-4 border-b border-boho-accent/20">
+              <h2 class="text-xl font-semibold text-boho-dark">Bestellübersicht</h2>
+            </div>
+
+            <div class="px-6 py-4 space-y-4">
+              <!-- Subtotal -->
+              <div class="flex justify-between text-boho-dark">
+                <span>Zwischensumme</span>
+                <span>{subtotal.toFixed(2)} €</span>
+              </div>
+
+              <!-- Shipping -->
+              <div class="flex justify-between text-boho-dark">
+                <span>Versand</span>
+                <span>
+                  {shipping === 0 ? (
+                    <span class="text-green-600 font-medium">Kostenlos</span>
+                  ) : (
+                    `${shipping.toFixed(2)} €`
+                  )}
+                </span>
+              </div>
+
+              <!-- Free Shipping Progress -->
+              {freeShippingRemaining > 0 && (
+                <div class="bg-boho-beige rounded-lg p-4">
+                  <div class="flex items-center justify-between text-sm text-boho-dark mb-2">
+                    <span>Kostenloser Versand ab 39,90 €</span>
+                    <span>{freeShippingRemaining.toFixed(2)} € fehlen</span>
+                  </div>
+                  <div class="w-full bg-boho-accent/20 rounded-full h-2">
+                    <div 
+                      class="bg-boho-pink h-2 rounded-full transition-all duration-300"
+                      style={`width: ${Math.min(100, (subtotal / freeShippingThreshold) * 100)}%`}
+                    ></div>
+                  </div>
+                </div>
+              )}
+
+              <!-- Total -->
+              <div class="border-t border-boho-accent/20 pt-4">
+                <div class="flex justify-between text-lg font-semibold text-boho-dark">
+                  <span>Gesamt</span>
+                  <span>{total.toFixed(2)} €</span>
+                </div>
+              </div>
+
+              <!-- Checkout Button -->
+              <button 
+                class="w-full bg-boho-pink text-white font-medium py-3 px-4 rounded-lg hover:bg-boho-brown transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                id="checkout-btn"
+                disabled={cartItems.length === 0}
+              >
+                <i class="fas fa-lock mr-2"></i>
+                Zur Kasse
+              </button>
+
+              <!-- Security Info -->
+              <div class="text-center text-sm text-boho-dark/70">
+                <i class="fas fa-shield-alt mr-1"></i>
+                Sichere Bezahlung mit SSL-Verschlüsselung
+              </div>
+
+              <!-- Payment Methods -->
+              <div class="flex items-center justify-center space-x-4 text-boho-dark/60">
+                <i class="fab fa-cc-visa text-2xl"></i>
+                <i class="fab fa-cc-mastercard text-2xl"></i>
+                <i class="fab fa-cc-paypal text-2xl"></i>
+                <i class="fab fa-cc-apple-pay text-2xl"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trust Signals -->
+          <div class="mt-6 space-y-4">
+            <div class="bg-boho-beige rounded-lg p-4">
+              <h3 class="font-semibold text-boho-dark mb-2">Warum Casa Petrada?</h3>
+              <ul class="space-y-2 text-sm text-boho-dark/70">
+                <li class="flex items-center">
+                  <i class="fas fa-check text-green-600 mr-2"></i>
+                  Handgefertigt in Deutschland
+                </li>
+                <li class="flex items-center">
+                  <i class="fas fa-check text-green-600 mr-2"></i>
+                  Kostenloser Versand ab 39,90 €
+                </li>
+                <li class="flex items-center">
+                  <i class="fas fa-check text-green-600 mr-2"></i>
+                  30 Tage Rückgaberecht
+                </li>
+                <li class="flex items-center">
+                  <i class="fas fa-check text-green-600 mr-2"></i>
+                  Persönlicher Kundenservice
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .cart-item {
+    transition: all 0.3s ease;
+  }
+
+  .cart-item:hover {
+    background-color: var(--boho-beige);
+  }
+
+  .quantity-btn {
+    transition: all 0.2s ease;
+  }
+
+  .quantity-btn:hover {
+    background-color: var(--boho-pink);
+    color: white;
+    border-color: var(--boho-pink);
+  }
+
+  .quantity-input:focus {
+    outline: none;
+    border-color: var(--boho-pink);
+    box-shadow: 0 0 0 2px rgba(196, 164, 132, 0.2);
+  }
+
+  .remove-item {
+    transition: all 0.2s ease;
+  }
+
+  .remove-item:hover {
+    transform: scale(1.1);
+  }
+
+  /* Loading animation for cart updates */
+  .cart-updating {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .cart-updating::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--boho-pink);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .cart-item {
+      padding: 1rem;
+    }
+    
+    .quantity-controls {
+      flex-direction: column;
+      space-y: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  // Cart functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const cartContainer = document.querySelector('.cart-items');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    const quantityBtns = document.querySelectorAll('.quantity-btn');
+    const removeBtns = document.querySelectorAll('.remove-item');
+
+    // Quantity controls
+    quantityBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const itemId = this.getAttribute('data-item-id');
+        const action = this.getAttribute('data-action');
+        const input = document.querySelector(`input[data-item-id="${itemId}"]`);
+        
+        if (input) {
+          let newQuantity = parseInt(input.value);
+          
+          if (action === 'increase' && newQuantity < 10) {
+            newQuantity++;
+          } else if (action === 'decrease' && newQuantity > 1) {
+            newQuantity--;
+          }
+          
+          updateQuantity(itemId, newQuantity);
+        }
+      });
+    });
+
+    // Quantity input changes
+    quantityInputs.forEach(input => {
+      input.addEventListener('change', function() {
+        const itemId = this.getAttribute('data-item-id');
+        const newQuantity = Math.max(1, Math.min(10, parseInt(this.value) || 1));
+        
+        updateQuantity(itemId, newQuantity);
+      });
+    });
+
+    // Remove items
+    removeBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const itemId = this.getAttribute('data-item-id');
+        
+        if (confirm('Möchtest du diesen Artikel aus dem Warenkorb entfernen?')) {
+          removeItem(itemId);
+        }
+      });
+    });
+
+    // Checkout button
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener('click', function() {
+        // In a real app, this would redirect to checkout
+        window.location.href = '/checkout';
+      });
+    }
+
+    // Update quantity function
+    function updateQuantity(itemId, newQuantity) {
+      const cartItem = document.querySelector(`[data-item-id="${itemId}"]`);
+      if (!cartItem) return;
+
+      // Add loading state
+      cartItem.classList.add('cart-updating');
+
+      // Simulate API call
+      setTimeout(() => {
+        // Update the input value
+        const input = cartItem.querySelector(`input[data-item-id="${itemId}"]`);
+        if (input) {
+          input.value = newQuantity;
+        }
+
+        // Update the price display
+        const priceElement = cartItem.querySelector('.item-price');
+        if (priceElement) {
+          const unitPrice = parseFloat(priceElement.getAttribute('data-unit-price'));
+          const newPrice = unitPrice * newQuantity;
+          priceElement.textContent = `${newPrice.toFixed(2)} €`;
+        }
+
+        // Remove loading state
+        cartItem.classList.remove('cart-updating');
+
+        // Update cart summary
+        updateCartSummary();
+
+        // Show success message
+        showNotification('Menge aktualisiert', 'success');
+      }, 500);
+    }
+
+    // Remove item function
+    function removeItem(itemId) {
+      const cartItem = document.querySelector(`[data-item-id="${itemId}"]`);
+      if (!cartItem) return;
+
+      // Add loading state
+      cartItem.classList.add('cart-updating');
+
+      // Simulate API call
+      setTimeout(() => {
+        cartItem.remove();
+        updateCartSummary();
+        showNotification('Artikel entfernt', 'success');
+
+        // Check if cart is empty
+        const remainingItems = document.querySelectorAll('.cart-item');
+        if (remainingItems.length === 0) {
+          location.reload(); // Reload to show empty state
+        }
+      }, 500);
+    }
+
+    // Update cart summary
+    function updateCartSummary() {
+      // In a real app, this would recalculate totals from the API
+      console.log('Cart summary updated');
+    }
+
+    // Show notification
+    function showNotification(message, type = 'success') {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ${
+        type === 'success' ? 'bg-green-600' : 'bg-red-600'
+      }`;
+      notification.textContent = message;
+
+      document.body.appendChild(notification);
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Auto-save cart changes
+    let saveTimeout;
+    function autoSaveCart() {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        // In a real app, this would save cart changes to the backend
+        console.log('Auto-saving cart...');
+      }, 1000);
+    }
+
+    // Listen for cart changes
+    document.addEventListener('input', function(e) {
+      if (e.target.classList.contains('quantity-input')) {
+        autoSaveCart();
+      }
+    });
+  });
+</script>
